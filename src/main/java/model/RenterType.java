@@ -1,4 +1,8 @@
 package model;
 
-public class RenterType {
+public interface RenterType {
+    int maxVolumes(int volumes);
+    String getRenterTypeInfo();
 }
+
+
