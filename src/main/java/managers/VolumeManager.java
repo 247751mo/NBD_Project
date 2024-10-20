@@ -20,7 +20,9 @@ public class VolumeManager {
         }
         return volumeRents;
     }
-
+    public void addVolume(Volume volume) {
+        volumes.add(volume);
+    }
     public int countVolumes() {
         return volumes.size();
     }

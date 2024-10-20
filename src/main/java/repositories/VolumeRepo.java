@@ -14,15 +14,14 @@ public class VolumeRepo {
     }
 
 
-    public void addVolume(Volume volume) {
+    public void addVolume(Volume volume, List<Volume> volumes) {
         volumes.add(volume);
     }
 
 
-    public void removeVolume(Volume volume) {
-        volumes.removeIf(existingVolume -> existingVolume.equals(volume));
+    public void removeVolume(Volume volume, List<Volume> volumes) {
+        volumes.remove(volume);
     }
-
 
     public List<Volume> getAllVolumes() {
         return new ArrayList<>(volumes);
