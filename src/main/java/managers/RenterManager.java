@@ -1,4 +1,4 @@
-
+package managers;
 import java.util.List;
 import model.Renter;
 import jakarta.persistence.EntityManager;
