@@ -5,7 +5,6 @@ import model.Renter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class RenterRepo {
     private final List<Renter> renters;
 

@@ -6,7 +6,6 @@ import java.util.List;
 
 public class RentRepo {
 
-
     private final List<Rent> rents;
 
 
