@@ -8,13 +8,14 @@
         <class>model.Card</class>
         <class>model.NoCard</class>
         <class>model.Monthly</class>
-        <class>model.Publication</class>
+
         <class>model.Rent</class>
         <class>model.Renter</class>
         <class>model.RenterType</class>
-        <class>model.Volume</class>
+
         <class>model.Weekly</class>
         <class>model.AbstractEntity</class>
+
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <shared-cache-mode>NONE</shared-cache-mode>
     <!--      <validation-mode>CALLBACK</validation-mode>-->

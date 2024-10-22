@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "renter_type", discriminatorType = DiscriminatorType.STRING)
-public abstract class RenterType extends com.rental.model.AbstractEntity {
+public abstract class RenterType extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Primary key auto-generated

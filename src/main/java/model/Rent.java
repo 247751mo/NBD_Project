@@ -1,15 +1,29 @@
 package model;
-
+import com.sun.istack.NotNull;
+import jakarta.persistence.*;
 import exceptions.ParameterException;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
+@Table(name = "rents")
+@Access(AccessType.FIELD)
 public class Rent {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "renter_id", nullable = false)
     private Renter renter;
-    private Volume volume;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "volume_id", nullable = false)
+    private Volume volume; // Volume type
+
+    @Column(name = "BeginTime")
     private LocalDateTime beginTime;
+    @Column(name = "EndTime")
     private LocalDateTime endTime;
 
     public Rent(UUID id, Renter renter, Volume volume, LocalDateTime beginTime) {
@@ -31,6 +45,10 @@ public class Rent {
         if (volume == null) {
             throw new ParameterException("Cannot create rent without volume!");
         }
+    }
+
+    public Rent() {
+
     }
 
     public UUID getId() {

@@ -1,4 +1,4 @@
-package com.rental.model;
+package model;
 
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;

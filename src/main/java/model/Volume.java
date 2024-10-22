@@ -4,7 +4,7 @@ import exceptions.ParameterException;
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity
+@MappedSuperclass
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "volume", discriminatorType = DiscriminatorType.STRING)
 public abstract class Volume implements Serializable {

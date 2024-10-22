@@ -3,7 +3,7 @@ package model;
 import javax.persistence.*;
 
 
-@MappedSuperclass
+@Entity
 @Access(AccessType.FIELD)
 public abstract class Publication extends Volume {
 
