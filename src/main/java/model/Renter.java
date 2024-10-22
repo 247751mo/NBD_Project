@@ -1,20 +1,36 @@
 package model;
 
 import exceptions.ParameterException;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import static java.util.Objects.requireNonNullElseGet;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "renters")
 public class Renter {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "first_name", nullable = false)
     private String firstName;
+
+    @Column(name = "last_name", nullable = false)
     private String lastName;
+
+    @Column(name = "personal_id", unique = true, nullable = false)
     private String personalID;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "renter_type_id")
     private RenterType renterType;
+
+    @Column(name = "is_archived")
     private boolean isArchive;
 
-    // Constructor
+    public Renter() {
+    }
+
+    // Constructor with parameters
     public Renter(String firstName, String lastName, String personalID, RenterType renterType) {
         if (firstName == null || firstName.isEmpty()) {
             throw new ParameterException("Invalid firstName (can't be empty)!");
@@ -28,14 +44,14 @@ public class Renter {
         this.firstName = firstName;
         this.lastName = lastName;
         this.personalID = personalID;
-        this.renterType = requireNonNullElseGet(renterType, NoCard::new);
+        this.renterType = renterType != null ? renterType : new NoCard();  // Defaults to NoCard
         this.isArchive = false;
     }
 
-    // Destructor equivalent in Java is the finalize method but it's not typically used.
-    // Instead, Java uses garbage collection.
-
-    // Getters
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
     public String getFirstName() {
         return firstName;
     }
@@ -52,7 +68,6 @@ public class Renter {
         return renterType;
     }
 
-    // Setters
     public void setFirstName(String newFirstName) {
         if (newFirstName != null && !newFirstName.isEmpty()) {
             this.firstName = newFirstName;
@@ -75,7 +90,6 @@ public class Renter {
         this.isArchive = status;
     }
 
-    // Other methods
     public String getInfo() {
         return "(Renter) first name: " + getFirstName() + ", last name: " + getLastName() + ", personal id: " + getPersonalID() +
                 ", renter type: " + getType().getRenterTypeInfo() + ", is archived: " + (checkIfArchived() ? "true" : "false");

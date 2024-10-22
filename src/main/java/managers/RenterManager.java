@@ -1,4 +1,5 @@
 package managers;
+import model.Renter;
 import java.util.List;
 import model.Renter;
 import jakarta.persistence.EntityManager;
@@ -19,7 +20,7 @@ public class RenterManager {
 
     public List<Renter> getAllRenters() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        List<Renter> renters = entityManager.createQuery("SELECT r FROM Renter r", Renter.class).getResultList();
+        List<Renter> renters = entityManager.createQuery("SELECT r FROM renters r", Renter.class).getResultList();
         entityManager.close();
         return renters;
     }

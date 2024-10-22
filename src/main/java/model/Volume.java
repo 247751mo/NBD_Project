@@ -1,12 +1,22 @@
 package model;
 
 import exceptions.ParameterException;
+import javax.persistence.*;
 
-public class Volume {
-
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "volume", discriminatorType = DiscriminatorType.STRING)
+public abstract class Volume {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
     private String genre;
+    @Column(name = "is_rented")
     private boolean isRented;
+    @Column(name = "is_archive")
     private boolean isArchive;
 
     public Volume(String title, String genre) throws ParameterException {

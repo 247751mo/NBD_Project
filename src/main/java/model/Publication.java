@@ -1,7 +1,12 @@
 package model;
 
+import javax.persistence.*;
+@Entity
+@Table(name = "publications")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Publication extends Volume {
 
+    @Column(nullable = false)
     private String publisher;
 
     public Publication(String title, String genre, String publisher) {
