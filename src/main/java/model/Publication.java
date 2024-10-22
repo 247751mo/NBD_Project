@@ -1,10 +1,11 @@
 package model;
 
 import javax.persistence.*;
-@Entity
-@Table(name = "publications")
-@Inheritance(strategy = InheritanceType.JOINED)
-public class Publication extends Volume {
+
+
+@MappedSuperclass
+@Access(AccessType.FIELD)
+public abstract class Publication extends Volume {
 
     @Column(nullable = false)
     private String publisher;

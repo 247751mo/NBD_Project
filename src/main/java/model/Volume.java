@@ -2,11 +2,12 @@ package model;
 
 import exceptions.ParameterException;
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "volume", discriminatorType = DiscriminatorType.STRING)
-public abstract class Volume {
+public abstract class Volume implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,7 +19,9 @@ public abstract class Volume {
     private boolean isRented;
     @Column(name = "is_archive")
     private boolean isArchive;
+    public Volume(){
 
+    }
     public Volume(String title, String genre) throws ParameterException {
         this.title = title;
         this.genre = genre;

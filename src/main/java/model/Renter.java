@@ -2,9 +2,12 @@ package model;
 
 import exceptions.ParameterException;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 
 @Entity
-@Table(name = "renters")
+@Valid
+@Table(name = "Client")
+@Access(AccessType.FIELD)
 public class Renter {
 
     @Id

@@ -5,7 +5,20 @@ import jakarta.persistence.*;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "renter_type", discriminatorType = DiscriminatorType.STRING)
-public abstract class RenterType {
+public abstract class RenterType extends com.rental.model.AbstractEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Primary key auto-generated
+    private Long id;
+
+    // Getter and Setter for id
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public abstract int maxVolumes(int volumes);
 
@@ -14,7 +27,6 @@ public abstract class RenterType {
 
 @Entity
 @DiscriminatorValue("NoCard")
-
 class NoCard extends RenterType {
 
     @Override
