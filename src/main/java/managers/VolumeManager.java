@@ -1,29 +1,33 @@
 package managers;
-import model.Rent;
 import model.Volume;
-import java.util.ArrayList;
-import java.util.List;
+import repositories.VolumeRepo;
+import java.io.Serializable;
 
-public class VolumeManager {
+public class VolumeManager implements Serializable {
 
-    private List<Volume> volumes = new ArrayList<>();
+    private VolumeRepo volumeRepo;
 
-    public List<Rent> getAllVolumeRents(Volume volume, List<Rent> rents) {
-        List<Rent> volumeRents = new ArrayList<>();
-        for (Rent rent : rents) {
-            if (rent.getVolume() == null) {
-                return volumeRents;
-            }
-            if (rent.getVolume().getTitle().equals(volume.getTitle())) {
-                volumeRents.add(rent);
-            }
+    public VolumeManager(VolumeRepo volumeRepo) {
+        if (volumeRepo == null) {
+            throw new IllegalArgumentException("volumeRepo cannot be null");
+        } else {
+            this.volumeRepo = volumeRepo;
         }
-        return volumeRents;
     }
+
     public void addVolume(Volume volume) {
-        volumes.add(volume);
+        if (volumeRepo.get(volume.getVolumeId()) != null) {
+            throw new IllegalArgumentException("Volume already exists");
+        } else {
+            volumeRepo.add(volume);
+        }
     }
-    public int countVolumes() {
-        return volumes.size();
+
+    public void removeVolume(Volume volume) {
+        if (volume != null) {
+            volume.setArchiveStatus(true);
+            volume.setRentedStatus(false);
+            volumeRepo.update(volume);
+        }
     }
 }
