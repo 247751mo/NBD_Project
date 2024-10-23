@@ -1,5 +1,4 @@
 package model;
-import com.sun.istack.NotNull;
 import jakarta.persistence.*;
 import exceptions.ParameterException;
 import java.time.LocalDateTime;
@@ -10,7 +9,7 @@ import java.util.UUID;
 @Access(AccessType.FIELD)
 public class Rent {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.EAGER)

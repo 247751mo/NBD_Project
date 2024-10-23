@@ -13,11 +13,8 @@ import java.io.Serializable;
 
 @MappedSuperclass
 @Access(AccessType.FIELD)
-@Embeddable
 public abstract class AbstractEntity implements Serializable {
 
     @Version
-    @NotNull
-    @GeneratedValue(strategy =  GenerationType.SEQUENCE)
-    protected long version;
+    private long version;
 }

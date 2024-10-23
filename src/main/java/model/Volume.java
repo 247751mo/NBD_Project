@@ -1,12 +1,12 @@
 package model;
 
 import exceptions.ParameterException;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 
-@MappedSuperclass
+@Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "volume", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Volume implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

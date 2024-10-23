@@ -8,11 +8,10 @@
         <class>model.Card</class>
         <class>model.NoCard</class>
         <class>model.Monthly</class>
-
+        <class>model.Volume</class>
         <class>model.Rent</class>
         <class>model.Renter</class>
         <class>model.RenterType</class>
-
         <class>model.Weekly</class>
         <class>model.AbstractEntity</class>
 

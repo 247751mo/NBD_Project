@@ -6,9 +6,9 @@ import jakarta.validation.Valid;
 
 @Entity
 @Valid
-@Table(name = "Client")
+@Table(name = "Renter")
 @Access(AccessType.FIELD)
-public class Renter {
+public class Renter extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
