@@ -28,7 +28,7 @@ public class RentRepo implements Repo<Rent> {
     // Get all Rents
     @Override
     public List<Rent> getAll() {
-        return em.createQuery("FROM Rent r", Rent.class).getResultList();
+        return em.createQuery("SELECT r FROM Rent r", Rent.class).getResultList();
     }
 
     // Add a new Rent
@@ -82,7 +82,7 @@ public class RentRepo implements Repo<Rent> {
     public void bookVolume(Renter renter, Volume volume, LocalDateTime rentStart) {
         try {
             em.getTransaction().begin();
-            Volume managedVolume = em.find(Volume.class, volume.getId(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+            Volume managedVolume = em.find(Volume.class, volume.getVolumeId(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
             Renter managedRenter = em.find(Renter.class, renter.getId(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 
             // Check if the volume is already rented or archived
@@ -106,12 +106,12 @@ public class RentRepo implements Repo<Rent> {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw new RuntimeException("Optimistic lock exception: The volume or renter was modified concurrently: " + volume.getId(), ole);
+            throw new RuntimeException("Optimistic lock exception: The volume or renter was modified concurrently: " + volume.getVolumeId(), ole);
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw new RuntimeException("The volume could not be booked: " + volume.getId(), e);
+            throw new RuntimeException("The volume could not be booked: " + volume.getVolumeId(), e);
         }
     }
 
