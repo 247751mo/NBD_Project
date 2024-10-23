@@ -3,14 +3,15 @@ package model;
 import exceptions.ParameterException;
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.UUID;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Volume implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID volumeId;
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
@@ -36,8 +37,8 @@ public abstract class Volume implements Serializable {
         }
     }
 
-    public Long getId() {
-        return id;
+    public UUID getVolumeId() {
+        return volumeId;
     }
 
     public String getTitle() {
