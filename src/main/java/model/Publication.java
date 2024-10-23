@@ -4,8 +4,9 @@ import javax.persistence.*;
 
 
 @Entity
+@DiscriminatorValue("Publication")
 @Access(AccessType.FIELD)
-public abstract class Publication extends Volume {
+public class Publication extends Volume {
 
     @Column(nullable = false)
     private String publisher;
