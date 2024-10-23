@@ -4,6 +4,8 @@ import exceptions.ParameterException;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 
+import java.util.UUID;
+
 @Entity
 @Valid
 @Table(name = "Renter")
@@ -11,8 +13,8 @@ import jakarta.validation.Valid;
 public class Renter extends AbstractEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -56,7 +58,7 @@ public class Renter extends AbstractEntity {
     }
 
     // Getters and setters
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
     public String getFirstName() {

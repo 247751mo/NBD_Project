@@ -1,32 +1,65 @@
 package repositories;
 
+import jakarta.persistence.EntityManager;
 import model.Renter;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RenterRepo implements Repo<Renter> {
-    private final List<Renter> renters;
 
+    private final EntityManager em;
 
-    public RenterRepo() {
-        this.renters = new ArrayList<>();
+    public RenterRepo(EntityManager entityManager) {
+        this.em = entityManager;
     }
 
-
-    public void addRenter(Renter renter) {
-        renters.add(renter);
+    @Override
+    public Renter get(UUID id) {
+        return em.find(Renter.class, id);
     }
-
-
-    public void removeRenter(Renter renter) {
-        renters.removeIf(existingRenter -> existingRenter.equals(renter));
-    }
-
-
+    @Override
     public List<Renter> getAll() {
-        return new ArrayList<>(renters);
+        return em.createQuery("SELECT R FROM Renter r", Renter.class).getResultList();
+    }
+    @Override
+    public Renter add(Renter renter) {
+        try {
+            em.getTransaction().begin();
+            em.persist(renter);
+            em.getTransaction().commit();
+            return renter;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new RuntimeException("Failed to add renter: " + renter.getId(), e);
+        }
+    }
+    @Override
+    public void delete(Renter renter) {
+        try {
+            em.getTransaction().begin();
+            Renter managedClient = em.contains(renter) ? renter : em.merge(renter);
+            em.remove(managedClient);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new RuntimeException("Failed to remove renter: " + renter.getId(), e);
+        }
+    }
+    @Override
+    public void update(Renter renter) {
+        try {
+            em.getTransaction().begin();
+            em.merge(renter);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new RuntimeException("Failed to update client: " + renter.getId(), e);
+        }
     }
 }
