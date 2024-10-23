@@ -27,6 +27,10 @@ public class Renter extends AbstractEntity {
     @JoinColumn(name = "renter_type_id")
     private RenterType renterType;
 
+    @Column(name = "rents")
+    private int rents = 0;
+
+
     @Column(name = "is_archived")
     private boolean isArchive;
 
@@ -71,6 +75,9 @@ public class Renter extends AbstractEntity {
         return renterType;
     }
 
+    public int getRents() {
+        return rents;
+    }
     public void setFirstName(String newFirstName) {
         if (newFirstName != null && !newFirstName.isEmpty()) {
             this.firstName = newFirstName;

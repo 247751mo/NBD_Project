@@ -1,68 +1,64 @@
 package managers;
 
 import model.Rent;
+import model.Renter;
 import model.Volume;
 import repositories.RentRepo;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-import exceptions.ParameterException;
-
+import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.List;
 
 public class RentManager {
     private final RentRepo rentRepo;
-    private final EntityManagerFactory entityManagerFactory;
-    private final EntityManager entityManager;
 
-    // Konstruktor, inicjuje repozytorium i EntityManager
-    public RentManager() {
-        this.rentRepo = new RentRepo();
-        this.entityManagerFactory = Persistence.createEntityManagerFactory("my-persistence-unit");
-        this.entityManager = entityManagerFactory.createEntityManager();
+
+    public RentManager(RentRepo rentRepo) {
+        if (rentRepo == null) {
+            throw new IllegalArgumentException("rentRepo cannot be null");
+        }
+        this.rentRepo = rentRepo;
     }
 
-    // Dodanie wypożyczenia, jeśli dostępny jest odpowiedni wolumen
-    public boolean createRent(List<Volume> volumes, Rent rent) {
-        entityManager.getTransaction().begin();
+    public void rentVolume(Renter renter, Volume volume, LocalDateTime rentStart) throws Exception {
+        // Check if the volume is available for rent
+        if (volume.checkIfRented()) {
+            throw new Exception("Volume is already rented: " + volume.getTitle());
+        }
 
+        // Check if the renter has reached the maximum number of rents (assumed to be 5, can be adjusted)
+        if (renter.getRents() >= 5) {
+            throw new Exception("Renter has reached the maximum number of rents: " + renter.getId());
+        }
+
+        // Proceed with the booking
         try {
-            // Sprawdzenie dostępności wolumenów
-            for (Volume volume : volumes) {
-                List<Rent> existingRents = rentRepo.getAllRents();
-                boolean isAvailable = existingRents.stream()
-                        .noneMatch(existingRent -> existingRent.getVolume().equals(volume));
-
-                if (isAvailable) {
-                    rent.setVolume(volume);
-                    rentRepo.addRent(rent, existingRents);
-                    entityManager.persist(rent);
-                    entityManager.getTransaction().commit();
-                    return true;
-                }
-            }
-
-            // Jeśli żaden wolumen nie jest dostępny, wycofaj transakcję
-            entityManager.getTransaction().rollback();
-            return false;
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw new ParameterException("Failed to create rent: " + e.getMessage());
+            rentRepo.bookVolume(renter, volume, rentStart);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("The rental process failed for volume: " + volume.getTitle(), e);
         }
     }
+    public void returnVolume(UUID rentId, LocalDateTime rentEnd) {
+        // Fetch the rent by its ID
+        Rent rent = rentRepo.get(rentId);
 
-    // Zwraca liczbę wszystkich wypożyczeń
-    public int countRents() {
-        return rentRepo.getAllRents().size();
+        // End the rent and mark the volume as returned
+        rent.endRent(rentEnd);
+
+        // Return the volume in the repository
+        rentRepo.returnVolume(rent, rentEnd);
+
+        // Mark the rent as archived (this could mean it's no longer active and stored for history purposes)
+        rent.setVolume(null); // Assuming nulling volume means archiving it
+        rentRepo.update(rent);
     }
 
-    // Metoda zamykająca EntityManager i EntityManagerFactory
-    public void close() {
-        if (entityManager.isOpen()) {
-            entityManager.close();
-        }
-        if (entityManagerFactory.isOpen()) {
-            entityManagerFactory.close();
-        }
+    // Fetch rent by its ID
+    public Rent getRent(UUID rentId) {
+        return rentRepo.get(rentId);
+    }
+
+    // Get all rents
+    public List<Rent> getAllRents() {
+        return rentRepo.getAll();
     }
 }
