@@ -1,11 +1,13 @@
 package repositories;
 
 import model.Renter;
-
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RenterRepo {
+public class RenterRepo implements Repo<Renter> {
     private final List<Renter> renters;
 
 

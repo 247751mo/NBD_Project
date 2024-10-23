@@ -36,6 +36,10 @@ public abstract class Volume implements Serializable {
         }
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getTitle() {
         return title;
     }

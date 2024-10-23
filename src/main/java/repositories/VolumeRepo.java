@@ -1,10 +1,13 @@
 package repositories;
-
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import model.Renter;
 import model.Volume;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VolumeRepo {
+public class VolumeRepo implements Repo<Renter>{
 
     private final List<Volume> volumes;
 
