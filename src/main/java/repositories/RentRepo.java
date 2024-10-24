@@ -99,7 +99,6 @@ public class RentRepo implements Repo<Rent> {
             em.persist(rent);
 
             // Increase renter's rent count
-            managedRenter.incrementRentCount();  // Assuming you have a method in Renter class to increment the rent count
             em.merge(managedRenter);
 
             // Mark the volume as rented

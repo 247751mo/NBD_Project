@@ -117,25 +117,31 @@ public class RentManagerTest {
 
         Weekly weekly = new Weekly("tytul", "gatunek", "publikowal");
         volumeRepo.add(weekly);
+        System.out.println("Renter's rents after return: " + renter.getRents());
         rentManager.rentVolume(renter, weekly, LocalDateTime.now());
         Weekly weekly2 = new Weekly("tytul2", "gatunek2", "publikowal2");
         volumeRepo.add(weekly2);
+        System.out.println("Renter's rents after return: " + renter.getRents());
         rentManager.rentVolume(renter, weekly2, LocalDateTime.now());
         Weekly weekly3 = new Weekly("tytul3", "gatunek3", "publikowal3");
         volumeRepo.add(weekly3);
+        System.out.println("Renter's rents after return: " + renter.getRents());
         rentManager.rentVolume(renter, weekly3, LocalDateTime.now());
         Weekly weekly4 = new Weekly("tytul4", "gatunek4", "publikowal4");
         volumeRepo.add(weekly4);
+        System.out.println("Renter's rents after return: " + renter.getRents());
         rentManager.rentVolume(renter, weekly4, LocalDateTime.now());
         Weekly weekly5 = new Weekly("tytul5", "gatunek5", "publikowal5");
         volumeRepo.add(weekly5);
+        System.out.println("Renter's rents after return: " + renter.getRents());
         rentManager.rentVolume(renter, weekly5, LocalDateTime.now());
         Weekly weekly6 = new Weekly("Fakt", "Wiadomosci", "J. Billig");
         volumeRepo.add(weekly6);
+        System.out.println("Renter's rents after return: " + renter.getRents());
         Exception exception = assertThrows(Exception.class, () -> {
             rentManager.rentVolume(renter, weekly6, LocalDateTime.now());
         });
-
+        System.out.println("Renter's rents after return: " + renter.getRents());
         String expectedMessage = ("Renter has reached the maximum number of rents: " + renter.getId());
         String actualMessage = exception.getMessage();
 

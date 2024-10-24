@@ -33,13 +33,14 @@ public class RentManager {
         }
 
         // Check if the renter has reached the maximum number of rents
-        if (renter.getRents() > 5) { // Assuming getRents() returns a collection
+        if (renter.getRents() >= 5) { // Assuming getRents() returns a collection
             throw new Exception("Renter has reached the maximum number of rents: " + renter.getId());
         }
 
         // Proceed with the booking
         try {
             rentRepo.bookVolume(renter, volume, rentStart);
+            renter.incrementRentCount();
         } catch (RuntimeException e) {
             throw new RuntimeException("The rental process failed for volume: " + volume.getTitle(), e);
         }
@@ -51,12 +52,13 @@ public class RentManager {
         // End the rent and mark the volume as returned
         rent.endRent(rentEnd);
 
+        Volume volume = rent.getVolume();
+        volume.setRentedStatus(false);
+
+        Renter renter = rent.getRenter();
+        renter.decrementRentCount();
         // Return the volume in the repository
         rentRepo.returnVolume(rent, rentEnd);
-
-        // Mark the rent as archived (this could mean it's no longer active and stored for history purposes)
-        rent.setVolume(null); // Assuming nulling volume means archiving it
-        rentRepo.update(rent);
     }
 
     // Fetch rent by its ID

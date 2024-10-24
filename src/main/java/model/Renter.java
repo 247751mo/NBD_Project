@@ -122,4 +122,7 @@ public class Renter extends AbstractEntity {
     public void incrementRentCount() {
         this.rents++;
     }
+    public void decrementRentCount() {
+        this.rents--;
+    }
 }
