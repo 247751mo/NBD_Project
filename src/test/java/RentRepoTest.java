@@ -82,5 +82,54 @@ class RentRepoTest {
         assertNotNull(retrievedRent, "The retrieved rent should not be null");
         assertEquals(rentId, retrievedRent.getId(), "The retrieved rent ID should match the persisted rent ID");
     }
+    @Test
+    void testGetAllRents() {
+
+
+        List<Rent> rents = rentRepo.getAll();
+        int initialSize = rents.size();
+
+        Renter renter1 = new Renter("Emma", "Davis", "EMMA123", new NoCard());
+        Renter renter2 = new Renter("Frank", "Taylor", "FRANK456", new Card());
+        Book book1 = new Book("Boleslaw Prus", "Lalka", "Powiesc");
+        Book book2 = new Book("Sofokles", "Krol Edyp", "Tragedia");
+
+        entityManager.getTransaction().begin();
+        entityManager.persist(renter1);
+        entityManager.persist(renter2);
+        entityManager.persist(book1);
+        entityManager.persist(book2);
+        entityManager.getTransaction().commit();
+
+        Rent rent1 = new Rent(renter1, book1, LocalDateTime.now());
+        Rent rent2 = new Rent(renter2, book2, LocalDateTime.now());
+
+        rentRepo.add(rent1);
+        rentRepo.add(rent2);
+
+        rents = rentRepo.getAll();
+        int finalSize = rents.size();
+
+        assertEquals(initialSize + 2, finalSize);
+    }
+    @Test
+    void testBookVolume() {
+        entityManager.getTransaction().begin();
+
+        Renter renter = new Renter("George", "Hall", "GEORGE789", new NoCard());
+        Book book = new Book("Adam Mickiewicz", "Pan Tadeusz", "Epika");
+        entityManager.persist(renter);
+        entityManager.persist(book);
+
+        entityManager.getTransaction().commit();
+
+        rentRepo.bookVolume(renter, book, LocalDateTime.now());
+
+        Volume foundBook = entityManager.find(Volume.class, book.getVolumeId());
+        assertTrue(foundBook.checkIfRented());
+
+        Renter foundRenter = entityManager.find(Renter.class, renter.getId());
+        assertEquals(1, foundRenter.getRents());
+    }
 
 }

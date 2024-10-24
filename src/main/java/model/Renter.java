@@ -78,8 +78,10 @@ public class Renter extends AbstractEntity {
     }
 
     public int getRents() {
+        this.rents++;
         return rents;
     }
+
     public void setFirstName(String newFirstName) {
         if (newFirstName != null && !newFirstName.isEmpty()) {
             this.firstName = newFirstName;
