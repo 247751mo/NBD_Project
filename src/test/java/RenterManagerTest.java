@@ -41,7 +41,7 @@ public class RenterManagerTest {
             renterManager.addRenter(renter);
         });
 
-        assertEquals("Volume already exists", exception.getMessage());
+        assertEquals("Renter already exists", exception.getMessage());
     }
 
     @Test

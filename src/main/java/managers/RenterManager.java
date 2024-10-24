@@ -17,10 +17,10 @@ public class RenterManager implements Serializable {
     }
 
     public void addRenter(Renter renter) {
-        if (renterRepo.get(renter.getId()) == null) {
+        if (renter.getId() == null) {
             renterRepo.add(renter);
         } else if (renterRepo.get(renter.getId()) != null) {
-            throw new IllegalArgumentException("Volume already exists");
+            throw new IllegalArgumentException("Renter already exists");
         } else {
             renterRepo.add(renter);
         }
