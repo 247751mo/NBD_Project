@@ -16,12 +16,15 @@ public class VolumeManager implements Serializable {
     }
 
     public void addVolume(Volume volume) {
-        if (volumeRepo.get(volume.getVolumeId()) != null) {
+        if (volume.getVolumeId() == null) {
+            volumeRepo.add(volume);
+        } else if (volumeRepo.get(volume.getVolumeId()) != null) {
             throw new IllegalArgumentException("Volume already exists");
         } else {
             volumeRepo.add(volume);
         }
     }
+
 
     public void removeVolume(Volume volume) {
         if (volume != null) {
