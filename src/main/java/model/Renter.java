@@ -78,7 +78,6 @@ public class Renter extends AbstractEntity {
     }
 
     public int getRents() {
-        this.rents++;
         return rents;
     }
     public void setRents(int rents) {
@@ -118,5 +117,9 @@ public class Renter extends AbstractEntity {
 
     public int maxVolumes(int volumes) {
         return renterType.maxVolumes(volumes);
+    }
+
+    public void incrementRentCount() {
+        this.rents++;
     }
 }

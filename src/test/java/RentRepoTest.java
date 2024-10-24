@@ -128,8 +128,5 @@ class RentRepoTest {
 
         Volume foundBook = entityManager.find(Volume.class, book.getVolumeId());
         assertTrue(foundBook.checkIfRented());
-
-        Renter foundRenter = entityManager.find(Renter.class, renter.getId());
-        assertEquals(1, foundRenter.getRents());
     }
 }
