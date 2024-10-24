@@ -9,6 +9,7 @@ import repositories.RentRepo;
 import repositories.VolumeRepo;
 import model.Rent;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -131,5 +132,4 @@ class RentRepoTest {
         Renter foundRenter = entityManager.find(Renter.class, renter.getId());
         assertEquals(1, foundRenter.getRents());
     }
-
 }
