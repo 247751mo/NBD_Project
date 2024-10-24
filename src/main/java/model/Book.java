@@ -1,18 +1,22 @@
 package model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Access(AccessType.FIELD)
-@DiscriminatorValue("book")
+@DiscriminatorValue("Book")
 public class Book extends Volume {
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String author;
 
     public Book(String author, String title, String genre) {
         super(title, genre);
         this.author = author;
+    }
+
+    public Book() {
+
     }
 
     public String getAuthor() {

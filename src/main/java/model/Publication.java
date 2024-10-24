@@ -1,6 +1,6 @@
 package model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 
 @Entity
@@ -8,12 +8,16 @@ import javax.persistence.*;
 @Access(AccessType.FIELD)
 public class Publication extends Volume {
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String publisher;
 
     public Publication(String title, String genre, String publisher) {
         super(title, genre);
         this.publisher = publisher;
+    }
+
+    public Publication() {
+
     }
 
     public String getPublisher() {

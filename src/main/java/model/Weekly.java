@@ -3,7 +3,7 @@ package model;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 
 @Entity
@@ -15,6 +15,10 @@ public class Weekly extends Publication {
 
     public Weekly(String title, String genre, String publisher) {
         super(title, genre, publisher);
+    }
+
+    public Weekly() {
+        super();
     }
 
     @Override

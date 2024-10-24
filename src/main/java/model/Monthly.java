@@ -1,6 +1,5 @@
 package model;
 import jakarta.persistence.*;
-import javax.persistence.Entity;
 
 
 @Entity
@@ -10,6 +9,10 @@ public class Monthly extends Publication {
 
     public Monthly(String title, String genre, String publisher) {
         super(title, genre, publisher);
+    }
+
+    public Monthly() {
+        super();
     }
 
     @Override
