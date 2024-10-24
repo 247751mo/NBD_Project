@@ -39,8 +39,8 @@ public class RenterRepo implements Repo<Renter> {
     public void delete(Renter renter) {
         try {
             em.getTransaction().begin();
-            Renter managedClient = em.contains(renter) ? renter : em.merge(renter);
-            em.remove(managedClient);
+            Renter managedRenter = em.contains(renter) ? renter : em.merge(renter);
+            em.remove(managedRenter);
             em.getTransaction().commit();
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
@@ -59,7 +59,7 @@ public class RenterRepo implements Repo<Renter> {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw new RuntimeException("Failed to update client: " + renter.getId(), e);
+            throw new RuntimeException("Failed to update renter: " + renter.getId(), e);
         }
     }
 }

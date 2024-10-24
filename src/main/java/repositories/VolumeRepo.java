@@ -37,8 +37,8 @@ public class VolumeRepo implements Repo<Volume> {
     public void delete(Volume volume) {
         try {
             em.getTransaction().begin();
-            Volume managedVehicle = em.contains(volume) ? volume : em.merge(volume);
-            em.remove(managedVehicle);
+            Volume managedVolume = em.contains(volume) ? volume : em.merge(volume);
+            em.remove(managedVolume);
             em.getTransaction().commit();
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {

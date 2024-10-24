@@ -27,17 +27,15 @@ public class RentManager {
             throw new IllegalArgumentException("Volume cannot be null.");
         }
 
-        // Check if the volume is available for rent
         if (volume.checkIfRented()) {
             throw new Exception("Volume is already rented: " + volume.getTitle());
         }
 
-        // Check if the renter has reached the maximum number of rents
-        if (renter.getRents() >= 5) { // Assuming getRents() returns a collection
+        if (renter.getRents() >= 5) {
             throw new Exception("Renter has reached the maximum number of rents: " + renter.getId());
         }
 
-        // Proceed with the booking
+
         try {
             rentRepo.bookVolume(renter, volume, rentStart);
             renter.incrementRentCount();
@@ -46,10 +44,8 @@ public class RentManager {
         }
     }
     public void returnVolume(UUID rentId, LocalDateTime rentEnd) {
-        // Fetch the rent by its ID
         Rent rent = rentRepo.get(rentId);
 
-        // End the rent and mark the volume as returned
         rent.endRent(rentEnd);
 
         Volume volume = rent.getVolume();
@@ -57,7 +53,7 @@ public class RentManager {
 
         Renter renter = rent.getRenter();
         renter.decrementRentCount();
-        // Return the volume in the repository
+
         rentRepo.returnVolume(rent, rentEnd);
     }
 

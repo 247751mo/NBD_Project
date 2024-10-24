@@ -5,7 +5,6 @@ import managers.RentManager;
 import managers.RenterManager;
 import managers.VolumeManager;
 import model.*;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import repositories.RentRepo;
@@ -50,7 +49,7 @@ public class RentManagerTest {
         RenterType noCardType = new NoCard();
         RenterType cardType = new Card();
 
-        Renter renter1 = new Renter("Tyler", "Okonma", "1222567890", cardType);
+        Renter renter1 = new Renter("Tyler", "One", "1222567890", cardType);
         Renter renter2 = new Renter("Frank", "Ocean", "0911654321", noCardType);
 
         Book book1 = new Book("Sofokles", "Krol Edyp", "Tragedia");
@@ -89,7 +88,7 @@ public class RentManagerTest {
 
         RenterType cardType = new Card();
         Renter renter2 = new Renter("John", "Doe", "132255620", cardType);
-        Renter renter = new Renter("Tyler", "Okonma", "122222220", cardType);
+        Renter renter = new Renter("Maly", "Wariat", "122222220", cardType);
         Book book = new Book("Stanislaw Lem", "Bajki robotow", "Science Fiction");
         renterRepo.add(renter);
         renterRepo.add(renter2);
@@ -111,7 +110,7 @@ public class RentManagerTest {
     void testRentVolumeWithTooManyRents() throws Exception {
         RenterType noCardType = new NoCard();
 
-        Renter renter = new Renter("Tyler", "Okonma", "1234567220", noCardType);
+        Renter renter = new Renter("Robert", "Lewandowski", "1234567220", noCardType);
         renterRepo.add(renter);
 
 
@@ -176,7 +175,7 @@ public class RentManagerTest {
         RenterType noCardType = new NoCard();
 
 
-        Renter renter = new Renter("Steve", "Lacy", "5678901234", noCardType);
+        Renter renter = new Renter("Minecraft", "Steve", "5678901234", noCardType);
         Book book = new Book("Frank Herbert", "Diuna", "Science Fiction");
 
         renterRepo.add(renter);

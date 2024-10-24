@@ -39,7 +39,7 @@ public class Renter extends AbstractEntity {
     public Renter() {
     }
 
-    // Constructor with parameters
+
     public Renter(String firstName, String lastName, String personalID, RenterType renterType) {
         if (firstName == null || firstName.isEmpty()) {
             throw new ParameterException("Invalid firstName (can't be empty)!");

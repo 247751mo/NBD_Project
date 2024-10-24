@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import repositories.RenterRepo;
 
 import java.util.List;
-import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,7 +50,7 @@ class RenterRepoTest {
     @Test
     void testRemoveRenter() {
         RenterType noCardType = new NoCard();
-        Renter renter = new Renter("Charlie", "Doe", "CHARLIE789", noCardType);
+        Renter renter = new Renter("John", "Rambo", "CHARLIE789", noCardType);
         renterRepo.add(renter);
 
         Renter foundRenter1 = renterRepo.get(renter.getId());

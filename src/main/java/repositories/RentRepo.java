@@ -63,7 +63,7 @@ public class RentRepo implements Repo<Rent> {
         }
     }
 
-    // Update Rent
+
     @Override
     public void update(Rent rent) {
         try {
@@ -78,15 +78,14 @@ public class RentRepo implements Repo<Rent> {
         }
     }
 
-    // Rent/Book a volume for a renter
-    // Rent/Book a volume for a renter
+
     public void bookVolume(Renter renter, Volume volume, LocalDateTime rentStart) {
         try {
             em.getTransaction().begin();
             Volume managedVolume = em.find(Volume.class, volume.getVolumeId(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
             Renter managedRenter = em.find(Renter.class, renter.getId(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 
-            // Check if the volume is already rented or archived
+
             if (managedVolume.checkIfRented()) {
                 throw new RuntimeException("The volume is already rented: " + volume.getTitle());
             }
@@ -94,14 +93,13 @@ public class RentRepo implements Repo<Rent> {
                 throw new RuntimeException("The volume is archived and cannot be rented: " + volume.getTitle());
             }
 
-            // Create new rent
+
             Rent rent = new Rent(managedRenter, managedVolume, rentStart);
             em.persist(rent);
 
-            // Increase renter's rent count
+
             em.merge(managedRenter);
 
-            // Mark the volume as rented
             managedVolume.setRentedStatus(true);
             em.merge(managedVolume);
 
@@ -120,18 +118,18 @@ public class RentRepo implements Repo<Rent> {
     }
 
 
-    // End a rent and return the volume
+
     public void returnVolume(Rent rent, LocalDateTime endTime) {
         try {
             em.getTransaction().begin();
 
-            // End the rent
-            rent.endRent(endTime);  // Set the end time of the rent
+
+            rent.endRent(endTime);
             em.merge(rent);
 
-            // Retrieve and update the volume
+
             Volume volume = rent.getVolume();
-            volume.setRentedStatus(false); // Mark volume as no longer rented
+            volume.setRentedStatus(false);
             em.merge(volume);
 
             em.getTransaction().commit();

@@ -1,6 +1,5 @@
 package managers;
 import model.Renter;
-import model.Volume;
 import repositories.RenterRepo;
 import java.io.Serializable;
 
