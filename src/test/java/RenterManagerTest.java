@@ -34,7 +34,7 @@ public class RenterManagerTest {
 
     @Test
     void testAddRenterWithExistingId() {
-        Renter renter = new Renter("Tyler", "Okonma", "1234567890", new NoCard());
+        Renter renter = new Renter("Tyler", "Okonma", "TYLER1", new NoCard());
         renterRepo.add(renter);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -46,7 +46,7 @@ public class RenterManagerTest {
 
     @Test
     void testAddRenterSuccessfully() {
-        Renter renter = new Renter("Frank", "Ocean", "0987654321", new NoCard());
+        Renter renter = new Renter("Frank", "Ocean", "FRANK325", new NoCard());
 
         renterManager.addRenter(renter);
 
@@ -58,7 +58,7 @@ public class RenterManagerTest {
 
     @Test
     void testRemoveRenter() {
-        Renter renter = new Renter("Kali", "Uchis", "987654321", new NoCard());
+        Renter renter = new Renter("Kali", "Uchis", "KALI343", new NoCard());
         renterRepo.add(renter);
 
         renterManager.removeRenter(renter);
