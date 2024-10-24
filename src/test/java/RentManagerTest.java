@@ -76,11 +76,22 @@ public class RentManagerTest {
         Renter renter = new Renter("Tyler", "Okonma", "1234567890", noCardType);
         renterRepo.add(renter);
 
-        for (int i = 1; i <= 5; i++) {
-            Weekly weekly = new Weekly("tytul"+i, "gatunek"+i, "publikowal"+i);
-            volumeRepo.add(weekly);
-            rentRepo.bookVolume(renter, weekly, LocalDateTime.now().minusDays(i));
-        }
+
+        Weekly weekly = new Weekly("tytul", "gatunek", "publikowal");
+        volumeRepo.add(weekly);
+        rentRepo.bookVolume(renter, weekly, LocalDateTime.now());
+        Weekly weekly2 = new Weekly("tytul2", "gatunek2", "publikowal2");
+        volumeRepo.add(weekly);
+        rentRepo.bookVolume(renter, weekly2, LocalDateTime.now());
+        Weekly weekly3 = new Weekly("tytul3", "gatunek3", "publikowal3");
+        volumeRepo.add(weekly3);
+        rentRepo.bookVolume(renter, weekly3, LocalDateTime.now());
+        Weekly weekly4 = new Weekly("tytul4", "gatunek4", "publikowal4");
+        volumeRepo.add(weekly4);
+        rentRepo.bookVolume(renter, weekly4, LocalDateTime.now());
+        Weekly weekly5 = new Weekly("tytul5", "gatunek5", "publikowal5");
+        volumeRepo.add(weekly5);
+        rentRepo.bookVolume(renter, weekly5, LocalDateTime.now());
 
         Weekly weekly6 = new Weekly("Fakt", "Wiadomosci", "J. Billig");
         volumeRepo.add(weekly6);
