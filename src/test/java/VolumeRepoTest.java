@@ -35,7 +35,7 @@ class VolumeRepoTest {
         assertEquals(monthly, foundVolume2);
     }
     @Test
-    void testRemoveVehicle() {
+    void testRemoveVolume() {
         Book book = new Book("Adam Mickiewicz", "Pan Tadeusz", "Epic Poetry");
         volumeRepo.add(book);
 
