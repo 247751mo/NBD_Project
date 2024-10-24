@@ -92,10 +92,10 @@ public class RentManagerTest {
         Weekly weekly5 = new Weekly("tytul5", "gatunek5", "publikowal5");
         volumeRepo.add(weekly5);
         rentRepo.bookVolume(renter, weekly5, LocalDateTime.now());
-
+        System.out.println("Current rents for renter " + renter.getId() + ": " + renter.getRents());
         Weekly weekly6 = new Weekly("Fakt", "Wiadomosci", "J. Billig");
         volumeRepo.add(weekly6);
-
+        System.out.println("Current rents for renter " + renter.getId() + ": " + renter.getRents());
         Exception exception = assertThrows(Exception.class, () -> {
             rentManager.rentVolume(renter, weekly6, LocalDateTime.now());
         });
