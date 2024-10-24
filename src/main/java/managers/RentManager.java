@@ -20,13 +20,20 @@ public class RentManager {
     }
 
     public void rentVolume(Renter renter, Volume volume, LocalDateTime rentStart) throws Exception {
+        if (renter == null) {
+            throw new IllegalArgumentException("Renter cannot be null.");
+        }
+        if (volume == null) {
+            throw new IllegalArgumentException("Volume cannot be null.");
+        }
+
         // Check if the volume is available for rent
         if (volume.checkIfRented()) {
             throw new Exception("Volume is already rented: " + volume.getTitle());
         }
 
-        // Check if the renter has reached the maximum number of rents (assumed to be 5, can be adjusted)
-        if (renter.getRents() >= 5) {
+        // Check if the renter has reached the maximum number of rents
+        if (renter.getRents() >= 5) { // Assuming getRents() returns a collection
             throw new Exception("Renter has reached the maximum number of rents: " + renter.getId());
         }
 
