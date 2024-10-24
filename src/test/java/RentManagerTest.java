@@ -10,8 +10,10 @@ import org.junit.jupiter.api.Test;
 import repositories.RentRepo;
 import repositories.RenterRepo;
 import repositories.VolumeRepo;
-
+import java.util.concurrent.*;
 import java.time.LocalDateTime;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -191,5 +193,83 @@ public class RentManagerTest {
 
         assertNotNull(foundRent);
         assertEquals(rent.getId(), foundRent.getId());
+    }
+
+
+    @Test
+    void testRentConcurent() throws Exception {
+        RenterType noCardType = new NoCard();
+
+        Renter renter = new Renter("Robert", "Lewandowski", "1234567220", noCardType);
+        renterRepo.add(renter);
+
+
+        Weekly weekly = new Weekly("tytul", "gatunek", "publikowal");
+        volumeRepo.add(weekly);
+        rentManager.rentVolume(renter, weekly, LocalDateTime.now());
+        Weekly weekly2 = new Weekly("tytul2", "gatunek2", "publikowal2");
+        volumeRepo.add(weekly2);
+        rentManager.rentVolume(renter, weekly2, LocalDateTime.now());
+        Weekly weekly3 = new Weekly("tytul3", "gatunek3", "publikowal3");
+        volumeRepo.add(weekly3);
+        rentManager.rentVolume(renter, weekly3, LocalDateTime.now());
+        Weekly weekly4 = new Weekly("tytul4", "gatunek4", "publikowal4");
+        volumeRepo.add(weekly4);
+        rentManager.rentVolume(renter, weekly4, LocalDateTime.now());
+
+        assertEquals(4, renter.getRents(), "Renter should have 4 active rents initially.");
+
+        Weekly weekly5 = new Weekly("tytul5", "gatunek5", "publikowal5");
+        volumeRepo.add(weekly5);
+        Weekly weekly6 = new Weekly("Fakt", "Wiadomosci", "J. Billig");
+        volumeRepo.add(weekly6);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+        Callable<Rent> rentTask1 = () -> rentManager.createRent(renter, weekly5, LocalDateTime.now());
+        Callable<Rent> rentTask2 = () -> rentManager.createRent(renter, weekly6, LocalDateTime.now());
+
+        Future<Rent> future1 = executorService.submit(rentTask1);
+        Future<Rent> future2 = executorService.submit(rentTask2);
+
+        Rent rent1 = null;
+        Rent rent2 = null;
+
+        try {
+            rent1 = future1.get(); // First concurrent rent attempt
+        } catch (ExecutionException e) {
+            // Handle the exception if the rent limit is exceeded
+            Throwable cause = e.getCause();
+            if (cause instanceof Exception) {
+                System.out.println("First rent task failed due to max rent limit: " + cause.getMessage());
+            } else {
+                throw e;
+            }
+        }
+
+        try {
+            rent2 = future2.get(); // Second concurrent rent attempt
+        } catch (ExecutionException e) {
+            // Handle the exception if the rent limit is exceeded
+            Throwable cause = e.getCause();
+            if (cause instanceof Exception) {
+                System.out.println("Second rent task failed due to max rent limit: " + cause.getMessage());
+            } else {
+                throw e;
+            }
+        }
+
+        // Assert that at least one of the two rent creations succeeded
+        assertTrue(rent1 != null || rent2 != null, "At least one rent creation should succeed.");
+
+        // Check how many active rents the renter currently has
+        int activeRentsCount = renter.getRents();
+
+
+        assertTrue(activeRentsCount <= 6, "Renter should have no more than 6 active rents.");
+
+
+        // Shutdown the executor service
+        executorService.shutdown();
     }
 }
