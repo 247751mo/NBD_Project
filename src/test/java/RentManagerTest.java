@@ -54,7 +54,7 @@ public class RentManagerTest {
 
         RenterType cardType = new Card();
 
-        Renter renter = new Renter("Tyler", "Okonma", "1234567890", cardType);
+        Renter renter = new Renter("Tyler", "Okonma", "122222220", cardType);
         Book book = new Book("Stanislaw Lem", "Bajki robotow", "Science Fiction");
         renterRepo.add(renter);
         volumeRepo.add(book);
@@ -73,7 +73,7 @@ public class RentManagerTest {
     void testRentVolumeWithTooManyRents() throws Exception {
         RenterType noCardType = new NoCard();
 
-        Renter renter = new Renter("Tyler", "Okonma", "1234567890", noCardType);
+        Renter renter = new Renter("Tyler", "Okonma", "1234567220", noCardType);
         renterRepo.add(renter);
 
 
@@ -81,7 +81,7 @@ public class RentManagerTest {
         volumeRepo.add(weekly);
         rentManager.rentVolume(renter, weekly, LocalDateTime.now());
         Weekly weekly2 = new Weekly("tytul2", "gatunek2", "publikowal2");
-        volumeRepo.add(weekly);
+        volumeRepo.add(weekly2);
         rentManager.rentVolume(renter, weekly2, LocalDateTime.now());
         Weekly weekly3 = new Weekly("tytul3", "gatunek3", "publikowal3");
         volumeRepo.add(weekly3);
@@ -112,7 +112,7 @@ public class RentManagerTest {
         RenterType cardType = new Card();
 
 
-        Renter renter = new Renter("Frank", "Ocean", "0987654321",cardType);
+        Renter renter = new Renter("Frank", "Ocean", "0917654321",cardType);
         Book book = new Book("Henryk Sienkiewicz", "Potop", "Historyczne");
 
         renterRepo.add(renter);
@@ -133,7 +133,7 @@ public class RentManagerTest {
 
         RenterType cardType = new Card();
 
-        Renter renter = new Renter("Earl", "Sweatshirt", "0123456789",cardType);
+        Renter renter = new Renter("Earl", "Sweatshirt", "0123236789",cardType);
         Monthly monthly12 = new Monthly("Top Gear", "Motoryzacyjne", "Immediate Media Company");
 
         renterRepo.add(renter);
@@ -182,11 +182,11 @@ public class RentManagerTest {
         RenterType noCardType = new NoCard();
         RenterType cardType = new Card();
 
-        Renter renter1 = new Renter("Tyler", "Okonma", "1234567890",cardType);
-        Renter renter2 = new Renter("Frank", "Ocean", "0987654321",noCardType);
+        Renter renter1 = new Renter("Tyler", "Okonma", "1222567890",cardType);
+        Renter renter2 = new Renter("Frank", "Ocean", "0911654321",noCardType);
 
         Book book1 = new Book("Sofokles", "Krol Edyp", "Tragedia");
-        Book book2 = new Book("Sofokles", "Krol Edyp", "Tragedia");
+        Book book2 = new Book("Sofoklesss", "Krol Edypds", "Tragediaaa");
 
         renterRepo.add(renter1);
         renterRepo.add(renter2);
