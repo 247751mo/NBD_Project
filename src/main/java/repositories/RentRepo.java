@@ -94,7 +94,7 @@ public class RentRepo implements Repo<Rent> {
             }
 
             // Create new rent
-            Rent rent = new Rent(UUID.randomUUID(), managedRenter, managedVolume, rentStart);
+            Rent rent = new Rent(managedRenter, managedVolume, rentStart);
             em.persist(rent);
 
             // Mark the volume as rented

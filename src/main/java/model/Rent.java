@@ -25,8 +25,7 @@ public class Rent {
     @Column(name = "EndTime")
     private LocalDateTime endTime;
 
-    public Rent(UUID id, Renter renter, Volume volume, LocalDateTime beginTime) {
-        this.id = id;
+    public Rent(Renter renter, Volume volume, LocalDateTime beginTime) {
         this.renter = renter;
         this.volume = volume;
         this.beginTime = beginTime;
