@@ -161,7 +161,7 @@ public class RentManagerTest {
         assertEquals(1, renter.getRents());
 
         Rent rent = rentRepo.getAll().get(0);
-        rentManager.returnVolume(rent.getId(), LocalDateTime.now().plusDays(1));
+        rentManager.returnVolume(rent.getId(), LocalDateTime.now().plusDays(0));
 
         assertEquals(0, renter.getRents());
         assertFalse(book.checkIfRented());
