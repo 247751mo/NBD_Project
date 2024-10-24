@@ -28,6 +28,7 @@ public class RentManagerTest {
     @BeforeAll
     public static void setUp() {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("default");
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         em = entityManagerFactory.createEntityManager();
         em1 = entityManagerFactory.createEntityManager();
 
@@ -39,6 +40,8 @@ public class RentManagerTest {
 
         volumeRepo = new VolumeRepo(em);
         volumeManager = new VolumeManager(volumeRepo);
+
+
     }
 
     @Test
