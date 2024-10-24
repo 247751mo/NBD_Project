@@ -89,11 +89,14 @@ public class RentManagerTest {
     void testRentVolumeWithUnavailableVolume() throws Exception {
 
         RenterType cardType = new Card();
-
+        Renter renter2 = new Renter("John", "Doe", "132255620", cardType);
         Renter renter = new Renter("Tyler", "Okonma", "122222220", cardType);
         Book book = new Book("Stanislaw Lem", "Bajki robotow", "Science Fiction");
         renterRepo.add(renter);
+        renterRepo.add(renter2);
         volumeRepo.add(book);
+        rentManager.rentVolume(renter2, book, LocalDateTime.now());
+
 
         Exception exception = assertThrows(Exception.class, () -> {
             rentManager.rentVolume(renter, book, LocalDateTime.now());
