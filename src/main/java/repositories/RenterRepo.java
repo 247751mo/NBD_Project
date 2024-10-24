@@ -19,7 +19,7 @@ public class RenterRepo implements Repo<Renter> {
     }
     @Override
     public List<Renter> getAll() {
-        return em.createQuery("SELECT R FROM Renter r", Renter.class).getResultList();
+        return em.createQuery("SELECT r FROM Renter r", Renter.class).getResultList();
     }
     @Override
     public Renter add(Renter renter) {
