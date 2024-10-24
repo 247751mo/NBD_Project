@@ -161,7 +161,7 @@ public class RentManagerTest {
         assertEquals(1, renter.getRents(), "Renter should have 1 rent before return.");
 
         Rent rent = rentRepo.getAll().get(0);
-        rentManager.returnVolume(rent.getId(), LocalDateTime.now().plusDays(1));
+        rentManager.returnVolume(rent.getId(), LocalDateTime.now().plusDays(0));
 
         // Log the current rents after return
         System.out.println("Renter's rents after return: " + renter.getRents());
