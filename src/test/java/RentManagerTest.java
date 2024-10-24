@@ -12,7 +12,6 @@ import repositories.RenterRepo;
 import repositories.VolumeRepo;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,7 +52,6 @@ public class RentManagerTest {
     @Test
     void testRentVolumeWithUnavailableVolume() throws Exception {
 
-        RenterType noCardType = new NoCard();
         RenterType cardType = new Card();
 
         Renter renter = new Renter("Tyler", "Okonma", "1234567890", cardType);
@@ -74,7 +72,6 @@ public class RentManagerTest {
     @Test
     void testRentVolumeWithTooManyRents() throws Exception {
         RenterType noCardType = new NoCard();
-        RenterType cardType = new Card();
 
         Renter renter = new Renter("Tyler", "Okonma", "1234567890", noCardType);
         renterRepo.add(renter);
@@ -101,7 +98,6 @@ public class RentManagerTest {
     @Test
     void testReturnVolume() throws Exception {
 
-        RenterType noCardType = new NoCard();
         RenterType cardType = new Card();
 
 
@@ -124,7 +120,6 @@ public class RentManagerTest {
     @Test
     void testReturnVolumeWithNullRentEnd() {
 
-        RenterType noCardType = new NoCard();
         RenterType cardType = new Card();
 
         Renter renter = new Renter("Earl", "Sweatshirt", "0123456789",cardType);
@@ -133,7 +128,11 @@ public class RentManagerTest {
         renterRepo.add(renter);
         volumeRepo.add(monthly12);
 
-        rentManager.rentVolume(renter, monthly12, LocalDateTime.now());
+        try {
+            rentManager.rentVolume(renter, monthly12, LocalDateTime.now());
+        } catch (Exception e) {
+            System.out.println("Error while renting volume: " + e.getMessage());
+        }
         Rent rent = rentRepo.getAll().get(0);
 
         rentManager.returnVolume(rent.getId(), null);
@@ -146,14 +145,18 @@ public class RentManagerTest {
     void testGetRent() {
 
         RenterType noCardType = new NoCard();
-        RenterType cardType = new Card();
+
 
         Renter renter = new Renter("Steve", "Lacy", "5678901234",noCardType);
         Book book = new Book("Frank Herbert", "Diuna", "Science Fiction");
 
         renterRepo.add(renter);
         volumeRepo.add(book);
-        rentManager.rentVolume(renter, book, LocalDateTime.now());
+        try {
+            rentManager.rentVolume(renter, book, LocalDateTime.now());
+        } catch (Exception e) {
+            System.out.println("Error while renting volume: " + e.getMessage());
+        }
 
         Rent rent = rentRepo.getAll().get(0);
         Rent foundRent = rentManager.getRent(rent.getId());
@@ -180,8 +183,16 @@ public class RentManagerTest {
         volumeRepo.add(book1);
         volumeRepo.add(book2);
 
-        rentManager.rentVolume(renter1, book1, LocalDateTime.now());
-        rentManager.rentVolume(renter2, book2, LocalDateTime.now());
+        try {
+            rentManager.rentVolume(renter1, book1, LocalDateTime.now());
+        } catch (Exception e) {
+            System.out.println("Error while renting volume: " + e.getMessage());
+        }
+        try {
+            rentManager.rentVolume(renter2, book2, LocalDateTime.now());
+        } catch (Exception e) {
+            System.out.println("Error while renting volume: " + e.getMessage());
+        }
 
         assertEquals(2, rentManager.getAllRents().size());
     }
