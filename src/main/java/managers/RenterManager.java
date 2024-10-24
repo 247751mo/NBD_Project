@@ -17,7 +17,9 @@ public class RenterManager implements Serializable {
     }
 
     public void addRenter(Renter renter) {
-        if (renterRepo.get(renter.getId()) != null) {
+        if (renterRepo.get(renter.getId()) == null) {
+            renterRepo.add(renter);
+        } else if (renterRepo.get(renter.getId()) != null) {
             throw new IllegalArgumentException("Volume already exists");
         } else {
             renterRepo.add(renter);
