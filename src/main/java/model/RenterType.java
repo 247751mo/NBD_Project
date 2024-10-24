@@ -25,32 +25,4 @@ public abstract class RenterType extends AbstractEntity {
     public abstract String getRenterTypeInfo();
 }
 
-@Entity
-@DiscriminatorValue("NoCard")
-class NoCard extends RenterType {
 
-    @Override
-    public int maxVolumes(int volumes) {
-        return volumes == 0 ? 5 : volumes;
-    }
-
-    @Override
-    public String getRenterTypeInfo() {
-        return "No Card";
-    }
-}
-
-@Entity
-@DiscriminatorValue("Card")
-class Card extends RenterType {
-
-    @Override
-    public int maxVolumes(int volumes) {
-        return volumes == 0 ? 10 : volumes;
-    }
-
-    @Override
-    public String getRenterTypeInfo() {
-        return "Card";
-    }
-}
