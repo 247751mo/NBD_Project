@@ -9,6 +9,8 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Volume implements Serializable {
+    @Version
+    private long version;
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID volumeId;
