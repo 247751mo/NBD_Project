@@ -28,6 +28,7 @@ public class RentManagerTest {
     @BeforeAll
     public static void setUp() {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("default");
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         em = entityManagerFactory.createEntityManager();
         em1 = entityManagerFactory.createEntityManager();
 
@@ -39,7 +40,42 @@ public class RentManagerTest {
 
         volumeRepo = new VolumeRepo(em);
         volumeManager = new VolumeManager(volumeRepo);
+
+
     }
+
+    @Test
+    void testGetAllRents() {
+
+        RenterType noCardType = new NoCard();
+        RenterType cardType = new Card();
+
+        Renter renter1 = new Renter("Tyler", "Okonma", "1222567890", cardType);
+        Renter renter2 = new Renter("Frank", "Ocean", "0911654321", noCardType);
+
+        Book book1 = new Book("Sofokles", "Krol Edyp", "Tragedia");
+        Book book2 = new Book("Sofoklesss", "Krol Edypds", "Tragediaaa");
+
+        renterRepo.add(renter1);
+        renterRepo.add(renter2);
+
+        volumeRepo.add(book1);
+        volumeRepo.add(book2);
+
+        try {
+            rentManager.rentVolume(renter1, book1, LocalDateTime.now());
+        } catch (Exception e) {
+            System.out.println("Error while renting volume: " + e.getMessage());
+        }
+        try {
+            rentManager.rentVolume(renter2, book2, LocalDateTime.now());
+        } catch (Exception e) {
+            System.out.println("Error while renting volume: " + e.getMessage());
+        }
+
+        assertEquals(2, rentManager.getAllRents().size());
+    }
+
 
     @Test
     void testRentManagerWithNullRepository() {
@@ -112,7 +148,7 @@ public class RentManagerTest {
         RenterType cardType = new Card();
 
 
-        Renter renter = new Renter("Frank", "Ocean", "0917654321",cardType);
+        Renter renter = new Renter("Frank", "Ocean", "0917654321", cardType);
         Book book = new Book("Henryk Sienkiewicz", "Potop", "Historyczne");
 
         renterRepo.add(renter);
@@ -133,7 +169,7 @@ public class RentManagerTest {
 
         RenterType cardType = new Card();
 
-        Renter renter = new Renter("Earl", "Sweatshirt", "0123236789",cardType);
+        Renter renter = new Renter("Earl", "Sweatshirt", "0123236789", cardType);
         Monthly monthly12 = new Monthly("Top Gear", "Motoryzacyjne", "Immediate Media Company");
 
         renterRepo.add(renter);
@@ -158,7 +194,7 @@ public class RentManagerTest {
         RenterType noCardType = new NoCard();
 
 
-        Renter renter = new Renter("Steve", "Lacy", "5678901234",noCardType);
+        Renter renter = new Renter("Steve", "Lacy", "5678901234", noCardType);
         Book book = new Book("Frank Herbert", "Diuna", "Science Fiction");
 
         renterRepo.add(renter);
@@ -174,37 +210,5 @@ public class RentManagerTest {
 
         assertNotNull(foundRent);
         assertEquals(rent.getId(), foundRent.getId());
-    }
-
-    @Test
-    void testGetAllRents() {
-
-        RenterType noCardType = new NoCard();
-        RenterType cardType = new Card();
-
-        Renter renter1 = new Renter("Tyler", "Okonma", "1222567890",cardType);
-        Renter renter2 = new Renter("Frank", "Ocean", "0911654321",noCardType);
-
-        Book book1 = new Book("Sofokles", "Krol Edyp", "Tragedia");
-        Book book2 = new Book("Sofoklesss", "Krol Edypds", "Tragediaaa");
-
-        renterRepo.add(renter1);
-        renterRepo.add(renter2);
-
-        volumeRepo.add(book1);
-        volumeRepo.add(book2);
-
-        try {
-            rentManager.rentVolume(renter1, book1, LocalDateTime.now());
-        } catch (Exception e) {
-            System.out.println("Error while renting volume: " + e.getMessage());
-        }
-        try {
-            rentManager.rentVolume(renter2, book2, LocalDateTime.now());
-        } catch (Exception e) {
-            System.out.println("Error while renting volume: " + e.getMessage());
-        }
-
-        assertEquals(2, rentManager.getAllRents().size());
     }
 }
