@@ -79,6 +79,7 @@ public class RentRepo implements Repo<Rent> {
     }
 
     // Rent/Book a volume for a renter
+    // Rent/Book a volume for a renter
     public void bookVolume(Renter renter, Volume volume, LocalDateTime rentStart) {
         try {
             em.getTransaction().begin();
@@ -97,6 +98,10 @@ public class RentRepo implements Repo<Rent> {
             Rent rent = new Rent(managedRenter, managedVolume, rentStart);
             em.persist(rent);
 
+            // Increase renter's rent count
+            managedRenter.incrementRentCount();  // Assuming you have a method in Renter class to increment the rent count
+            em.merge(managedRenter);
+
             // Mark the volume as rented
             managedVolume.setRentedStatus(true);
             em.merge(managedVolume);
@@ -114,6 +119,7 @@ public class RentRepo implements Repo<Rent> {
             throw new RuntimeException("The volume could not be booked: " + volume.getVolumeId(), e);
         }
     }
+
 
     // End a rent and return the volume
     public void returnVolume(Rent rent, LocalDateTime endTime) {

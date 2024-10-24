@@ -33,7 +33,7 @@ public class RentManager {
         }
 
         // Check if the renter has reached the maximum number of rents
-        if (renter.getRents() >= 5) { // Assuming getRents() returns a collection
+        if (renter.getRents() > 5) { // Assuming getRents() returns a collection
             throw new Exception("Renter has reached the maximum number of rents: " + renter.getId());
         }
 

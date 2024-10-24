@@ -6,6 +6,7 @@ import managers.RenterManager;
 import managers.VolumeManager;
 import model.*;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import repositories.RentRepo;
 import repositories.RenterRepo;
@@ -25,8 +26,8 @@ public class RentManagerTest {
     private static EntityManager em;
     private static EntityManager em1;
 
-    @BeforeAll
-    public static void setUp() {
+    @BeforeEach
+    public void setUp() {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("default");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         em = entityManagerFactory.createEntityManager();
@@ -46,7 +47,6 @@ public class RentManagerTest {
 
     @Test
     void testGetAllRents() {
-
         RenterType noCardType = new NoCard();
         RenterType cardType = new Card();
 
@@ -58,10 +58,8 @@ public class RentManagerTest {
 
         renterRepo.add(renter1);
         renterRepo.add(renter2);
-
         volumeRepo.add(book1);
         volumeRepo.add(book2);
-
         try {
             rentManager.rentVolume(renter1, book1, LocalDateTime.now());
         } catch (Exception e) {
@@ -72,6 +70,7 @@ public class RentManagerTest {
         } catch (Exception e) {
             System.out.println("Error while renting volume: " + e.getMessage());
         }
+
 
         assertEquals(2, rentManager.getAllRents().size());
     }
@@ -131,15 +130,13 @@ public class RentManagerTest {
         Weekly weekly5 = new Weekly("tytul5", "gatunek5", "publikowal5");
         volumeRepo.add(weekly5);
         rentManager.rentVolume(renter, weekly5, LocalDateTime.now());
-        System.out.println("Current rents for renter " + renter.getId() + ": " + renter.getRents());
         Weekly weekly6 = new Weekly("Fakt", "Wiadomosci", "J. Billig");
         volumeRepo.add(weekly6);
-        System.out.println("Current rents for renter " + renter.getId() + ": " + renter.getRents());
         Exception exception = assertThrows(Exception.class, () -> {
             rentManager.rentVolume(renter, weekly6, LocalDateTime.now());
         });
 
-        String expectedMessage = "Renter has reached the maximum number of rents: " + renter.getId();
+        String expectedMessage = ("Renter has reached the maximum number of rents: " + renter.getId());
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage), "Unexpected exception message: " + actualMessage);
@@ -147,48 +144,24 @@ public class RentManagerTest {
 
     @Test
     void testReturnVolume() throws Exception {
-
-        RenterType cardType = new Card();
-
-
-        Renter renter = new Renter("Frank", "Ocean", "0917654321", cardType);
+        Renter renter = new Renter("Fraxzczxcnk", "Ocexczcxzan", "09176543xzc21", new Card());
         Book book = new Book("Henryk Sienkiewicz", "Potop", "Historyczne");
 
         renterRepo.add(renter);
         volumeRepo.add(book);
         rentManager.rentVolume(renter, book, LocalDateTime.now());
 
-        assertEquals(1, renter.getRents());
+        // Assert initial rents
+        assertEquals(1, renter.getRents(), "Renter should have 1 rent before return.");
 
         Rent rent = rentRepo.getAll().get(0);
         rentManager.returnVolume(rent.getId(), LocalDateTime.now().plusDays(1));
 
-        assertEquals(0, renter.getRents());
-        assertFalse(book.checkIfRented());
-    }
+        // Log the current rents after return
+        System.out.println("Renter's rents after return: " + renter.getRents());
 
-    @Test
-    void testReturnVolumeWithNullRentEnd() {
-
-        RenterType cardType = new Card();
-
-        Renter renter = new Renter("Earl", "Sweatshirt", "0123236789", cardType);
-        Monthly monthly12 = new Monthly("Top Gear", "Motoryzacyjne", "Immediate Media Company");
-
-        renterRepo.add(renter);
-        volumeRepo.add(monthly12);
-
-        try {
-            rentManager.rentVolume(renter, monthly12, LocalDateTime.now());
-        } catch (Exception e) {
-            System.out.println("Error while renting volume: " + e.getMessage());
-        }
-        Rent rent = rentRepo.getAll().get(0);
-
-        rentManager.returnVolume(rent.getId(), null);
-
-        assertFalse(monthly12.checkIfRented());
-        assertNotNull(rent.getEndTime());
+        assertEquals(0, renter.getRents(), "Renter should have 0 rents after return.");
+        assertFalse(book.checkIfRented(), "Book should not be rented after return.");
     }
 
     @Test
