@@ -1,14 +1,11 @@
 package model;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 @Getter
-
-@NoArgsConstructor
 public class Renter {
 
     @BsonProperty("personalID")

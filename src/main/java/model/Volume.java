@@ -46,7 +46,7 @@ public abstract class Volume {
         if (genre == null || genre.isEmpty()) {
             throw new IllegalArgumentException("Invalid genre (can't be empty)!");
         }
-        this.volumeId = volumeId;
+        this.volumeId = UUID.randomUUID().toString();
         this.title = title;
         this.genre = genre;
         this.isRented = false;

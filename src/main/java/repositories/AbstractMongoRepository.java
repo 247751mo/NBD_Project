@@ -8,9 +8,11 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.CreateCollectionOptions;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ValidationAction;
 import com.mongodb.client.model.ValidationOptions;
 import model.*;
 import org.bson.BsonType;
+import org.bson.Document;
 import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -19,6 +21,7 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractMongoRepository implements AutoCloseable {
 
@@ -52,19 +55,67 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
         if (!getDatabase().listCollectionNames().into(new ArrayList<>()).contains("volumes")) {
             createBooksCollection();
         }
+        if (!getDatabase().listCollectionNames().into(new ArrayList<>()).contains("renters")) {
+            createRentersCollection();
+        }
     }
+    private void createRentersCollection() {
+        try {
+            ValidationOptions validationOptions = new ValidationOptions().validator(
+                    Filters.jsonSchema(
+                            new Document("bsonType", "object")
+                                    .append("required", List.of("_id", "firstName", "lastName", "renterType", "rents"))
+                                    .append("properties", new Document()
+                                            .append("_id", new Document("bsonType", "string"))
+                                            .append("firstName", new Document("bsonType", "string"))
+                                            .append("lastName", new Document("bsonType", "string"))
+                                            .append("renterType", new Document("bsonType", "object")
+                                                    .append("required", List.of("_type"))
+                                                    .append("properties", new Document()
+                                                            .append("_type", new Document("bsonType", "string"))))
+                                            .append("isArchived", new Document("bsonType", "boolean"))
+                                            .append("rents", new Document("bsonType", "int")
+                                                    .append("minimum", 0)
+                                                    .append("maximum", 10))
+                                    )
+                    )
+            ).validationAction(ValidationAction.ERROR);
+
+            CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions()
+                    .validationOptions(validationOptions);
+
+            getDatabase().createCollection("renters", createCollectionOptions);
+        } catch (Exception e) {
+            System.err.println("Error creating 'renters' collection: " + e.getMessage());
+            // Możesz dodać logowanie do systemu lub odpowiednią reakcję
+        }
+    }
+
     private void createBooksCollection() {
-        Bson isAvailableType = Filters.type("isAvailable", BsonType.BOOLEAN);
-        Bson isAvailableYes = Filters.eq("isAvailable", true);
-        Bson isAvailableNo = Filters.eq("isAvailable", false);
+        try {
+            ValidationOptions validationOptions = new ValidationOptions().validator(
+                    Filters.jsonSchema(
+                            new Document("bsonType", "object")
+                                    .append("required", List.of("_id", "title", "genre", "isAvailable"))
+                                    .append("properties", new Document()
+                                            .append("_id", new Document("bsonType", "string"))
+                                            .append("title", new Document("bsonType", "string"))
+                                            .append("genre", new Document("bsonType", "string"))
+                                            .append("isAvailable", new Document("bsonType", "boolean"))
+                                    )
+                    )
+            ).validationAction(ValidationAction.ERROR);
 
-        ValidationOptions validationOptions = new ValidationOptions()
-                .validator(Filters.and(isAvailableType, isAvailableYes, isAvailableNo));
+            CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions()
+                    .validationOptions(validationOptions);
 
-        CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions()
-                .validationOptions(validationOptions);
-        getDatabase().createCollection("volumes", createCollectionOptions);
+            getDatabase().createCollection("volumes", createCollectionOptions);
+        } catch (Exception e) {
+            System.err.println("Error creating 'volumes' collection: " + e.getMessage());
+            // Możesz dodać logowanie do systemu lub odpowiednią reakcję
+        }
     }
+
 
 
     public MongoClient getMongoClient() {
