@@ -6,12 +6,17 @@ import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.CreateCollectionOptions;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ValidationOptions;
 import model.*;
+import org.bson.BsonType;
 import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 
@@ -39,21 +44,27 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                 .credential(credential)
                 .applyConnectionString(connectionString)
                 .uuidRepresentation (UuidRepresentation.STANDARD)
-                .codecRegistry(CodecRegistries.fromRegistries(
-                        MongoClientSettings.getDefaultCodecRegistry(),
-                        CodecRegistries.fromProviders(new UniqueIDCodecProvider()),
-                        pojoCodecRegistry
-                ))
+                .codecRegistry(pojoCodecRegistry)
                 .build();
 
         mongoClient = MongoClients.create(settings);
         database = mongoClient.getDatabase("rental");
-        if (!getDatabase().listCollectionNames().into(new ArrayList<>()).contains("books")) {
+        if (!getDatabase().listCollectionNames().into(new ArrayList<>()).contains("volumes")) {
             createBooksCollection();
         }
     }
-//Miejsce na create collection
-//
+    private void createBooksCollection() {
+        Bson isAvailableType = Filters.type("isAvailable", BsonType.BOOLEAN);
+        Bson isAvailableYes = Filters.eq("isAvailable", true);
+        Bson isAvailableNo = Filters.eq("isAvailable", false);
+
+        ValidationOptions validationOptions = new ValidationOptions()
+                .validator(Filters.and(isAvailableType, isAvailableYes, isAvailableNo));
+
+        CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions()
+                .validationOptions(validationOptions);
+        getDatabase().createCollection("volumes", createCollectionOptions);
+    }
 
 
     public MongoClient getMongoClient() {
