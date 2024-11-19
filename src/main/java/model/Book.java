@@ -1,31 +1,31 @@
 package model;
 
-import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
-@Entity
-@Access(AccessType.FIELD)
-@DiscriminatorValue("Book")
+@Getter
+@Setter
+@NoArgsConstructor
+@BsonDiscriminator(key = "_type", value = "Book")
 public class Book extends Volume {
 
-    @Column(nullable = true)
+    @BsonProperty("author")
     private String author;
 
-    public Book(String author, String title, String genre) {
+    @BsonCreator
+    public Book(@BsonProperty("title") String title,
+                @BsonProperty("genre") String genre,
+                @BsonProperty("author") String author) {
         super(title, genre);
         this.author = author;
     }
 
-    public Book() {
-
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
     @Override
     public String volumeInfo() {
-        return "Book: " + super.volumeInfo() + ", author: " + getAuthor();
+        return "Book: " + super.volumeInfo() + ", author: " + author;
     }
 }
-

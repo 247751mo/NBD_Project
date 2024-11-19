@@ -1,31 +1,31 @@
 package model;
 
-import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
-
-@Entity
-@DiscriminatorValue("Publication")
-@Access(AccessType.FIELD)
+@Getter
+@Setter
+@NoArgsConstructor
+@BsonDiscriminator(key = "_type", value = "Publication")
 public class Publication extends Volume {
 
-    @Column(nullable = true)
+    @BsonProperty("publisher")
     private String publisher;
 
-    public Publication(String title, String genre, String publisher) {
+    @BsonCreator
+    public Publication(@BsonProperty("title") String title,
+                       @BsonProperty("genre") String genre,
+                       @BsonProperty("publisher") String publisher) {
         super(title, genre);
         this.publisher = publisher;
     }
 
-    public Publication() {
-
-    }
-
-    public String getPublisher() {
-        return publisher;
-    }
-
     @Override
     public String volumeInfo() {
-        return super.volumeInfo();
+        return super.volumeInfo() + ", publisher: " + publisher;
     }
 }

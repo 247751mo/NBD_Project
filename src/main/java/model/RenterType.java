@@ -1,28 +1,15 @@
 package model;
 
-import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "renter_type", discriminatorType = DiscriminatorType.STRING)
-public abstract class RenterType extends AbstractEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Primary key auto-generated
-    private Long id;
-
-    // Getter and Setter for id
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+@Getter
+@NoArgsConstructor
+@BsonDiscriminator(key = "_type")
+public abstract class RenterType {
 
     public abstract int maxVolumes(int volumes);
 
     public abstract String getRenterTypeInfo();
 }
-
-

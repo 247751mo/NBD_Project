@@ -1,28 +1,25 @@
 package model;
 
-import jakarta.persistence.Access;
-import jakarta.persistence.AccessType;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
-
-@Entity
-@Access(AccessType.FIELD)
-@DiscriminatorValue("Weekly")
+@Data
+@NoArgsConstructor
+@BsonDiscriminator(key = "_type", value = "Weekly")
 public class Weekly extends Publication {
 
-
-
-    public Weekly(String title, String genre, String publisher) {
+    @BsonCreator
+    public Weekly(@BsonProperty("title") String title,
+                  @BsonProperty("genre") String genre,
+                  @BsonProperty("publisher") String publisher) {
         super(title, genre, publisher);
-    }
-
-    public Weekly() {
-        super();
     }
 
     @Override
     public String volumeInfo() {
-        return "Publication: " + super.volumeInfo() + ", publisher: " + getPublisher();
+        return "Publication: " + super.volumeInfo() + ", Type: Weekly";
     }
 }

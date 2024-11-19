@@ -1,10 +1,20 @@
 package model;
 
-import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
-@Entity
-@DiscriminatorValue("Card")
+@Data
+@NoArgsConstructor
+@BsonDiscriminator(key = "_type", value = "Card")
 public class Card extends RenterType {
+
+    @BsonCreator
+    public Card() {
+        // Domyślny konstruktor
+    }
 
     @Override
     public int maxVolumes(int volumes) {
