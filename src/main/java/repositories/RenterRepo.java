@@ -24,9 +24,16 @@ public class RenterRepo extends AbstractMongoRepository {
 
     public void add(Renter renter) {
         MongoCollection<Renter> collection = getDatabase().getCollection("renters", Renter.class);
-        collection.insertOne(renter);
-        System.out.println("Inserted renter: " + renter);
+        System.out.println("Inserting renter: " + renter);
+        try {
+            collection.insertOne(renter);
+            System.out.println("Successfully inserted: " + renter);
+        } catch (Exception e) {
+            System.out.println("Error inserting renter: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
 
     public void delete(Renter renter) {
         Bson filter = Filters.eq("_id", renter.getPersonalID());

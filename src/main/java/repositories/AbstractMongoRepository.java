@@ -48,6 +48,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                 .codecRegistry(pojoCodecRegistry)
                 .build();
         System.out.println("PojoCodecProvider registered");
+
         mongoClient = MongoClients.create(settings);
         database = mongoClient.getDatabase("rental");
 //        if (!getDatabase().listCollectionNames().into(new ArrayList<>()).contains("volumes")) {
