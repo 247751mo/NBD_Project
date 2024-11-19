@@ -5,9 +5,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
-import jakarta.persistence.OptimisticLockException;
 import model.Rent;
 import model.Renter;
 import model.Volume;
@@ -17,12 +14,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class RentRepo extends AbstractMongoRepository {
-
-    private final EntityManager em;
-
-    public RentRepo(EntityManager entityManager) {
-        this.em = entityManager;
-    }
 
     public Rent get(String id) {
         Bson filter = Filters.eq("_id", id);

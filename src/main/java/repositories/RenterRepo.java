@@ -4,20 +4,11 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
-import jakarta.persistence.EntityManager;
 import model.Renter;
 import org.bson.conversions.Bson;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class RenterRepo extends AbstractMongoRepository {
-
-    private final EntityManager em;
-
-    public RenterRepo(EntityManager entityManager) {
-        this.em = entityManager;
-    }
 
     public Renter get(String id) {
         Bson filter = Filters.eq("_id", id);
