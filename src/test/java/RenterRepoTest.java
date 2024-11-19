@@ -1,7 +1,10 @@
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import model.Card;
 import model.NoCard;
 import model.Renter;
 import model.RenterType;
+import org.bson.Document;
 import org.junit.jupiter.api.*;
 import repositories.RenterRepo;
 
@@ -47,6 +50,17 @@ class RenterRepoTest {
 
         assertEquals(renter1, foundClient1);
         assertEquals(renter2, foundClient2);
+    }
+    @Test
+    void testPersonalIdAsId() {
+        Renter renter = new Renter("TEST123", "Test", "User", new NoCard());
+        renterRepo.add(renter);
+
+        MongoCollection<Document> collection = renterRepo.getDatabase().getCollection("renters");
+        Document found = collection.find(Filters.eq("_id", "TEST123")).first();
+
+        assertNotNull(found, "Renter not found in database");
+        assertEquals("TEST123", found.getString("_id"));
     }
 
 
