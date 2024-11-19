@@ -3,12 +3,13 @@ package model;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 @Getter
 public class Renter {
 
-    @BsonProperty("personalID")
+    @BsonId
     private String personalID;
 
     @BsonProperty("firstName")
