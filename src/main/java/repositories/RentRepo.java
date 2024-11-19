@@ -62,7 +62,7 @@ public class RentRepo extends AbstractMongoRepository {
             MongoCollection<Rent> rentCollection = getDatabase().getCollection("rents", Rent.class);
 
             Bson volumeFilter = Filters.eq("_id", volume.getVolumeId());
-            Bson renterFilter = Filters.eq("_id", renter.getId());
+            Bson renterFilter = Filters.eq("_id", renter.getPersonalID());
 
             Volume existingVolume = volumeCollection.find(volumeFilter).first();
             if (existingVolume == null || existingVolume.isRented()) {
@@ -97,7 +97,7 @@ public class RentRepo extends AbstractMongoRepository {
 
 
             Bson volumeFilter = Filters.eq("_id", rent.getVolume().getVolumeId());
-            Bson renterFilter = Filters.eq("_id", rent.getRenter().getId());
+            Bson renterFilter = Filters.eq("_id", rent.getRenter().getPersonalID());
 
             Volume existingVolume = volumeCollection.find(volumeFilter).first();
             if (existingVolume == null || !existingVolume.isRented()) {

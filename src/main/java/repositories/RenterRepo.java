@@ -28,13 +28,13 @@ public class RenterRepo extends AbstractMongoRepository {
     }
 
     public void delete(Renter renter) {
-        Bson filter = Filters.eq("_id", renter.getId());
+        Bson filter = Filters.eq("_id", renter.getPersonalID());
         MongoCollection<Renter> collection = getDatabase().getCollection("renters", Renter.class);
         collection.findOneAndDelete(filter);
     }
 
     public void update(Renter renter) {
-        Bson filter = Filters.eq("_id", renter.getId());
+        Bson filter = Filters.eq("_id", renter.getPersonalID());
         MongoCollection<Renter> collection = getDatabase().getCollection("renters", Renter.class);
         Bson updates = Updates.combine(
                 Updates.set("firstName", renter.getFirstName()),
