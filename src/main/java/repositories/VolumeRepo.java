@@ -1,67 +1,48 @@
 package repositories;
 
-import jakarta.persistence.EntityManager;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import org.bson.conversions.Bson;
 import model.Volume;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.UUID;
 
-public class VolumeRepo implements Repo<Volume> {
+public class VolumeRepo extends AbstractMongoRepository {
 
-    private final EntityManager em;
-
-    public VolumeRepo(EntityManager entityManager) {
-        this.em = entityManager;
+    public void create(Volume volume) {
+        MongoCollection<Volume> collection = getDatabase().getCollection("volumes", Volume.class);
+        collection.insertOne(volume);
     }
 
-    @Override
-    public Volume get(UUID id) {
-        return em.find(Volume.class, id);
+    public Volume read(UUID id) {
+        Bson filter = Filters.eq("_id", id);
+        MongoCollection<Volume> collection = getDatabase().getCollection("volumes", Volume.class);
+        FindIterable<Volume> volumes = collection.find(filter);
+        return volumes.first();
     }
 
-    @Override
-    public Volume add(Volume volume) {
-        try {
-            em.getTransaction().begin();
-            em.persist(volume);
-            em.getTransaction().commit();
-            return volume;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to add volume: " + volume.getVolumeId(), e);
-        }
+    public ArrayList<Volume> readAll() {
+        MongoCollection<Volume> collection = getDatabase().getCollection("volumes", Volume.class);
+        return collection.find().into(new ArrayList<>());
     }
 
-    @Override
-    public void delete(Volume volume) {
-        try {
-            em.getTransaction().begin();
-            Volume managedVolume = em.contains(volume) ? volume : em.merge(volume);
-            em.remove(managedVolume);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to remove volume: " + volume.getVolumeId(), e);
-        }
-    }
-    @Override
-    public List<Volume> getAll() {
-        return em.createQuery("SELECT v FROM Volume v", Volume.class).getResultList();
-    }
-    @Override
     public void update(Volume volume) {
-        try {
-            em.getTransaction().begin();
-            em.merge(volume);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to update volume: " + volume.getVolumeId(), e);
-        }
+        Bson filter = Filters.eq("_id", volume.getVolumeId());
+        MongoCollection<Volume> collection = getDatabase().getCollection("volumes", Volume.class);
+        Bson updates = Updates.combine(
+                Updates.set("title", volume.getTitle()),
+                Updates.set("genre", volume.getGenre()),
+                Updates.set("rentedStatus", volume.isRented()),
+                Updates.set("archivedStatus", volume.isArchive())
+        );
+        collection.findOneAndUpdate(filter, updates);
+    }
+
+    public void delete(Volume volume) {
+        Bson filter = Filters.eq("_id", volume.getVolumeId());
+        MongoCollection<Volume> collection = getDatabase().getCollection("volumes", Volume.class);
+        collection.findOneAndDelete(filter);
     }
 }
