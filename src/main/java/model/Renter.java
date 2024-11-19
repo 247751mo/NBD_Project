@@ -6,6 +6,8 @@ import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
+import java.util.Objects;
+
 @Getter
 public class Renter {
 
@@ -44,7 +46,24 @@ public class Renter {
         this.isArchived = false;
         this.rents = 0;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Renter renter = (Renter) o;
+        return isArchived == renter.isArchived &&
+                rents == renter.rents &&
+                Objects.equals(personalID, renter.personalID) &&
+                Objects.equals(firstName, renter.firstName) &&
+                Objects.equals(lastName, renter.lastName);
 
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(personalID, firstName, lastName, isArchived, rents);
+    }
+}
     /*public int getMaxVolumes(int volumes) {
         int maxVolumes = this.renterType.maxVolumes(volumes);
 
@@ -54,4 +73,4 @@ public class Renter {
 
         return Math.min(maxVolumes, volumes);
     }*/
-}
+
