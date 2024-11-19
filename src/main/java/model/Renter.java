@@ -16,6 +16,7 @@ public class Renter {
     private String id;
 
     @BsonProperty("firstName")
+    @Setter
     private String firstName;
 
     @BsonProperty("lastName")

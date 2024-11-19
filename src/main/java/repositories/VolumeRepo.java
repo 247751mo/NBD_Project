@@ -16,7 +16,7 @@ public class VolumeRepo extends AbstractMongoRepository {
         collection.insertOne(volume);
     }
 
-    public Volume read(UUID id) {
+    public Volume read(String id) {
         Bson filter = Filters.eq("_id", id);
         MongoCollection<Volume> collection = getDatabase().getCollection("volumes", Volume.class);
         FindIterable<Volume> volumes = collection.find(filter);
