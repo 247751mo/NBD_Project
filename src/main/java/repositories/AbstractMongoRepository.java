@@ -25,8 +25,8 @@ import java.util.List;
 
 public abstract class AbstractMongoRepository implements AutoCloseable {
 
-    private final ConnectionString connectionString = new ConnectionString("mongodb://mongodb1:27017,mongodb2:27017,mongodb3:27017/?replicaSet=replica_set_single");
-    private final MongoCredential credential = MongoCredential.createCredential("admin", "admin", "adminpassword".toCharArray());
+    private ConnectionString connectionString = new ConnectionString("mongodb://mongodb1:27017,mongodb2:27018,mongodb3:27019/?replicaSet=replica_set_single");
+    private MongoCredential credential = MongoCredential.createCredential("nbd", "admin", "nbdpassword".toCharArray());
 
     private final CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(
             MongoClientSettings.getDefaultCodecRegistry(),
