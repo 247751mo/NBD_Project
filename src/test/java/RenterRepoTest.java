@@ -1,10 +1,20 @@
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import model.Card;
 import model.NoCard;
 import model.Renter;
 import model.RenterType;
+import org.bson.BsonDocument;
+import org.bson.BsonDocumentReader;
+import org.bson.BsonDocumentWriter;
 import org.bson.Document;
+import org.bson.codecs.Codec;
+import org.bson.codecs.DecoderContext;
+import org.bson.codecs.EncoderContext;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.junit.jupiter.api.*;
 import repositories.RenterRepo;
 
@@ -74,6 +84,39 @@ class RenterRepoTest {
         assertNotNull(retrievedRenter);
         assertEquals(renter.getPersonalID(), retrievedRenter.getPersonalID());
         assertTrue(retrievedRenter.getRenterType() instanceof Card);
+    }
+    @Test
+    void testPojoSerialization() {
+        PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder()
+                .automatic(true)
+                .register(Renter.class, RenterType.class, Card.class, NoCard.class)
+                .build();
+
+        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
+                MongoClientSettings.getDefaultCodecRegistry(),
+                CodecRegistries.fromProviders(pojoCodecProvider)
+        );
+
+        Codec<Renter> renterCodec = codecRegistry.get(Renter.class);
+
+        RenterType cardType = new Card();
+        Renter renter = new Renter("TEST123", "Doe", "John", cardType);
+
+        // Serializacja
+        Document document = new Document();
+        BsonDocumentWriter writer = new BsonDocumentWriter(new BsonDocument());
+        EncoderContext encoderContext = EncoderContext.builder().isEncodingCollectibleDocument(true).build();
+        renterCodec.encode(writer, renter, encoderContext);
+
+        // Deserializacja
+        BsonDocument bsonDocument = writer.getDocument();
+        Renter decodedRenter = renterCodec.decode(
+                new BsonDocumentReader(bsonDocument),
+                DecoderContext.builder().build()
+        );
+
+        assertEquals(renter.getPersonalID(), decodedRenter.getPersonalID());
+        assertTrue(decodedRenter.getRenterType() instanceof Card);
     }
 
 }
