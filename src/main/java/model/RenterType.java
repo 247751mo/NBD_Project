@@ -6,7 +6,7 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 
 @Getter
 @NoArgsConstructor
-@BsonDiscriminator(key = "_type")
+@BsonDiscriminator(key = "_type", value = "RenterType")
 public abstract class RenterType {
 
     public abstract int maxVolumes(int volumes);

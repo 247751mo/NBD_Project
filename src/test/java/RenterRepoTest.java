@@ -63,5 +63,17 @@ class RenterRepoTest {
         assertEquals("TEST123", found.getString("_id"));
     }
 
+    @Test
+    void testSerializationDeserialization() {
+        RenterType cardType = new Card();
+        Renter renter = new Renter("TEST123", "Doe", "John", cardType);
+
+        renterRepo.add(renter);
+        Renter retrievedRenter = renterRepo.get("TEST123");
+
+        assertNotNull(retrievedRenter);
+        assertEquals(renter.getPersonalID(), retrievedRenter.getPersonalID());
+        assertTrue(retrievedRenter.getRenterType() instanceof Card);
+    }
 
 }
