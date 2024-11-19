@@ -27,7 +27,7 @@ public class RenterManager implements Serializable {
 
     public void removeRenter(Renter renter) {
         if (renter != null) {
-            renter.setArchiveStatus(true);
+            renter.setArchived(true);
             renterRepo.update(renter);
         }
     }

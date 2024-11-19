@@ -8,7 +8,7 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 @Getter
-@Setter
+
 @NoArgsConstructor
 public class Renter {
 
@@ -19,18 +19,23 @@ public class Renter {
     private String firstName;
 
     @BsonProperty("lastName")
+    @Setter
     private String lastName;
 
     @BsonProperty("personalID")
+    @Setter
     private String personalID;
 
     @BsonProperty("renterType")
+    @Setter
     private RenterType renterType;
 
     @BsonProperty("isArchived")
+    @Setter
     private boolean isArchived;
 
     @BsonProperty("rents")
+    @Setter
     private int rents;
 
     @BsonCreator

@@ -1,11 +1,17 @@
 package repositories;
 
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import jakarta.persistence.EntityManager;
 import model.Renter;
-import java.util.List;
-import java.util.UUID;
+import org.bson.conversions.Bson;
 
-public class RenterRepo implements Repo<Renter> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class RenterRepo extends AbstractMongoRepository {
 
     private final EntityManager em;
 
@@ -13,53 +19,39 @@ public class RenterRepo implements Repo<Renter> {
         this.em = entityManager;
     }
 
-    @Override
-    public Renter get(UUID id) {
-        return em.find(Renter.class, id);
+    public Renter get(String id) {
+        Bson filter = Filters.eq("_id", id);
+        MongoCollection<Renter> collection = getDatabase().getCollection("renters", Renter.class);
+        FindIterable<Renter> renters = collection.find(filter);
+        return renters.first();
     }
-    @Override
-    public List<Renter> getAll() {
-        return em.createQuery("SELECT r FROM Renter r", Renter.class).getResultList();
+
+    public ArrayList<Renter> getAll() {
+        MongoCollection<Renter> collection = getDatabase().getCollection("renters", Renter.class);
+        return collection.find().into(new ArrayList<>());
     }
-    @Override
-    public Renter add(Renter renter) {
-        try {
-            em.getTransaction().begin();
-            em.persist(renter);
-            em.getTransaction().commit();
-            return renter;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to add renter: " + renter.getId(), e);
-        }
+
+    public void add(Renter renter) {
+        MongoCollection<Renter> collection = getDatabase().getCollection("renters", Renter.class);
+        collection.insertOne(renter);
     }
-    @Override
+
     public void delete(Renter renter) {
-        try {
-            em.getTransaction().begin();
-            Renter managedRenter = em.contains(renter) ? renter : em.merge(renter);
-            em.remove(managedRenter);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to remove renter: " + renter.getId(), e);
-        }
+        Bson filter = Filters.eq("_id", renter.getId());
+        MongoCollection<Renter> collection = getDatabase().getCollection("renters", Renter.class);
+        collection.findOneAndDelete(filter);
     }
-    @Override
+
     public void update(Renter renter) {
-        try {
-            em.getTransaction().begin();
-            em.merge(renter);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to update renter: " + renter.getId(), e);
-        }
+        Bson filter = Filters.eq("_id", renter.getId());
+        MongoCollection<Renter> collection = getDatabase().getCollection("renters", Renter.class);
+        Bson updates = Updates.combine(
+                Updates.set("firstName", renter.getFirstName()),
+                Updates.set("lastName", renter.getLastName()),
+                Updates.set("personalID", renter.getPersonalID()),
+                Updates.set("renterType", renter.getRenterType()),
+                Updates.set("archived", renter.isArchived())
+        );
+        collection.findOneAndUpdate(filter, updates);
     }
 }
