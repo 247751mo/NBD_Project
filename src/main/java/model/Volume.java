@@ -16,7 +16,7 @@ import java.util.UUID;
 public abstract class Volume {
 
     @BsonId // Oznacza pole jako unikalny identyfikator dla MongoDB
-    private UUID volumeId;
+    private String volumeId;
 
     @BsonProperty("title")
     @Setter
@@ -35,7 +35,8 @@ public abstract class Volume {
     private boolean isArchive;
 
     @BsonCreator
-    public Volume(@BsonProperty("title") String title,
+    public Volume(@BsonProperty("volumeId") String volumeId,
+                  @BsonProperty("title") String title,
                   @BsonProperty("genre") String genre) {
         if (title == null || title.isEmpty()) {
             throw new IllegalArgumentException("Invalid title (can't be empty)!");
@@ -43,7 +44,7 @@ public abstract class Volume {
         if (genre == null || genre.isEmpty()) {
             throw new IllegalArgumentException("Invalid genre (can't be empty)!");
         }
-        this.volumeId = UUID.randomUUID(); // Generuje nowe UUID
+        this.volumeId = volumeId;
         this.title = title;
         this.genre = genre;
         this.isRented = false;
