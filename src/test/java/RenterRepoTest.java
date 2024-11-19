@@ -48,8 +48,8 @@ class RenterRepoTest {
         RenterType noCardType = new NoCard();
         RenterType cardType = new Card();
 
-        Renter renter1 = new Renter("ALICE123", "Johnson", "Alice", noCardType);
-        Renter renter2 = new Renter("BOB456", "Smith", "Bob", cardType);
+        Renter renter1 = new Renter("233", "Johnson", "Alice");
+        Renter renter2 = new Renter("323", "Smith", "Bob");
 
 
         renterRepo.add(renter1);
@@ -63,7 +63,7 @@ class RenterRepoTest {
     }
     @Test
     void testPersonalIdAsId() {
-        Renter renter = new Renter("TEST123", "Test", "User", new NoCard());
+        Renter renter = new Renter("TEST123", "Test", "User");
         renterRepo.add(renter);
 
         MongoCollection<Document> collection = renterRepo.getDatabase().getCollection("renters");
@@ -76,14 +76,14 @@ class RenterRepoTest {
     @Test
     void testSerializationDeserialization() {
         RenterType cardType = new Card();
-        Renter renter = new Renter("TEST123", "Doe", "John", cardType);
+        Renter renter = new Renter("TEST123", "Doe", "John");
 
         renterRepo.add(renter);
         Renter retrievedRenter = renterRepo.get("TEST123");
 
         assertNotNull(retrievedRenter);
         assertEquals(renter.getPersonalID(), retrievedRenter.getPersonalID());
-        assertTrue(retrievedRenter.getRenterType() instanceof Card);
+
     }
     @Test
     void testPojoSerialization() {
@@ -100,7 +100,7 @@ class RenterRepoTest {
         Codec<Renter> renterCodec = codecRegistry.get(Renter.class);
 
         RenterType cardType = new Card();
-        Renter renter = new Renter("TEST123", "Doe", "John", cardType);
+        Renter renter = new Renter("TEST123", "Doe", "John");
 
         // Serializacja
         Document document = new Document();
@@ -116,7 +116,7 @@ class RenterRepoTest {
         );
 
         assertEquals(renter.getPersonalID(), decodedRenter.getPersonalID());
-        assertTrue(decodedRenter.getRenterType() instanceof Card);
+
     }
 
 }

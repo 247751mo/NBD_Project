@@ -48,7 +48,7 @@ public class RenterRepo extends AbstractMongoRepository {
                 Updates.set("firstName", renter.getFirstName()),
                 Updates.set("lastName", renter.getLastName()),
                 Updates.set("personalID", renter.getPersonalID()),
-                Updates.set("renterType", renter.getRenterType()),
+                /*Updates.set("renterType", renter.getRenterType()),*/
                 Updates.set("archived", renter.isArchived())
         );
         collection.findOneAndUpdate(filter, updates);
