@@ -41,7 +41,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                 .uuidRepresentation (UuidRepresentation.STANDARD)
                 .codecRegistry(CodecRegistries.fromRegistries(
                         MongoClientSettings.getDefaultCodecRegistry(),
-                        CodecRegistries.fromCodecs(new VirtualMachineCodec()),
+                        CodecRegistries.fromProviders(new UniqueIDCodecProvider()),
                         pojoCodecRegistry
                 ))
                 .build();
