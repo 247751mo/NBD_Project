@@ -1,17 +1,22 @@
 package repositories;
 
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.OptimisticLockException;
 import model.Rent;
 import model.Renter;
 import model.Volume;
+import org.bson.conversions.Bson;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.ArrayList;
 
-public class RentRepo implements Repo<Rent> {
+public class RentRepo extends AbstractMongoRepository {
 
     private final EntityManager em;
 
@@ -19,125 +24,118 @@ public class RentRepo implements Repo<Rent> {
         this.em = entityManager;
     }
 
-    // Get Rent by UUID
-    @Override
-    public Rent get(UUID id) {
-        return em.find(Rent.class, id);
+    public Rent get(String id) {
+        Bson filter = Filters.eq("_id", id);
+        MongoCollection<Rent> collection = getDatabase().getCollection("rents", Rent.class);
+        FindIterable<Rent> rents = collection.find(filter);
+        return rents.first();
     }
 
-    // Get all Rents
-    @Override
-    public List<Rent> getAll() {
-        return em.createQuery("SELECT r FROM Rent r", Rent.class).getResultList();
-    }
+    public ArrayList<Rent> getAll() {
+        MongoCollection<Rent> collection = getDatabase().getCollection("rents", Rent.class);
+        return collection.find().into(new ArrayList<>());}
 
-    // Add a new Rent
-    @Override
-    public Rent add(Rent rent) {
-        try {
-            em.getTransaction().begin();
-            em.persist(rent);
-            em.getTransaction().commit();
-            return rent;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to add rent: " + rent.getId(), e);
-        }
+
+    public void add(Rent rent) {
+        MongoCollection<Rent> collection = getDatabase().getCollection("rents", Rent.class);
+        collection.insertOne(rent);
     }
 
     // Delete Rent
-    @Override
     public void delete(Rent rent) {
-        try {
-            em.getTransaction().begin();
-            Rent managedRent = em.contains(rent) ? rent : em.merge(rent);
-            em.remove(managedRent);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to delete rent: " + rent.getId(), e);
-        }
+        Bson filter = Filters.eq("_id", rent.getId());
+        MongoCollection<Rent> collection = getDatabase().getCollection("rents", Rent.class);
+        collection.findOneAndDelete(filter);
     }
 
 
-    @Override
     public void update(Rent rent) {
-        try {
-            em.getTransaction().begin();
-            em.merge(rent);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to update rent: " + rent.getId(), e);
-        }
+        Bson filter = Filters.eq("_id", rent.getId());
+        MongoCollection<Rent> collection = getDatabase().getCollection("rents", Rent.class);
+        Bson updates = Updates.combine(
+                Updates.set("renter", rent.getRenter()),
+                Updates.set("volume", rent.getVolume()),
+                Updates.set("beginTime", rent.getBeginTime()),
+                Updates.set("endTime", rent.getEndTime())
+        );
+        collection.findOneAndUpdate(filter, updates);
     }
 
 
-    public void bookVolume(Renter renter, Volume volume, LocalDateTime rentStart) {
-        try {
-            em.getTransaction().begin();
-            Volume managedVolume = em.find(Volume.class, volume.getVolumeId(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-            Renter managedRenter = em.find(Renter.class, renter.getId(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+    public void bookVolume(Renter renter, Volume volume, LocalDateTime beginTime) {
+        try (ClientSession clientSession = getMongoClient().startSession()) {
+            clientSession.startTransaction();
 
+            MongoCollection<Volume> volumeCollection = getDatabase().getCollection("volumes", Volume.class);
+            MongoCollection<Renter> renterCollection = getDatabase().getCollection("renters", Renter.class);
+            MongoCollection<Rent> rentCollection = getDatabase().getCollection("rents", Rent.class);
 
-            if (managedVolume.checkIfRented()) {
-                throw new RuntimeException("The volume is already rented: " + volume.getTitle());
+            Bson volumeFilter = Filters.eq("_id", volume.getVolumeId());
+            Bson renterFilter = Filters.eq("_id", renter.getId());
+
+            Volume existingVolume = volumeCollection.find(volumeFilter).first();
+            if (existingVolume == null || existingVolume.isRented()) {
+                throw new IllegalStateException("Booking failed: Volume does not exist or is already unavailable.");
             }
-            if (managedVolume.checkIfArchived()) {
-                throw new RuntimeException("The volume is archived and cannot be rented: " + volume.getTitle());
-            }
+            existingVolume.setRented(true);
+            volumeCollection.replaceOne(clientSession, volumeFilter, existingVolume);
 
+            renterCollection.findOneAndUpdate(clientSession, renterFilter, Updates.inc("rents", 1));
 
-            Rent rent = new Rent(managedRenter, managedVolume, rentStart);
-            em.persist(rent);
+            Renter updatedRenter = renterCollection.find(renterFilter).first();
+            Volume updatedVolume = volumeCollection.find(volumeFilter).first();
 
+            Rent rent = new Rent(updatedRenter, updatedVolume, beginTime);
+            rentCollection.insertOne(clientSession, rent);
 
-            em.merge(managedRenter);
-
-            managedVolume.setRentedStatus(true);
-            em.merge(managedVolume);
-
-            em.getTransaction().commit();
-        } catch (OptimisticLockException ole) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Optimistic lock exception: The volume or renter was modified concurrently: " + volume.getVolumeId(), ole);
+            clientSession.commitTransaction();
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("The volume could not be booked: " + volume.getVolumeId(), e);
+            throw new RuntimeException("Booking volume failed", e);
         }
     }
 
 
 
     public void returnVolume(Rent rent, LocalDateTime endTime) {
-        try {
-            em.getTransaction().begin();
+        try (ClientSession clientSession = getMongoClient().startSession()) {
+            clientSession.startTransaction();
+
+            MongoCollection<Volume> volumeCollection = getDatabase().getCollection("volumes", Volume.class);
+            MongoCollection<Renter> renterCollection = getDatabase().getCollection("renters", Renter.class);
+            MongoCollection<Rent> rentCollection = getDatabase().getCollection("rents", Rent.class);
 
 
-            rent.endRent(endTime);
-            em.merge(rent);
+            Bson volumeFilter = Filters.eq("_id", rent.getVolume().getVolumeId());
+            Bson renterFilter = Filters.eq("_id", rent.getRenter().getId());
 
-
-            Volume volume = rent.getVolume();
-            volume.setRentedStatus(false);
-            em.merge(volume);
-
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+            Volume existingVolume = volumeCollection.find(volumeFilter).first();
+            if (existingVolume == null || !existingVolume.isRented()) {
+                throw new IllegalStateException("Returning failed: Volume does not exist or is already available.");
             }
-            throw new RuntimeException("The volume could not be returned: " + rent.getId(), e);
+            existingVolume.setRented(false);
+            volumeCollection.replaceOne(clientSession, volumeFilter, existingVolume);
+
+            renterCollection.findOneAndUpdate(clientSession, renterFilter, Updates.inc("rents", -1));
+
+            Renter updatedRenter = renterCollection.find(renterFilter).first();
+            Volume updatedVolume = volumeCollection.find(volumeFilter).first();
+
+            rent.endRent();
+
+            Rent updatedRent = new Rent(rent.getId(), updatedRenter, updatedVolume, rent.getBeginTime());
+            updatedRent.endRent();
+
+            Bson rentFilter = Filters.eq("_id", rent.getId());
+            Bson updates = Updates.combine(
+                    Updates.set("renter", updatedRenter),
+                    Updates.set("volume", updatedVolume),
+                    Updates.set("rentEnd", updatedRent.getEndTime())
+            );
+            rentCollection.findOneAndUpdate(clientSession, rentFilter, updates);
+
+            clientSession.commitTransaction();
+        } catch (Exception e) {
+            throw new RuntimeException("Returning volume failed", e);
         }
     }
 }
