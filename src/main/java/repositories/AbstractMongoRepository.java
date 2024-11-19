@@ -34,7 +34,8 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                             .conventions(Conventions.DEFAULT_CONVENTIONS)
                             .register(Book.class,Card.class,Monthly.class, NoCard.class, Publication.class, Rent.class, Renter.class, RenterType.class,Volume.class,Weekly.class)
                             .build()
-            )
+            ),
+            CodecRegistries.fromCodecs(new RenterTypeCodec())
     );
 
     private MongoClient mongoClient;

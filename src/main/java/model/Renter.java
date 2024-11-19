@@ -22,9 +22,9 @@ public class Renter {
     @Setter
     private String lastName;
 
-//    @BsonProperty("renterType")
-//    @Setter
-//    private RenterType renterType;
+    @BsonProperty("renterType")
+   @Setter
+    private RenterType renterType;
 
     @BsonProperty("isArchived")
     @Setter
@@ -37,12 +37,12 @@ public class Renter {
     @BsonCreator
     public Renter(@BsonProperty("personalID") String personalID,
                   @BsonProperty("firstName") String firstName,
-                  @BsonProperty("lastName") String lastName)
-        /*@BsonProperty("renterType") RenterType renterType)*/ {
+                  @BsonProperty("lastName") String lastName,
+        @BsonProperty("renterType") RenterType renterType){
         this.personalID = personalID;
         this.firstName = firstName;
         this.lastName = lastName;
-        /*this.renterType = renterType;*/
+        this.renterType = renterType;
         this.isArchived = false;
         this.rents = 0;
     }
@@ -63,8 +63,8 @@ public class Renter {
     public int hashCode() {
         return Objects.hash(personalID, firstName, lastName, isArchived, rents);
     }
-}
-    /*public int getMaxVolumes(int volumes) {
+
+    public int getMaxVolumes(int volumes) {
         int maxVolumes = this.renterType.maxVolumes(volumes);
 
         if (this.rents >= maxVolumes) {
@@ -72,5 +72,5 @@ public class Renter {
         }
 
         return Math.min(maxVolumes, volumes);
-    }*/
-
+    }
+}
