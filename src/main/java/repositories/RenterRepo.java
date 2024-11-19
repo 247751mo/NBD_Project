@@ -25,6 +25,7 @@ public class RenterRepo extends AbstractMongoRepository {
     public void add(Renter renter) {
         MongoCollection<Renter> collection = getDatabase().getCollection("renters", Renter.class);
         collection.insertOne(renter);
+        System.out.println("Inserted renter: " + renter);
     }
 
     public void delete(Renter renter) {
