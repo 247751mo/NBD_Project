@@ -1,8 +1,9 @@
 package model;
 
-import exceptions.ParameterException;
-import jakarta.persistence.*;
-import jakarta.validation.Valid;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.util.UUID;
 
