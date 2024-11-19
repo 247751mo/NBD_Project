@@ -20,12 +20,12 @@ public class Book extends Volume {
     public Book(@BsonProperty("title") String title,
                 @BsonProperty("genre") String genre,
                 @BsonProperty("author") String author) {
-        super(title, genre);
+        super(null, title, genre);
         this.author = author;
     }
 
     @Override
     public String volumeInfo() {
-        return "Book: " + super.volumeInfo() + ", author: " + author;
+        return "Book: " + super.volumeInfo() + ", Author: " + author;
     }
 }

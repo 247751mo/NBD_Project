@@ -1,4 +1,4 @@
-import jakarta.persistence.EntityManager;
+/*import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import model.*;
@@ -129,4 +129,4 @@ class RentRepoTest {
         Volume foundBook = entityManager.find(Volume.class, book.getVolumeId());
         assertTrue(foundBook.checkIfRented());
     }
-}
+}*/

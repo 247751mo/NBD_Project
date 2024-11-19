@@ -20,7 +20,7 @@ public class Publication extends Volume {
     public Publication(@BsonProperty("title") String title,
                        @BsonProperty("genre") String genre,
                        @BsonProperty("publisher") String publisher) {
-        super(title, genre);
+        super(null, title, genre);
         this.publisher = publisher;
     }
 

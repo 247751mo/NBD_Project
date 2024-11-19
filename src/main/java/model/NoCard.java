@@ -11,10 +11,6 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 @BsonDiscriminator(key = "_type", value = "NoCard")
 public class NoCard extends RenterType {
 
-    @BsonCreator
-    public NoCard() {
-        // Domyślny konstruktor
-    }
 
     @Override
     public int maxVolumes(int volumes) {

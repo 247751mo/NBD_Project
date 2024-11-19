@@ -9,15 +9,9 @@ import model.Renter;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class RenterRepo extends AbstractMongoRepository {
-
-    private final EntityManager em;
-
-    public RenterRepo(EntityManager entityManager) {
-        this.em = entityManager;
-    }
 
     public Renter get(String id) {
         Bson filter = Filters.eq("_id", id);
@@ -37,20 +31,21 @@ public class RenterRepo extends AbstractMongoRepository {
     }
 
     public void delete(Renter renter) {
-        Bson filter = Filters.eq("_id", renter.getId());
+        Bson filter = Filters.eq("_id", renter.getPersonalID());
         MongoCollection<Renter> collection = getDatabase().getCollection("renters", Renter.class);
         collection.findOneAndDelete(filter);
     }
 
     public void update(Renter renter) {
-        Bson filter = Filters.eq("_id", renter.getId());
+        Bson filter = Filters.eq("_id", renter.getPersonalID());
         MongoCollection<Renter> collection = getDatabase().getCollection("renters", Renter.class);
         Bson updates = Updates.combine(
                 Updates.set("firstName", renter.getFirstName()),
                 Updates.set("lastName", renter.getLastName()),
                 Updates.set("personalID", renter.getPersonalID()),
                 Updates.set("renterType", renter.getRenterType()),
-                Updates.set("archived", renter.isArchived())
+                Updates.set("archived", renter.isArchived()),
+                Updates.set("rents", renter.getRents())
         );
         collection.findOneAndUpdate(filter, updates);
     }

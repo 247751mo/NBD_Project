@@ -6,8 +6,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
-import jakarta.persistence.OptimisticLockException;
 import model.Rent;
 import model.Renter;
 import model.Volume;
@@ -71,7 +69,7 @@ public class RentRepo extends AbstractMongoRepository {
             MongoCollection<Rent> rentCollection = getDatabase().getCollection("rents", Rent.class);
 
             Bson volumeFilter = Filters.eq("_id", volume.getVolumeId());
-            Bson renterFilter = Filters.eq("_id", renter.getId());
+            Bson renterFilter = Filters.eq("_id", renter.getPersonalID());
 
             Volume existingVolume = volumeCollection.find(volumeFilter).first();
             if (existingVolume == null || existingVolume.isRented()) {
@@ -106,7 +104,7 @@ public class RentRepo extends AbstractMongoRepository {
 
 
             Bson volumeFilter = Filters.eq("_id", rent.getVolume().getVolumeId());
-            Bson renterFilter = Filters.eq("_id", rent.getRenter().getId());
+            Bson renterFilter = Filters.eq("_id", rent.getRenter().getPersonalID());
 
             Volume existingVolume = volumeCollection.find(volumeFilter).first();
             if (existingVolume == null || !existingVolume.isRented()) {

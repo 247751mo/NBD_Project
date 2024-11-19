@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonCreator;
-import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 @Getter
@@ -12,8 +11,8 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 @NoArgsConstructor
 public class Renter {
 
-    @BsonId
-    private String id;
+    @BsonProperty("personalID")
+    private String personalID;
 
     @BsonProperty("firstName")
     @Setter
@@ -22,10 +21,6 @@ public class Renter {
     @BsonProperty("lastName")
     @Setter
     private String lastName;
-
-    @BsonProperty("personalID")
-    @Setter
-    private String personalID;
 
     @BsonProperty("renterType")
     @Setter
@@ -40,16 +35,24 @@ public class Renter {
     private int rents;
 
     @BsonCreator
-    public Renter(@BsonProperty("id") String id,
+    public Renter(@BsonProperty("personalID") String personalID,
                   @BsonProperty("firstName") String firstName,
                   @BsonProperty("lastName") String lastName,
-                  @BsonProperty("personalID") String personalID,
                   @BsonProperty("renterType") RenterType renterType) {
-        this.id = id;
+        this.personalID = personalID;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.personalID = personalID;
         this.renterType = renterType;
         this.isArchived = false;
+        this.rents = 0;
+    }
+    public int getMaxVolumes(int volumes) {
+        int maxVolumes = this.renterType.maxVolumes(volumes);
+
+        if (this.rents >= maxVolumes) {
+            return maxVolumes;
+        }
+
+        return Math.min(maxVolumes, volumes);
     }
 }

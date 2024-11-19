@@ -38,6 +38,8 @@ public abstract class Volume {
     public Volume(@BsonProperty("volumeId") String volumeId,
                   @BsonProperty("title") String title,
                   @BsonProperty("genre") String genre) {
+        this.volumeId = (volumeId != null && !volumeId.isEmpty()) ? volumeId : UUID.randomUUID().toString();
+
         if (title == null || title.isEmpty()) {
             throw new IllegalArgumentException("Invalid title (can't be empty)!");
         }

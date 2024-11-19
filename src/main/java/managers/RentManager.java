@@ -1,4 +1,4 @@
-package managers;
+/*package managers;
 
 import model.Rent;
 import model.Renter;
@@ -75,4 +75,4 @@ public class RentManager {
         return rent;
     }
 
-}
+}*/
