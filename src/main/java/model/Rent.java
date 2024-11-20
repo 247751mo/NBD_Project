@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Getter
-@Setter
+
 @NoArgsConstructor
 public class Rent {
 
@@ -20,15 +20,19 @@ public class Rent {
     private String id;
 
     @BsonProperty("renter")
+    @Setter
     private Renter renter;
 
     @BsonProperty("volume")
+    @Setter
     private Volume volume;
 
     @BsonProperty("beginTime")
+    @Setter
     private LocalDateTime beginTime;
 
     @BsonProperty("endTime")
+    @Setter
     private LocalDateTime endTime;
 
     @BsonCreator
