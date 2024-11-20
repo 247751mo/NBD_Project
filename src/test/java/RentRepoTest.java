@@ -1,132 +1,150 @@
-/*import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-import model.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import repositories.RenterRepo;
-import repositories.RentRepo;
-import repositories.VolumeRepo;
+import com.mongodb.client.model.Filters;
+import model.Book;
 import model.Rent;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.UUID;
+import model.Renter;
+import model.Volume;
+import org.junit.jupiter.api.*;
+import repositories.RentRepo;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RentRepoTest {
+
     private static RentRepo rentRepo;
-    private static EntityManagerFactory entityManagerFactory;
-    private static EntityManager entityManager;
-    private static VolumeRepo volumeRepo;
-    private static RenterRepo renterRepo;
-    private static EntityManager em;
 
     @BeforeAll
     public static void setUp() {
-        entityManagerFactory = Persistence.createEntityManagerFactory("default");
-        entityManager = entityManagerFactory.createEntityManager();
-        rentRepo = new RentRepo(entityManager);
-        renterRepo = new RenterRepo(entityManager);
-        volumeRepo = new VolumeRepo(entityManager);
-        em = entityManagerFactory.createEntityManager();
+        rentRepo = new RentRepo();
     }
+
+    @BeforeEach
+    public void cleanUp() {
+        rentRepo.getDatabase().getCollection("rents", Rent.class).drop();
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).drop();
+        rentRepo.getDatabase().getCollection("renters", Renter.class).drop();
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        rentRepo.getDatabase().getCollection("rents", Rent.class).drop();
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).drop();
+        rentRepo.getDatabase().getCollection("renters", Renter.class).drop();
+        rentRepo.close();
+    }
+
     @Test
-    void testAddRent() {
-        Renter renter = new Renter("Frank", "Ocean", "FRANK325", new NoCard());
-        Book book = new Book("Andrzej Sapkowski", "Wiedzmin Krew Elfow", "Fantasy");
+    void testCreateRent() {
+        Renter renter = new Renter("123", "Doe", "John");
+        Book volume = new Book("vol1", "Test Volume", "Science Fiction");
+        Rent rent = new Rent(renter, volume, LocalDateTime.now());
 
-        renterRepo.create(renter);
-        volumeRepo.create(book);
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume);
 
-        Rent rent = new Rent(renter, book, LocalDateTime.now());
+        rentRepo.create(rent);
+
+        Rent foundRent = rentRepo.read(rent.getId());
+        assertNotNull(foundRent);
+        assertEquals(renter.getPersonalID(), foundRent.getRenter().getPersonalID());
+        assertEquals(volume.getVolumeId(), foundRent.getVolume().getVolumeId());
+    }
+
+    @Test
+    void testDeleteRent() {
+        Renter renter = new Renter("124", "Doe", "Jane");
+        Book volume = new Book("vol2", "Another Volume", "Fantasy");
+        Rent rent = new Rent(renter, volume, LocalDateTime.now());
+
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume);
+
         rentRepo.create(rent);
         Rent foundRent = rentRepo.read(rent.getId());
-
-        assertEquals(rent, foundRent);
-    }
-    @Test
-    void testRemoveRent() {
-        Renter renter = new Renter("Tyler", "Okonma", "TYLER1", new NoCard());
-        Book book = new Book("Homer", "Odyseja", "Epos");
-
-        renterRepo.create(renter);
-        volumeRepo.create(book);
-
-        Rent rent = new Rent(renter, book, LocalDateTime.now());
-        rentRepo.create(rent);
-
-        Rent foundRent1 = rentRepo.read(rent.getId());
-        assertNotNull(foundRent1);
+        assertNotNull(foundRent);
 
         rentRepo.delete(rent);
-
-        Rent foundRent2 = rentRepo.read(rent.getId());
-        assertNull(foundRent2);
+        Rent deletedRent = rentRepo.read(rent.getId());
+        assertNull(deletedRent);
     }
+
     @Test
     void testUpdateRent() {
-        Renter renter = new Renter("Kali", "Uchis", "KALI343", new NoCard());
-        Book book = new Book("Boleslaw Prus", "Kamizelka", "Opowiadanie");
-        Rent rent = new Rent(renter, book, LocalDateTime.now());
+        Renter renter = new Renter("125", "Doe", "Max");
+        Book volume = new Book("vol3", "Volume to Update", "Thriller");
+        Rent rent = new Rent(renter, volume, LocalDateTime.now());
 
-        em.getTransaction().begin();
-        em.persist(renter);
-        em.persist(book);
-        em.getTransaction().commit();
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume);
 
         rentRepo.create(rent);
-        UUID rentId = rent.getId();
-        assertNotNull(rentId,"The rent ID should not be null after persisting");
-        Rent retrievedRent = rentRepo.read(rentId);
-        assertNotNull(retrievedRent, "The retrieved rent should not be null");
-        assertEquals(rentId, retrievedRent.getId(), "The retrieved rent ID should match the persisted rent ID");
+
+        rent.setEndTime(LocalDateTime.now().plusDays(1));
+        rentRepo.update(rent);
+
+        Rent updatedRent = rentRepo.read(rent.getId());
+        assertNotNull(updatedRent.getEndTime());
+        assertEquals(rent.getEndTime(), updatedRent.getEndTime());
     }
+
     @Test
-    void testGetAllRents() {
-
-
+    void testReadAllRents() {
         List<Rent> rents = rentRepo.readAll();
         int initialSize = rents.size();
 
-        Renter renter1 = new Renter("Emma", "Davis", "EMMA123", new NoCard());
-        Renter renter2 = new Renter("Frank", "Taylor", "FRANK456", new Card());
-        Book book1 = new Book("Boleslaw Prus", "Lalka", "Powiesc");
-        Book book2 = new Book("Sofokles", "Krol Edyp", "Tragedia");
+        Renter renter1 = new Renter("126", "Smith", "Alice");
+        Renter renter2 = new Renter("127", "Brown", "Bob");
+        Book volume1 = new Book("vol4", "First Volume", "Drama");
+        Book volume2 = new Book("vol5", "Second Volume", "Horror");
 
-        entityManager.getTransaction().begin();
-        entityManager.persist(renter1);
-        entityManager.persist(renter2);
-        entityManager.persist(book1);
-        entityManager.persist(book2);
-        entityManager.getTransaction().commit();
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter1);
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter2);
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume1);
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume2);
 
-        Rent rent1 = new Rent(renter1, book1, LocalDateTime.now());
-        Rent rent2 = new Rent(renter2, book2, LocalDateTime.now());
-
-        rentRepo.create(rent1);
-        rentRepo.create(rent2);
+        rentRepo.create(new Rent(renter1, volume1, LocalDateTime.now()));
+        rentRepo.create(new Rent(renter2, volume2, LocalDateTime.now()));
 
         rents = rentRepo.readAll();
-        int finalSize = rents.size();
-
-        assertEquals(initialSize + 2, finalSize);
+        assertEquals(initialSize + 2, rents.size());
     }
+
     @Test
     void testBookVolume() {
-        entityManager.getTransaction().begin();
+        Renter renter = new Renter("128", "Taylor", "Chris");
+        Book volume = new Book("vol6", "Bookable Volume", "Adventure");
 
-        Renter renter = new Renter("George", "Hall", "GEORGE789", new NoCard());
-        Book book = new Book("Adam Mickiewicz", "Pan Tadeusz", "Epika");
-        entityManager.persist(renter);
-        entityManager.persist(book);
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume);
 
-        entityManager.getTransaction().commit();
+        rentRepo.bookVolume(renter, volume, LocalDateTime.now());
 
-        rentRepo.bookVolume(renter, book, LocalDateTime.now());
+        Volume updatedVolume = rentRepo.getDatabase()
+                .getCollection("volumes", Volume.class)
+                .find(Filters.eq("_id", volume.getVolumeId()))
+                .first();
 
-        Volume foundBook = entityManager.find(Volume.class, book.getVolumeId());
-        assertTrue(foundBook.checkIfRented());
+        assertTrue(updatedVolume.isRented());
     }
-}*/
+
+    @Test
+    void testReturnVolume() {
+        Renter renter = new Renter("129", "Lee", "Kim");
+        Book volume = new Book("vol7", "Returnable Volume", "Biography");
+        Rent rent = new Rent(renter, volume, LocalDateTime.now());
+
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume);
+        rentRepo.create(rent);
+
+        rentRepo.returnVolume(rent, LocalDateTime.now().plusDays(1));
+
+        Volume updatedVolume = rentRepo.getDatabase()
+                .getCollection("volumes", Volume.class)
+                .find(Filters.eq("_id", volume.getVolumeId()))
+                .first();
+
+        assertFalse(updatedVolume.isRented());
+    }
+}
