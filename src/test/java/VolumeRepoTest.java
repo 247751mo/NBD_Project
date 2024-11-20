@@ -33,7 +33,7 @@ class VolumeRepoTest {
 
     @Test
     void testAddVolume() {
-        Book book1 = new Book("Solaris", "Scifi", "Stanislaw Lem");
+        Volume book1 = new Book("Solaris", "Scifi", "Stanislaw Lem");
         volumeRepo.create(book1);
 
         Volume foundVolume = volumeRepo.read(book1.getVolumeId());
@@ -49,7 +49,7 @@ class VolumeRepoTest {
 
     @Test
     void testSerializationAndDeserialization() {
-        Book book = new Book("TestTitle", "TestGenre", "TestAuthor");
+        Volume book = new Book("TestTitle", "TestGenre", "TestAuthor");
         volumeRepo.create(book);
 
         Volume retrievedBook = volumeRepo.read(book.getVolumeId());
@@ -58,14 +58,14 @@ class VolumeRepoTest {
         assertTrue(retrievedBook instanceof Book);
 
         Book retrievedBookCasted = (Book) retrievedBook;
-        assertEquals(book.getAuthor(), retrievedBookCasted.getAuthor());
+        assertEquals(book.getTitle(), retrievedBookCasted.getTitle());
         assertEquals(book, retrievedBook);
     }
 
 
     @Test
     void testRemoveVolume() {
-        Book book1 = new Book("Solaris","Scifi","Stanislaw Lem");
+        Volume book1 = new Book("Solaris","Scifi","Stanislaw Lem");
         volumeRepo.create(book1);
 
         Volume foundVolume = volumeRepo.read(book1.getVolumeId());
@@ -79,7 +79,7 @@ class VolumeRepoTest {
 
     @Test
     void testUpdateVolume() {
-        Book book1 = new Book("Solaris","Scifi","Stanislaw Lem");
+        Volume book1 = new Book("Solaris","Scifi","Stanislaw Lem");
         volumeRepo.create(book1);
 
         Volume foundVolumeBeforeUpdate = volumeRepo.read(book1.getVolumeId());
@@ -103,8 +103,8 @@ class VolumeRepoTest {
         List<Volume> volumes = volumeRepo.readAll();
         int initialSize = volumes.size();
 
-        Book book1 = new Book("Solaris","Scifi","Stanislaw Lem");
-        Monthly monthly1 = new Monthly("Miesiecznik","Gatunek","Wydawca");
+        Volume book1 = new Book("Solaris","Scifi","Stanislaw Lem");
+        Volume monthly1 = new Monthly("Miesiecznik","Gatunek","Wydawca");
 
         volumeRepo.create(book1);
         volumeRepo.create(monthly1);
