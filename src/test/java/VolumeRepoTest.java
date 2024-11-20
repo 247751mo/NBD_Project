@@ -35,9 +35,10 @@ class VolumeRepoTest {
     void testAddVolume() {
         Volume book1 = new Book("Solaris", "Scifi", "Stanislaw Lem");
         volumeRepo.create(book1);
-
+        System.out.println("Expectedidddd: " + book1.getVolumeId());
         Volume foundVolume = volumeRepo.read(book1.getVolumeId());
-
+        System.out.println("Expectedidddd: " + book1.getVolumeId());
+        System.out.println("Expectedidddd: " + foundVolume.getVolumeId());
         assertEquals(book1.getTitle(), foundVolume.getTitle());
         assertEquals(book1.getGenre(), foundVolume.getGenre());
         assertEquals(book1.getVolumeId(), foundVolume.getVolumeId());
