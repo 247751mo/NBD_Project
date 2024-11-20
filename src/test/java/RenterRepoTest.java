@@ -48,8 +48,8 @@ class RenterRepoTest {
         RenterType noCardType = new NoCard();
         RenterType cardType = new Card();
 
-        Renter renter1 = new Renter("233", "Johnson", "Alice");
-        Renter renter2 = new Renter("323", "Smith", "Bob");
+        Renter renter1 = new Renter("233", "Johnson", "Alice", noCardType);
+        Renter renter2 = new Renter("323", "Smith", "Bob", cardType);
 
 
         renterRepo.add(renter1);
@@ -63,7 +63,8 @@ class RenterRepoTest {
     }
     @Test
     void testPersonalIdAsId() {
-        Renter renter = new Renter("TEST123", "Test", "User");
+        RenterType cardType = new Card();
+        Renter renter = new Renter("TEST123", "Test", "User", cardType);
         renterRepo.add(renter);
 
         MongoCollection<Document> collection = renterRepo.getDatabase().getCollection("renters");
@@ -76,7 +77,7 @@ class RenterRepoTest {
     @Test
     void testSerializationDeserialization() {
         RenterType cardType = new Card();
-        Renter renter = new Renter("TEST123", "Doe", "John");
+        Renter renter = new Renter("TEST123", "Doe", "John", cardType);
 
         renterRepo.add(renter);
         Renter retrievedRenter = renterRepo.get("TEST123");
@@ -100,7 +101,7 @@ class RenterRepoTest {
         Codec<Renter> renterCodec = codecRegistry.get(Renter.class);
 
         RenterType cardType = new Card();
-        Renter renter = new Renter("TEST123", "Doe", "John");
+        Renter renter = new Renter("TEST123", "Doe", "John", cardType);
 
         // Serializacja
         Document document = new Document();
