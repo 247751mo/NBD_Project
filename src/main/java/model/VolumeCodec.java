@@ -48,6 +48,7 @@ public class VolumeCodec implements Codec<Volume> {
         String title = null;
         String genre = null;
         boolean isAvailable = false;
+        boolean isRented = false;
         String author = null;
         int pageCount = 0;
         String editor = null;
@@ -72,6 +73,9 @@ public class VolumeCodec implements Codec<Volume> {
                     break;
                 case "isAvailable":
                     isAvailable = reader.readBoolean();
+                    break;
+                case "isRented":
+                    isRented = reader.readBoolean();
                     break;
                 case "author":
                     author = reader.readString();
