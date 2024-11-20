@@ -11,7 +11,7 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 @Getter
 @Setter
 @NoArgsConstructor
-@BsonDiscriminator(key = "_type", value = "Publication")
+@BsonDiscriminator(key = "_type", value = "publication")
 public class Publication extends Volume {
 
     @BsonProperty("publisher")

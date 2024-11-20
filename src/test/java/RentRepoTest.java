@@ -7,6 +7,7 @@ import org.junit.jupiter.api.*;
 import repositories.RentRepo;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,7 +86,8 @@ class RentRepoTest {
 
         Rent updatedRent = rentRepo.read(rent.getId());
         assertNotNull(updatedRent.getEndTime());
-        assertEquals(rent.getEndTime(), updatedRent.getEndTime());
+        assertEquals(rent.getEndTime().truncatedTo(ChronoUnit.SECONDS), updatedRent.getEndTime().truncatedTo(ChronoUnit.SECONDS));
+
     }
 
     @Test

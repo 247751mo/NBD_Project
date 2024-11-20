@@ -9,7 +9,7 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 
 @Data
 @NoArgsConstructor
-@BsonDiscriminator(key = "_type", value = "Weekly")
+@BsonDiscriminator(key = "_type", value = "weekly")
 public class Weekly extends Publication {
 
     @BsonCreator
