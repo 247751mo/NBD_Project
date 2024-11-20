@@ -25,11 +25,11 @@
 //        Book book = new Book("Henryk Sienkiewicz", "Potop", "Historyczne");
 //        Monthly monthly = new Monthly("Top Gear", "Motoryzacyjne", "Immediate Media Company");
 //
-//        volumeRepo.add(book);
-//        volumeRepo.add(monthly);
+//        volumeRepo.create(book);
+//        volumeRepo.create(monthly);
 //
-//        Book foundVolume1 = (Book) volumeRepo.get(book.getVolumeId());
-//        Monthly foundVolume2 = (Monthly) volumeRepo.get(monthly.getVolumeId());
+//        Book foundVolume1 = (Book) volumeRepo.read(book.getVolumeId());
+//        Monthly foundVolume2 = (Monthly) volumeRepo.read(monthly.getVolumeId());
 //
 //        assertEquals(book, foundVolume1);
 //        assertEquals(monthly, foundVolume2);
@@ -37,22 +37,22 @@
 //    @Test
 //    void testDeleteVolume() {
 //        Book book = new Book("Adam Mickiewicz", "Pan Tadeusz", "Epika");
-//        volumeRepo.add(book);
+//        volumeRepo.create(book);
 //
-//        Book foundBook1 = (Book) volumeRepo.get(book.getVolumeId());
+//        Book foundBook1 = (Book) volumeRepo.read(book.getVolumeId());
 //        assertNotNull(foundBook1);
 //
 //        volumeRepo.delete(book);
 //
-//        Book foundBook2 = (Book) volumeRepo.get(book.getVolumeId());
+//        Book foundBook2 = (Book) volumeRepo.read(book.getVolumeId());
 //        assertNull(foundBook2);
 //    }
 //    @Test
 //    void testUpdateVolume() {
 //        Weekly weekly = new Weekly("Fakt", "Wiadomosci", "J. Billig");
-//        volumeRepo.add(weekly);
+//        volumeRepo.create(weekly);
 //
-//        Weekly foundWeekly1 = (Weekly) volumeRepo.get(weekly.getVolumeId());
+//        Weekly foundWeekly1 = (Weekly) volumeRepo.read(weekly.getVolumeId());
 //        assertEquals("Fakt", foundWeekly1.getTitle());
 //        assertEquals("Wiadomosci", foundWeekly1.getGenre());
 //
@@ -61,22 +61,22 @@
 //
 //        volumeRepo.update(weekly);
 //
-//        Weekly foundWeekly2 = (Weekly) volumeRepo.get(weekly.getVolumeId());
+//        Weekly foundWeekly2 = (Weekly) volumeRepo.read(weekly.getVolumeId());
 //        assertEquals("Tygodnik Sportowy", foundWeekly2.getTitle());
 //        assertEquals("Sportowe", foundWeekly2.getGenre());
 //    }
 //    @Test
 //    void testGetAllVolumes() {
-//        List<Volume> volumes = volumeRepo.getAll();
+//        List<Volume> volumes = volumeRepo.readAll();
 //        int initialSize = volumes.size();
 //
 //        Book book1 = new Book("Boleslaw Prus", "Lalka", "Powiesc");
 //        Book book2 = new Book("Sofokles", "Krol Edyp", "Tragedia");
 //
-//        volumeRepo.add(book1);
-//        volumeRepo.add(book2);
+//        volumeRepo.create(book1);
+//        volumeRepo.create(book2);
 //
-//        volumes = volumeRepo.getAll();
+//        volumes = volumeRepo.readAll();
 //        int finalSize = volumes.size();
 //
 //        assertEquals(initialSize + 2, finalSize);

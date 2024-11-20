@@ -37,12 +37,12 @@ class RentRepoTest {
         Renter renter = new Renter("Frank", "Ocean", "FRANK325", new NoCard());
         Book book = new Book("Andrzej Sapkowski", "Wiedzmin Krew Elfow", "Fantasy");
 
-        renterRepo.add(renter);
-        volumeRepo.add(book);
+        renterRepo.create(renter);
+        volumeRepo.create(book);
 
         Rent rent = new Rent(renter, book, LocalDateTime.now());
-        rentRepo.add(rent);
-        Rent foundRent = rentRepo.get(rent.getId());
+        rentRepo.create(rent);
+        Rent foundRent = rentRepo.read(rent.getId());
 
         assertEquals(rent, foundRent);
     }
@@ -51,18 +51,18 @@ class RentRepoTest {
         Renter renter = new Renter("Tyler", "Okonma", "TYLER1", new NoCard());
         Book book = new Book("Homer", "Odyseja", "Epos");
 
-        renterRepo.add(renter);
-        volumeRepo.add(book);
+        renterRepo.create(renter);
+        volumeRepo.create(book);
 
         Rent rent = new Rent(renter, book, LocalDateTime.now());
-        rentRepo.add(rent);
+        rentRepo.create(rent);
 
-        Rent foundRent1 = rentRepo.get(rent.getId());
+        Rent foundRent1 = rentRepo.read(rent.getId());
         assertNotNull(foundRent1);
 
         rentRepo.delete(rent);
 
-        Rent foundRent2 = rentRepo.get(rent.getId());
+        Rent foundRent2 = rentRepo.read(rent.getId());
         assertNull(foundRent2);
     }
     @Test
@@ -76,10 +76,10 @@ class RentRepoTest {
         em.persist(book);
         em.getTransaction().commit();
 
-        rentRepo.add(rent);
+        rentRepo.create(rent);
         UUID rentId = rent.getId();
         assertNotNull(rentId,"The rent ID should not be null after persisting");
-        Rent retrievedRent = rentRepo.get(rentId);
+        Rent retrievedRent = rentRepo.read(rentId);
         assertNotNull(retrievedRent, "The retrieved rent should not be null");
         assertEquals(rentId, retrievedRent.getId(), "The retrieved rent ID should match the persisted rent ID");
     }
@@ -87,7 +87,7 @@ class RentRepoTest {
     void testGetAllRents() {
 
 
-        List<Rent> rents = rentRepo.getAll();
+        List<Rent> rents = rentRepo.readAll();
         int initialSize = rents.size();
 
         Renter renter1 = new Renter("Emma", "Davis", "EMMA123", new NoCard());
@@ -105,10 +105,10 @@ class RentRepoTest {
         Rent rent1 = new Rent(renter1, book1, LocalDateTime.now());
         Rent rent2 = new Rent(renter2, book2, LocalDateTime.now());
 
-        rentRepo.add(rent1);
-        rentRepo.add(rent2);
+        rentRepo.create(rent1);
+        rentRepo.create(rent2);
 
-        rents = rentRepo.getAll();
+        rents = rentRepo.readAll();
         int finalSize = rents.size();
 
         assertEquals(initialSize + 2, finalSize);

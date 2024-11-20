@@ -1,11 +1,10 @@
-/*package managers;
+package managers;
 
 import model.Rent;
 import model.Renter;
 import model.Volume;
 import repositories.RentRepo;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import java.util.List;
 
 public class RentManager {
@@ -27,44 +26,42 @@ public class RentManager {
             throw new IllegalArgumentException("Volume cannot be null.");
         }
 
-        if (volume.checkIfRented()) {
+        if (volume.isRented()) {
             throw new Exception("Volume is already rented: " + volume.getTitle());
         }
 
         if (renter.getRents() >= 5) {
-            throw new Exception("Renter has reached the maximum number of rents: " + renter.getId());
+            throw new Exception("Renter has reached the maximum number of rents: " + renter.getPersonalID());
         }
 
 
         try {
             rentRepo.bookVolume(renter, volume, rentStart);
-            renter.incrementRentCount();
         } catch (RuntimeException e) {
             throw new RuntimeException("The rental process failed for volume: " + volume.getTitle(), e);
         }
     }
-    public void returnVolume(UUID rentId, LocalDateTime rentEnd) {
-        Rent rent = rentRepo.get(rentId);
+    public void returnVolume(String rentId, LocalDateTime rentEnd) {
+        Rent rent = rentRepo.read(rentId);
 
-        rent.endRent(rentEnd);
+        rent.endRent();
 
         Volume volume = rent.getVolume();
-        volume.setRentedStatus(false);
+        volume.setRented(false);
 
         Renter renter = rent.getRenter();
-        renter.decrementRentCount();
 
         rentRepo.returnVolume(rent, rentEnd);
     }
 
     // Fetch rent by its ID
-    public Rent getRent(UUID rentId) {
-        return rentRepo.get(rentId);
+    public Rent getRent(String rentId) {
+        return rentRepo.read(rentId);
     }
 
     // Get all rents
     public List<Rent> getAllRents() {
-        return rentRepo.getAll();
+        return rentRepo.readAll();
     }
 
     public Rent createRent(Renter renter, Volume volume, LocalDateTime rentStart) {
@@ -75,4 +72,4 @@ public class RentManager {
         return rent;
     }
 
-}*/
+}

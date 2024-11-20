@@ -15,19 +15,19 @@ import java.util.ArrayList;
 
 public class RentRepo extends AbstractMongoRepository {
 
-    public Rent get(String id) {
+    public Rent read(String id) {
         Bson filter = Filters.eq("_id", id);
         MongoCollection<Rent> collection = getDatabase().getCollection("rents", Rent.class);
         FindIterable<Rent> rents = collection.find(filter);
         return rents.first();
     }
 
-    public ArrayList<Rent> getAll() {
+    public ArrayList<Rent> readAll() {
         MongoCollection<Rent> collection = getDatabase().getCollection("rents", Rent.class);
         return collection.find().into(new ArrayList<>());}
 
 
-    public void add(Rent rent) {
+    public void create(Rent rent) {
         MongoCollection<Rent> collection = getDatabase().getCollection("rents", Rent.class);
         collection.insertOne(rent);
     }

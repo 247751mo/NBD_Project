@@ -1,4 +1,4 @@
-/*package managers;
+package managers;
 import model.Volume;
 import repositories.VolumeRepo;
 import java.io.Serializable;
@@ -17,21 +17,20 @@ public class VolumeManager implements Serializable {
 
     public void addVolume(Volume volume) {
         if (volume.getVolumeId() == null) {
-            volumeRepo.add(volume);
-        } else if (volumeRepo.get(volume.getVolumeId()) != null) {
+            volumeRepo.create(volume);
+        } else if (volumeRepo.read(volume.getVolumeId()) != null) {
             throw new IllegalArgumentException("Volume already exists");
         } else {
-            volumeRepo.add(volume);
+            volumeRepo.create(volume);
         }
     }
 
 
     public void removeVolume(Volume volume) {
         if (volume != null) {
-            volume.setArchiveStatus(true);
-            volume.setRentedStatus(false);
+            volume.setArchive(true);
+            volume.setRented(false);
             volumeRepo.update(volume);
         }
     }
 }
-*/

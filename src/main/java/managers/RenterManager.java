@@ -18,10 +18,10 @@ public class RenterManager implements Serializable {
     }
 
     public void registerRenter(Renter renter) {
-        if (renterRepo.get(renter.getPersonalID()) != null) {
+        if (renterRepo.read(renter.getPersonalID()) != null) {
             throw new IllegalArgumentException("Client with the same ID already exists.");
         }
-        renterRepo.add(renter);
+        renterRepo.create(renter);
     }
 
     public void unregisterRenter(Renter renter) {

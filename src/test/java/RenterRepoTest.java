@@ -1,20 +1,4 @@
-import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
-import model.Card;
-import model.NoCard;
 import model.Renter;
-import model.RenterType;
-import org.bson.BsonDocument;
-import org.bson.BsonDocumentReader;
-import org.bson.BsonDocumentWriter;
-import org.bson.Document;
-import org.bson.codecs.Codec;
-import org.bson.codecs.DecoderContext;
-import org.bson.codecs.EncoderContext;
-import org.bson.codecs.configuration.CodecRegistries;
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
 import org.junit.jupiter.api.*;
 import repositories.RenterRepo;
 
@@ -44,18 +28,18 @@ class RenterRepoTest {
     }
 
     @Test
-    void testAddRenter() {
+    void testCreateRenter() {
 
 
         Renter renter1 = new Renter("233", "Johnson", "Alice");
         Renter renter2 = new Renter("323", "Smith", "Bob");
 
 
-        renterRepo.add(renter1);
-        renterRepo.add(renter2);
+        renterRepo.create(renter1);
+        renterRepo.create(renter2);
 
-        Renter foundRenter1 = renterRepo.get(renter1.getPersonalID());
-        Renter foundRenter2 = renterRepo.get(renter2.getPersonalID());
+        Renter foundRenter1 = renterRepo.read(renter1.getPersonalID());
+        Renter foundRenter2 = renterRepo.read(renter2.getPersonalID());
 
         assertEquals(renter1, foundRenter1);
         assertEquals(renter2, foundRenter2);
@@ -65,21 +49,21 @@ class RenterRepoTest {
     void testRemoveRenter() {
 
         Renter renter = new Renter("54623", "Big", "Ben");
-        renterRepo.add(renter);
-        Renter foundRenter = renterRepo.get(renter.getPersonalID());
+        renterRepo.create(renter);
+        Renter foundRenter = renterRepo.read(renter.getPersonalID());
         assertNotNull(foundRenter);
 
         renterRepo.delete(renter);
-        Renter foundRenter1 = renterRepo.get(renter.getPersonalID());
+        Renter foundRenter1 = renterRepo.read(renter.getPersonalID());
         assertNull(foundRenter1);
     }
 
     @Test
     void testUpdateRenter() {
         Renter renter = new Renter("55437653", "Max", "Zly");
-        renterRepo.add(renter);
+        renterRepo.create(renter);
 
-        Renter foundRenter = renterRepo.get(renter.getPersonalID());
+        Renter foundRenter = renterRepo.read(renter.getPersonalID());
         assertEquals("55437653", foundRenter.getPersonalID());
         assertEquals("Max", foundRenter.getFirstName());
         assertEquals("Zly", foundRenter.getLastName());
@@ -89,24 +73,24 @@ class RenterRepoTest {
 
         renterRepo.update(renter);
 
-        Renter foundRenter1 = renterRepo.get(renter.getPersonalID());
+        Renter foundRenter1 = renterRepo.read(renter.getPersonalID());
         assertEquals("Adam", foundRenter1.getFirstName());
         assertEquals("Malysz", foundRenter1.getLastName());
         assertEquals("55437653", foundRenter.getPersonalID());
     }
 
     @Test
-    void testGetAllRenters() {
-        List<Renter> renters = renterRepo.getAll();
+    void testReadAllRenters() {
+        List<Renter> renters = renterRepo.readAll();
         int initialSize = renters.size();
 
         Renter renter1 = new Renter("233", "Johnson", "Alice");
         Renter renter2 = new Renter("323", "Smith", "Bob");
 
-        renterRepo.add(renter1);
-        renterRepo.add(renter2);
+        renterRepo.create(renter1);
+        renterRepo.create(renter2);
 
-        renters = renterRepo.getAll();
+        renters = renterRepo.readAll();
         int finalsize = renters.size();
 
         assertEquals(initialSize +2, finalsize);
