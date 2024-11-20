@@ -12,6 +12,7 @@ import java.util.Objects;
 public class Renter {
 
     @BsonId
+    @Getter
     private String personalID;
 
     @BsonProperty("firstName")
@@ -23,7 +24,7 @@ public class Renter {
     private String lastName;
 
     @BsonProperty("renterType")
-   @Setter
+    @Setter
     private RenterType renterType;
 
     @BsonProperty("isArchived")
@@ -37,12 +38,12 @@ public class Renter {
     @BsonCreator
     public Renter(@BsonProperty("personalID") String personalID,
                   @BsonProperty("firstName") String firstName,
-                  @BsonProperty("lastName") String lastName,
-        @BsonProperty("renterType") RenterType renterType){
+                  @BsonProperty("lastName") String lastName/*,
+                  @BsonProperty("renterType") RenterType renterType*/){
         this.personalID = personalID;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.renterType = renterType;
+      /*  this.renterType = renterType;*/
         this.isArchived = false;
         this.rents = 0;
     }
