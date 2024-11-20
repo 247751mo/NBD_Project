@@ -37,7 +37,7 @@ class RentRepoTest {
     @Test
     void testCreateRent() {
         Renter renter = new Renter("123", "Doe", "John");
-        Book volume = new Book("vol1", "Test Volume", "Science Fiction");
+        Book volume = new Book(1,"vol1", "Test Volume", "Science Fiction");
         Rent rent = new Rent(renter, volume, LocalDateTime.now());
 
         rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
@@ -54,7 +54,7 @@ class RentRepoTest {
     @Test
     void testDeleteRent() {
         Renter renter = new Renter("124", "Doe", "Jane");
-        Book volume = new Book("vol2", "Another Volume", "Fantasy");
+        Book volume = new Book(2,"vol2", "Another Volume", "Fantasy");
         Rent rent = new Rent(renter, volume, LocalDateTime.now());
 
         rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
@@ -72,7 +72,7 @@ class RentRepoTest {
     @Test
     void testUpdateRent() {
         Renter renter = new Renter("125", "Doe", "Max");
-        Book volume = new Book("vol3", "Volume to Update", "Thriller");
+        Book volume = new Book(3,"vol3", "Volume to Update", "Thriller");
         Rent rent = new Rent(renter, volume, LocalDateTime.now());
 
         rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
@@ -95,8 +95,8 @@ class RentRepoTest {
 
         Renter renter1 = new Renter("126", "Smith", "Alice");
         Renter renter2 = new Renter("127", "Brown", "Bob");
-        Book volume1 = new Book("vol4", "First Volume", "Drama");
-        Book volume2 = new Book("vol5", "Second Volume", "Horror");
+        Book volume1 = new Book(4,"vol4", "First Volume", "Drama");
+        Book volume2 = new Book(5,"vol5", "Second Volume", "Horror");
 
         rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter1);
         rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter2);
@@ -113,7 +113,7 @@ class RentRepoTest {
     @Test
     void testBookVolume() {
         Renter renter = new Renter("128", "Taylor", "Chris");
-        Book volume = new Book("vol6", "Bookable Volume", "Adventure");
+        Book volume = new Book(6,"vol6", "Bookable Volume", "Adventure");
 
         rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
         rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume);
@@ -131,7 +131,7 @@ class RentRepoTest {
     @Test
     void testReturnVolume() {
         Renter renter = new Renter("129", "Lee", "Kim");
-        Book volume = new Book("vol7", "Returnable Volume", "Biography");
+        Book volume = new Book(1,"vol7", "Returnable Volume", "Biography");
         Rent rent = new Rent(renter, volume, LocalDateTime.now());
 
         rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);

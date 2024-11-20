@@ -13,13 +13,10 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 public class Weekly extends Publication {
 
     @BsonCreator
-    public Weekly(@BsonId String volumeId,
+    public Weekly(@BsonId Integer volumeId,
                 @BsonProperty("title") String title,
                   @BsonProperty("genre") String genre,
                   @BsonProperty("publisher") String publisher) {
-        super(title, genre, publisher);
-    }
-    public Weekly(String title, String genre, String publisher) {
-        this(null, title, genre, publisher);
+        super(volumeId, title, genre, publisher);
     }
 }

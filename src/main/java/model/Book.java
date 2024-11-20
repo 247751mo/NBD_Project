@@ -18,14 +18,11 @@ public class Book extends Volume {
     private String author;
 
     @BsonCreator
-    public Book(@BsonId String volumeId,
+    public Book(@BsonId Integer volumeId,
                 @BsonProperty("title") String title,
                 @BsonProperty("genre") String genre,
                 @BsonProperty("author") String author) {
-        super(null, title, genre);
+        super(volumeId, title, genre);
         this.author = author;
-    }
-    public Book(String title, String genre, String author) {
-        this(null, title, genre, author);
     }
 }

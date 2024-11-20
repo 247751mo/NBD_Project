@@ -23,7 +23,7 @@ public class VolumeCodec implements Codec<Volume> {
         }
 
         // Write common fields for all Volume types
-        writer.writeString("_id", volume.getVolumeId());
+        writer.writeInt32("_id", volume.getVolumeId());
         writer.writeString("title", volume.getTitle());
         writer.writeString("genre", volume.getGenre());
 
@@ -44,7 +44,7 @@ public class VolumeCodec implements Codec<Volume> {
         reader.readStartDocument();
 
         String type = null;
-        String id = null;
+        Integer id = null;
         String title = null;
         String genre = null;
         boolean isAvailable = false;
@@ -62,7 +62,7 @@ public class VolumeCodec implements Codec<Volume> {
                     type = reader.readString();
                     break;
                 case "_id":
-                    id = reader.readString();
+                    id = reader.readInt32();
                     break;
                 case "title":
                     title = reader.readString();

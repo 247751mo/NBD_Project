@@ -13,13 +13,11 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 public class Monthly extends Publication {
 
     @BsonCreator
-    public Monthly(@BsonId String volumeId,
+    public Monthly(@BsonId Integer volumeId,
                    @BsonProperty("title") String title,
                    @BsonProperty("genre") String genre,
                    @BsonProperty("publisher") String publisher) {
-        super(title, genre, publisher);
-    }
-    public Monthly(String title, String genre, String publisher) {
-        this(null, title, genre, publisher);
+        super(volumeId, title, genre, publisher);
     }
 }
+

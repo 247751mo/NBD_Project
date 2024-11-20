@@ -18,15 +18,12 @@ public class Publication extends Volume {
     private String publisher;
 
     @BsonCreator
-    public Publication(@BsonId String volumeId,
+    public Publication(@BsonId Integer volumeId,
                         @BsonProperty("title") String title,
                        @BsonProperty("genre") String genre,
                        @BsonProperty("publisher") String publisher) {
-        super(null, title, genre);
+        super(volumeId, title, genre);
         this.publisher = publisher;
     }
 
-    public Publication(String title, String genre, String publisher) {
-        this(null, title, genre, publisher);
-    }
 }

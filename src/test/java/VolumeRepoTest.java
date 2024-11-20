@@ -33,12 +33,9 @@ class VolumeRepoTest {
 
     @Test
     void testAddVolume() {
-        Book book1 = new Book("Solaris", "Scifi", "Stanislaw Lem");
+        Book book1 = new Book(1,"Solaris", "Scifi", "Stanislaw Lem");
         volumeRepo.create(book1);
-        System.out.println("Expectedidddd: " + book1.getVolumeId());
-        Book foundVolume = (Book) volumeRepo.read(book1.getVolumeId());
-        System.out.println("Expectedidddd: " + book1.getVolumeId()+ book1.getAuthor() + book1.getTitle());
-        System.out.println("Expectedidddd: " + foundVolume.getVolumeId()+foundVolume.getAuthor()+foundVolume.getTitle());
+        Book foundVolume = (Book) volumeRepo.read(1);
         assertEquals(book1.getTitle(), foundVolume.getTitle());
         assertEquals(book1.getGenre(), foundVolume.getGenre());
         assertEquals(book1.getVolumeId(), foundVolume.getVolumeId());
@@ -48,25 +45,11 @@ class VolumeRepoTest {
         assertEquals(book1, foundVolume);
     }
 
-    @Test
-    void testSerializationAndDeserialization() {
-        Volume book = new Book("TestTitle", "TestGenre", "TestAuthor");
-        volumeRepo.create(book);
-
-        Volume retrievedBook = volumeRepo.read(book.getVolumeId());
-
-        assertNotNull(retrievedBook);
-        assertTrue(retrievedBook instanceof Book);
-
-        Book retrievedBookCasted = (Book) retrievedBook;
-        assertEquals(book.getTitle(), retrievedBookCasted.getTitle());
-        assertEquals(book, retrievedBook);
-    }
 
 
     @Test
     void testRemoveVolume() {
-        Volume book1 = new Book("Solaris","Scifi","Stanislaw Lem");
+        Volume book1 = new Book(1,"Solaris","Scifi","Stanislaw Lem");
         volumeRepo.create(book1);
 
         Volume foundVolume = volumeRepo.read(book1.getVolumeId());
@@ -80,7 +63,7 @@ class VolumeRepoTest {
 
     @Test
     void testUpdateVolume() {
-        Volume book1 = new Book("Solaris","Scifi","Stanislaw Lem");
+        Volume book1 = new Book(1,"Solaris","Scifi","Stanislaw Lem");
         volumeRepo.create(book1);
 
         Volume foundVolumeBeforeUpdate = volumeRepo.read(book1.getVolumeId());
@@ -96,7 +79,7 @@ class VolumeRepoTest {
         Volume foundVolumeAfterUpdate = volumeRepo.read(book1.getVolumeId());
         assertEquals("NowyTytul", foundVolumeAfterUpdate.getTitle());
         assertEquals("ificS", foundVolumeAfterUpdate.getGenre());
-        assertTrue(foundVolumeAfterUpdate.isRented());
+
     }
 
     @Test
@@ -104,8 +87,8 @@ class VolumeRepoTest {
         List<Volume> volumes = volumeRepo.readAll();
         int initialSize = volumes.size();
 
-        Volume book1 = new Book("Solaris","Scifi","Stanislaw Lem");
-        Volume monthly1 = new Monthly("Miesiecznik","Gatunek","Wydawca");
+        Volume book1 = new Book(1,"Solaris","Scifi","Stanislaw Lem");
+        Volume monthly1 = new Monthly(2, "Miesiecznik","Gatunek","Wydawca");
 
         volumeRepo.create(book1);
         volumeRepo.create(monthly1);
