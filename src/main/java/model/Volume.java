@@ -8,11 +8,12 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
-@BsonDiscriminator(key = "type", value = "Volume") // Określa klucz typu w przypadku dziedziczenia
+@BsonDiscriminator(key = "_type", value = "Volume") // Określa klucz typu w przypadku dziedziczenia
 public abstract class Volume {
 
     @BsonId // Oznacza pole jako unikalny identyfikator dla MongoDB
@@ -69,11 +70,6 @@ public abstract class Volume {
 
     @Override
     public int hashCode() {
-        int result = volumeId.hashCode();
-        result = 31 * result + title.hashCode();
-        result = 31 * result + genre.hashCode();
-        result = 31 * result + Boolean.hashCode(isRented);
-        result = 31 * result + Boolean.hashCode(isArchive);
-        return result;
+       return Objects.hash(volumeId, isRented, isArchive, genre,title);
     }
 }

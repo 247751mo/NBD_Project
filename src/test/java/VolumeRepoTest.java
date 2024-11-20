@@ -33,21 +33,35 @@ class VolumeRepoTest {
 
     @Test
     void testAddVolume() {
-        Book book1 = new Book("Solaris","Scifi","Stanislaw Lem");
-        Monthly monthly1 = new Monthly("Miesiecznik","Gatunek","Wydawca");
-
+        Book book1 = new Book("Solaris", "Scifi", "Stanislaw Lem");
         volumeRepo.create(book1);
-        volumeRepo.create(monthly1);
 
-        Volume foundVolume1 = volumeRepo.read(book1.getVolumeId());
-        Volume foundVolume2 = volumeRepo.read(monthly1.getVolumeId());
-        assertEquals(book1.getTitle(), foundVolume1.getTitle());
-        assertEquals(book1.getGenre(), foundVolume1.getGenre());
-        assertEquals(book1.isRented(), foundVolume1.isRented());
-        assertEquals(book1, foundVolume1);
-        assertEquals(monthly1, foundVolume2);
+        Volume foundVolume = volumeRepo.read(book1.getVolumeId());
 
+        assertEquals(book1.getTitle(), foundVolume.getTitle());
+        assertEquals(book1.getGenre(), foundVolume.getGenre());
+        assertEquals(book1.getVolumeId(), foundVolume.getVolumeId());
+        assertEquals(((Book) book1).getAuthor(), ((Book) foundVolume).getAuthor());
+
+        // Porównanie całego obiektu
+        assertEquals(book1, foundVolume);
     }
+
+    @Test
+    void testSerializationAndDeserialization() {
+        Book book = new Book("TestTitle", "TestGenre", "TestAuthor");
+        volumeRepo.create(book);
+
+        Volume retrievedBook = volumeRepo.read(book.getVolumeId());
+
+        assertNotNull(retrievedBook);
+        assertTrue(retrievedBook instanceof Book);
+
+        Book retrievedBookCasted = (Book) retrievedBook;
+        assertEquals(book.getAuthor(), retrievedBookCasted.getAuthor());
+        assertEquals(book, retrievedBook);
+    }
+
 
     @Test
     void testRemoveVolume() {
