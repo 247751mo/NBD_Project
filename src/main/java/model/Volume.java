@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
-@BsonDiscriminator(key = "_type", value = "Volume") // Określa klucz typu w przypadku dziedziczenia
+@BsonDiscriminator(key = "type", value = "Volume") // Określa klucz typu w przypadku dziedziczenia
 public abstract class Volume {
 
     @BsonId // Oznacza pole jako unikalny identyfikator dla MongoDB
@@ -53,9 +53,6 @@ public abstract class Volume {
         this.isArchive = false;
     }
 
-    public String volumeInfo() {
-        return "Title: " + getTitle() + "\nGenre: " + getGenre();
-    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -63,12 +60,20 @@ public abstract class Volume {
 
         Volume volume = (Volume) o;
 
-
-        return volumeId.equals(volume.volumeId);
+        return isRented == volume.isRented &&
+                isArchive == volume.isArchive &&
+                volumeId.equals(volume.volumeId) &&
+                title.equals(volume.title) &&
+                genre.equals(volume.genre);
     }
 
     @Override
     public int hashCode() {
-        return volumeId.hashCode();
+        int result = volumeId.hashCode();
+        result = 31 * result + title.hashCode();
+        result = 31 * result + genre.hashCode();
+        result = 31 * result + Boolean.hashCode(isRented);
+        result = 31 * result + Boolean.hashCode(isArchive);
+        return result;
     }
 }
