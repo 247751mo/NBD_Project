@@ -54,22 +54,25 @@ public abstract class Volume {
         this.isArchive = false;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         Volume volume = (Volume) o;
-
         return isRented == volume.isRented &&
                 isArchive == volume.isArchive &&
-                volumeId.equals(volume.volumeId) &&
-                title.equals(volume.title) &&
-                genre.equals(volume.genre);
+                Objects.equals(volumeId, volume.volumeId) &&
+                Objects.equals(title, volume.title) &&
+                Objects.equals(genre, volume.genre);  // Porównuj tylko te właściwości, które są istotne
+
+
     }
+
 
     @Override
     public int hashCode() {
-       return Objects.hash(volumeId, isRented, isArchive, genre,title);
+       return Objects.hash(volumeId,genre,title);
     }
 }
