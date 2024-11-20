@@ -46,7 +46,11 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                 .credential(credential)
                 .applyConnectionString(connectionString)
                 .uuidRepresentation (UuidRepresentation.STANDARD)
-                .codecRegistry(pojoCodecRegistry)
+                .codecRegistry(CodecRegistries.fromRegistries(
+                        MongoClientSettings.getDefaultCodecRegistry(),
+                        CodecRegistries.fromCodecs(new VolumeCodec()),
+                        pojoCodecRegistry
+                ))
                 .build();
         System.out.println("PojoCodecProvider registered");
 

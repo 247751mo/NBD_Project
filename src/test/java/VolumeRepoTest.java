@@ -41,12 +41,12 @@ class VolumeRepoTest {
 
         Volume foundVolume1 = volumeRepo.read(book1.getVolumeId());
         Volume foundVolume2 = volumeRepo.read(monthly1.getVolumeId());
-
-        assertEquals(book1, foundVolume1);
-        assertEquals(monthly1, foundVolume2);
         assertEquals(book1.getTitle(), foundVolume1.getTitle());
         assertEquals(book1.getGenre(), foundVolume1.getGenre());
         assertEquals(book1.isRented(), foundVolume1.isRented());
+        assertEquals(book1, foundVolume1);
+        assertEquals(monthly1, foundVolume2);
+
     }
 
     @Test
