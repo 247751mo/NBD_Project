@@ -5,6 +5,8 @@ import model.Renter;
 import model.Volume;
 import org.junit.jupiter.api.*;
 import repositories.RentRepo;
+import repositories.RenterRepo;
+import repositories.VolumeRepo;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -14,10 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class RentRepoTest {
 
     private static RentRepo rentRepo;
+    private static RenterRepo renterRepo;
+    private static VolumeRepo volumeRepo;
 
     @BeforeAll
     public static void setUp() {
         rentRepo = new RentRepo();
+        renterRepo = new RenterRepo();
+        volumeRepo = new VolumeRepo();
     }
 
     @BeforeEach
@@ -117,17 +123,16 @@ class RentRepoTest {
         Renter renter = new Renter("128", "Taylor", "Chris");
         Book volume = new Book(6,"vol6", "Bookable Volume", "Adventure");
 
-        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
-        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume);
+        renterRepo.create(renter);
+        volumeRepo.create(volume);
+
+
 
         rentRepo.bookVolume(renter, volume, LocalDateTime.now());
 
-        Volume updatedVolume = rentRepo.getDatabase()
-                .getCollection("volumes", Volume.class)
-                .find(Filters.eq("_id", volume.getVolumeId()))
-                .first();
+        Volume foundBook = volumeRepo.read(volume.getVolumeId());
 
-        assertTrue(updatedVolume.isRented());
+        assertTrue(foundBook.isRented());
     }
 
     @Test
