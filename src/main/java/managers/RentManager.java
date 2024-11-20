@@ -57,13 +57,4 @@ public class RentManager {
     public List<Rent> getAllRents() {
         return rentRepo.readAll();
     }
-
-    public Rent createRent(Renter renter, Volume volume, LocalDateTime rentStart) {
-
-        Rent rent = new Rent(renter,volume,LocalDateTime.now());
-
-
-        return rent;
-    }
-
 }
