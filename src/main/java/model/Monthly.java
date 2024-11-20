@@ -18,8 +18,4 @@ public class Monthly extends Publication {
         super(title, genre, publisher);
     }
 
-    @Override
-    public String volumeInfo() {
-        return "Publication: " + super.volumeInfo() + ", Type: Monthly";
-    }
 }

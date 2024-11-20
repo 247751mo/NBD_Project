@@ -24,8 +24,4 @@ public class Book extends Volume {
         this.author = author;
     }
 
-    @Override
-    public String volumeInfo() {
-        return "Book: " + super.volumeInfo() + ", Author: " + author;
-    }
 }

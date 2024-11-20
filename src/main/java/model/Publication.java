@@ -24,8 +24,4 @@ public class Publication extends Volume {
         this.publisher = publisher;
     }
 
-    @Override
-    public String volumeInfo() {
-        return super.volumeInfo() + ", publisher: " + publisher;
-    }
 }

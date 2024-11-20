@@ -18,8 +18,4 @@ public class Weekly extends Publication {
         super(title, genre, publisher);
     }
 
-    @Override
-    public String volumeInfo() {
-        return "Publication: " + super.volumeInfo() + ", Type: Weekly";
-    }
 }

@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
-@BsonDiscriminator(key = "type") // Określa klucz typu w przypadku dziedziczenia
+@BsonDiscriminator(key = "type", value = "Volume") // Określa klucz typu w przypadku dziedziczenia
 public abstract class Volume {
 
     @BsonId // Oznacza pole jako unikalny identyfikator dla MongoDB
