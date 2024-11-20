@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 @Getter
@@ -17,11 +18,14 @@ public class Book extends Volume {
     private String author;
 
     @BsonCreator
-    public Book(@BsonProperty("title") String title,
+    public Book(@BsonId String volumeId,
+                @BsonProperty("title") String title,
                 @BsonProperty("genre") String genre,
                 @BsonProperty("author") String author) {
         super(null, title, genre);
         this.author = author;
     }
-
+    public Book(String title, String genre, String author) {
+        this(null, title, genre, author);
+    }
 }

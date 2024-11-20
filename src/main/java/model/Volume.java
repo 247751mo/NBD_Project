@@ -11,7 +11,6 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 import java.util.UUID;
 
 @Getter
-@NoArgsConstructor
 @BsonDiscriminator(key = "type", value = "Volume") // Określa klucz typu w przypadku dziedziczenia
 public abstract class Volume {
 
