@@ -51,7 +51,7 @@ class RentRepoTest {
         rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume);
 
         rentRepo.create(rent);
-
+        System.out.println("PojoCodecProvider registered"+ renter.getCurrentRentsNumber());
         Rent foundRent = rentRepo.read(rent.getId());
         assertNotNull(foundRent);
         assertEquals(renter.getPersonalID(), foundRent.getRenter().getPersonalID());
