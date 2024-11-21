@@ -68,8 +68,9 @@ public class RentRepo extends AbstractMongoRepository {
             if (existingVolume == null || existingVolume.isRented()) {
                 throw new IllegalStateException("Booking failed: Volume does not exist or is already unavailable.");
             }
-            existingVolume.setRented(true);
-            volumeCollection.replaceOne(clientSession, volumeFilter, existingVolume);
+            Bson updateRented = Updates.set("isRented", true);
+            volumeCollection.updateOne(clientSession, volumeFilter, updateRented);
+
 
             renterCollection.findOneAndUpdate(clientSession, renterFilter, Updates.inc("rents", 1));
 
