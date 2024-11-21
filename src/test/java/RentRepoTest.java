@@ -120,8 +120,9 @@ class RentRepoTest {
 
     @Test
     void testsiemanko(){
-        Book book = new Book(1,"siemanko", "John Smith", "Fantasy");
+        Book book = new Book(10,"siemanko", "John Smith", "Fantasy");
         Renter renter32 = new Renter("32", "John", "Smith");
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter32);
         volumeRepo.create(book);
         Rent testrent1 = new Rent(renter32, book, LocalDateTime.now());
         rentRepo.create(testrent1);
