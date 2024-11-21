@@ -41,7 +41,6 @@ class VolumeRepoTest {
         assertEquals(book1.getVolumeId(), foundVolume.getVolumeId());
         assertEquals(((Book) book1).getAuthor(), ((Book) foundVolume).getAuthor());
 
-        // Porównanie całego obiektu
         assertEquals(book1, foundVolume);
     }
 
