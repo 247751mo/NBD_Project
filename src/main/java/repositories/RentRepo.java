@@ -173,7 +173,7 @@ public class RentRepo extends AbstractMongoRepository {
 
             MongoCollection<Renter> rentersCollection = getDatabase().getCollection("renters", Renter.class);
             Bson renterFilter = Filters.eq("_id", rent.getRenter().getPersonalID());
-            Bson renterUpdate = Updates.inc("currentRentsNumber",1)
+            Bson renterUpdate = Updates.inc("currentRentsNumber",1);
             rentersCollection.updateOne(clientSession,renterFilter, renterUpdate);
 
             clientSession.commitTransaction();
