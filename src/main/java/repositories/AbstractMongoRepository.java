@@ -112,7 +112,6 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
             getDatabase().createCollection("volumes", createCollectionOptions);
         } catch (Exception e) {
             System.err.println("Error creating 'volumes' collection: " + e.getMessage());
-            // Możesz dodać logowanie do systemu lub odpowiednią reakcję
         }
     }
 

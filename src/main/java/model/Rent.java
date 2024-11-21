@@ -47,7 +47,7 @@ public class Rent {
     }
 
     public Rent(Renter renter, Volume volume, LocalDateTime beginTime) {
-        this.id = java.util.UUID.randomUUID().toString(); // Automatyczne generowanie ID
+        this.id = java.util.UUID.randomUUID().toString();
         this.renter = renter;
         this.volume = volume;
         this.beginTime = beginTime != null ? beginTime.truncatedTo(ChronoUnit.SECONDS) : LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);

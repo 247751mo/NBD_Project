@@ -13,7 +13,6 @@ public class VolumeCodec implements Codec<Volume> {
     public void encode(BsonWriter writer, Volume volume, EncoderContext encoderContext) {
         writer.writeStartDocument();
 
-        // Write the type discriminator based on the class
         if (volume instanceof Book) {
             writer.writeString("_type", "book");
         } else if (volume instanceof Monthly) {
@@ -22,12 +21,11 @@ public class VolumeCodec implements Codec<Volume> {
             writer.writeString("_type", "publication");
         }
 
-        // Write common fields for all Volume types
         writer.writeInt32("_id", volume.getVolumeId());
         writer.writeString("title", volume.getTitle());
         writer.writeString("genre", volume.getGenre());
-        writer.writeInt32("isRented", volume.getIsRented()); // Ensure isRented is written
-        writer.writeBoolean("isArchive", volume.isArchive()); // Ensure isArchive is written
+        writer.writeInt32("isRented", volume.getIsRented());
+        writer.writeBoolean("isArchive", volume.isArchive());
 
         // Write subclass-specific fields
         if (volume instanceof Book book) {
@@ -50,8 +48,8 @@ public class VolumeCodec implements Codec<Volume> {
         Integer id = null;
         String title = null;
         String genre = null;
-        int isRented = 0; // Default value for isRented
-        boolean isArchive = false; // Default value for isArchive
+        int isRented = 0;
+        boolean isArchive = false;
         String author = null;
         String publisher = null;
 
@@ -90,7 +88,6 @@ public class VolumeCodec implements Codec<Volume> {
 
         reader.readEndDocument();
 
-        // Instantiate the correct subclass based on the "_type" field
         return switch (type) {
             case "book" -> new Book(id, title, genre, author);
             case "monthly" -> new Monthly(id, title, genre, publisher);

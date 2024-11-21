@@ -16,7 +16,7 @@ import java.util.UUID;
 @BsonDiscriminator(key = "_type", value = "volume")
 public abstract class Volume {
 
-    @BsonId // Oznacza pole jako unikalny identyfikator dla MongoDB
+    @BsonId
     private Integer volumeId;
 
     @BsonProperty("title")
@@ -67,7 +67,7 @@ public abstract class Volume {
                 isArchive == volume.isArchive &&
                 Objects.equals(volumeId, volume.volumeId) &&
                 Objects.equals(title, volume.title) &&
-                Objects.equals(genre, volume.genre);  // Porównuj tylko te właściwości, które są istotne
+                Objects.equals(genre, volume.genre);
 
 
     }
