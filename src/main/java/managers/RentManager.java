@@ -43,13 +43,5 @@ public class RentManager {
         //rentRepo.returnVolume(rent, rentEnd);
     }
 
-    // Fetch rent by its ID
-    public Rent getRent(String rentId) {
-        return rentRepo.read(rentId);
-    }
 
-    // Get all rents
-    public List<Rent> getAllRents() {
-        return rentRepo.readAll();
-    }
 }
