@@ -19,6 +19,8 @@ public class VolumeCodec implements Codec<Volume> {
             writer.writeString("_type", "monthly");
         } else if (volume instanceof Publication) {
             writer.writeString("_type", "publication");
+        } else if (volume instanceof Weekly) {
+            writer.writeString("_type", "weekly");
         }
 
         writer.writeInt32("_id", volume.getVolumeId());
@@ -27,13 +29,15 @@ public class VolumeCodec implements Codec<Volume> {
         writer.writeInt32("isRented", volume.getIsRented());
         writer.writeBoolean("isArchive", volume.isArchive());
 
-        // Write subclass-specific fields
+
         if (volume instanceof Book book) {
             writer.writeString("author", book.getAuthor());
         } else if (volume instanceof Monthly monthly) {
             writer.writeString("publisher", monthly.getPublisher());
         } else if (volume instanceof Publication publication) {
             writer.writeString("publisher", publication.getPublisher());
+        } else if (volume instanceof Weekly) {
+            writer.writeString("_type", "weekly");
         }
 
         writer.writeEndDocument();
