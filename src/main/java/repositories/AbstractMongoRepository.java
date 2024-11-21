@@ -18,6 +18,8 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.conversions.Bson;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +59,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
         mongoClient = MongoClients.create(settings);
         database = mongoClient.getDatabase("rental");
         if (!getDatabase().listCollectionNames().into(new ArrayList<>()).contains("volumes")) {
-            createBooksCollection();
+            createVolumesCollection();
         }
         if (!getDatabase().listCollectionNames().into(new ArrayList<>()).contains("renters")) {
             createRentersCollection();
@@ -94,29 +96,17 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
         }
     }
 
-    private void createBooksCollection() {
-        try {
-            ValidationOptions validationOptions = new ValidationOptions().validator(
-                    Filters.jsonSchema(
-                            new Document("bsonType", "object")
-                                    .append("required", List.of("_id", "title", "genre", "isAvailable"))
-                                    .append("properties", new Document()
-                                            .append("_id", new Document("bsonType", "string"))
-                                            .append("title", new Document("bsonType", "string"))
-                                            .append("genre", new Document("bsonType", "string"))
-                                            .append("isAvailable", new Document("bsonType", "boolean"))
-                                    )
-                    )
-            ).validationAction(ValidationAction.ERROR);
+    private void createVolumesCollection() {
+        Bson isRentedType = Filters.type("isRented", BsonType.BOOLEAN);
+        Bson isRentedYes = Filters.eq("isRented", true);
+        Bson isRentedNo = Filters.eq("isRented", false);
 
-            CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions()
-                    .validationOptions(validationOptions);
+        ValidationOptions validationOptions = new ValidationOptions()
+                .validator(Filters.and(isRentedType, isRentedYes, isRentedNo));
 
-            getDatabase().createCollection("volumes", createCollectionOptions);
-        } catch (Exception e) {
-            System.err.println("Error creating 'volumes' collection: " + e.getMessage());
-            // Możesz dodać logowanie do systemu lub odpowiednią reakcję
-        }
+        CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions()
+                .validationOptions(validationOptions);
+        getDatabase().createCollection("volumes", createCollectionOptions);
     }
 
 
