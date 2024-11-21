@@ -117,15 +117,4 @@ class RentRepoTest {
         rents = rentRepo.readAll();
         assertEquals(initialSize + 2, rents.size());
     }
-
-    @Test
-    void testsiemanko(){
-        Book book = new Book(10,"siemanko", "John Smith", "Fantasy");
-        Renter renter32 = new Renter("32", "John", "Smith");
-        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter32);
-        volumeRepo.create(book);
-        Rent testrent1 = new Rent(renter32, book, LocalDateTime.now());
-        rentRepo.create(testrent1);
-        System.out.println("PojoCodecProvider registered"+ renter32.getCurrentRentsNumber());
-    }
 }
