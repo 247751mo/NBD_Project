@@ -36,5 +36,10 @@ public class RentManager {
 
 
     }
+    public void returnVolume(String rentId, LocalDateTime rentEnd) {
+        Rent rent = rentRepo.read(rentId);
+        rent.endRent();
+    }
+
 
 }

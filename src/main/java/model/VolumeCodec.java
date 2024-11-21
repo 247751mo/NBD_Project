@@ -13,17 +13,13 @@ public class VolumeCodec implements Codec<Volume> {
     public void encode(BsonWriter writer, Volume volume, EncoderContext encoderContext) {
         writer.writeStartDocument();
 
-
         if (volume instanceof Book) {
             writer.writeString("_type", "book");
         } else if (volume instanceof Monthly) {
             writer.writeString("_type", "monthly");
         } else if (volume instanceof Publication) {
             writer.writeString("_type", "publication");
-        } else if (volume instanceof Weekly) {
-            writer.writeString("_type", "weekly");
         }
-
 
         writer.writeInt32("_id", volume.getVolumeId());
         writer.writeString("title", volume.getTitle());
@@ -31,17 +27,14 @@ public class VolumeCodec implements Codec<Volume> {
         writer.writeInt32("isRented", volume.getIsRented());
         writer.writeBoolean("isArchive", volume.isArchive());
 
-
+        // Write subclass-specific fields
         if (volume instanceof Book book) {
             writer.writeString("author", book.getAuthor());
         } else if (volume instanceof Monthly monthly) {
             writer.writeString("publisher", monthly.getPublisher());
         } else if (volume instanceof Publication publication) {
             writer.writeString("publisher", publication.getPublisher());
-        } else if (volume instanceof Weekly) {
-            writer.writeString("_type", "weekly");
         }
-
 
         writer.writeEndDocument();
     }
@@ -50,7 +43,7 @@ public class VolumeCodec implements Codec<Volume> {
     public Volume decode(BsonReader reader, DecoderContext decoderContext) {
         reader.readStartDocument();
 
-
+        // Variables to hold the field values
         String type = null;
         Integer id = null;
         String title = null;
@@ -94,7 +87,6 @@ public class VolumeCodec implements Codec<Volume> {
         }
 
         reader.readEndDocument();
-
 
         return switch (type) {
             case "book" -> new Book(id, title, genre, author);
