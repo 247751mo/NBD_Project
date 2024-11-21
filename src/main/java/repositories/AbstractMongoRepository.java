@@ -80,7 +80,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                                             .append("isArchived", new Document("bsonType", "bool"))
                                             .append("currentRentsNumber", new Document("bsonType", "int")
                                                     .append("minimum", 0)
-                                                    .append("maximum", 10))
+                                                    .append("maximum", 5))
                                     )
                     )
             ).validationAction(ValidationAction.ERROR);
