@@ -91,6 +91,7 @@ public class VolumeCodec implements Codec<Volume> {
         return switch (type) {
             case "book" -> new Book(id, title, genre, author);
             case "monthly" -> new Monthly(id, title, genre, publisher);
+            case "weekly" -> new Weekly(id, title, genre, publisher);
             case "publication" -> new Publication(id, title, genre, publisher);
             default -> throw new IllegalArgumentException("Unsupported volume type: " + type);
         };

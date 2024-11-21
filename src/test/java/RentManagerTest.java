@@ -46,12 +46,13 @@ public class RentManagerTest {
         rentRepo.getDatabase().getCollection("volumes", Volume.class).drop();
         rentRepo.getDatabase().getCollection("renters", Renter.class).drop();
         Book volume = new Book(2, "vol2", "Another Volume", "Fantasy");
+        volume.setIsRented(1);
         Renter renter = new Renter("124", "Doe", "Jane");
 
         volumeRepo.create(volume);
-        renterRepo.create(renter);
-        volume.setIsRented(1);
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
 
+        Rent rent = new Rent(renter, volume, LocalDateTime.now());
         Exception exception = assertThrows(Exception.class, () -> rentManager.rentVolume(renter, volume, LocalDateTime.now()));
 
         String expected = "Volume is already rented: " + volume.getTitle();
@@ -94,7 +95,7 @@ public class RentManagerTest {
             Rent testRent6 = new Rent(renter, volume6, LocalDateTime.now());
             rentRepo.create(testRent6);
         } catch (com.mongodb.MongoWriteException e) {
-            exception = e; // Zapisujemy wyjątek
+            exception = e;
             System.out.println("Exception caught: " + e.getMessage());
         }
 
