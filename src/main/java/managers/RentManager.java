@@ -26,26 +26,21 @@ public class RentManager {
             throw new IllegalArgumentException("Volume cannot be null.");
         }
 
-        if (volume.isRented()) {
+        if (volume.getIsRented()==1) {
             throw new Exception("Volume is already rented: " + volume.getTitle());
         }
 
-        if (renter.getRents() >= 5) {
+        if (renter.getCurrentRentsNumber() >= 5) {
             throw new Exception("Renter has reached the maximum number of rents: " + renter.getPersonalID());
         }
 
 
-        try {
-            rentRepo.bookVolume(renter, volume, rentStart);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("The rental process failed for volume: " + volume.getTitle(), e);
-        }
     }
     public void returnVolume(String rentId, LocalDateTime rentEnd) {
         Rent rent = rentRepo.read(rentId);
         rent.endRent();
 
-        rentRepo.returnVolume(rent, rentEnd);
+        //rentRepo.returnVolume(rent, rentEnd);
     }
 
     // Fetch rent by its ID

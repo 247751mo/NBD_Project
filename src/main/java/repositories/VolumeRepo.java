@@ -39,7 +39,7 @@ public class VolumeRepo extends AbstractMongoRepository {
         Bson updates = Updates.combine(
                 Updates.set("title", volume.getTitle()),
                 Updates.set("genre", volume.getGenre()),
-                Updates.set("rentedStatus", volume.isRented()),
+                Updates.set("rentedStatus", volume.getIsRented()),
                 Updates.set("archivedStatus", volume.isArchive())
         );
         collection.findOneAndUpdate(filter, updates);

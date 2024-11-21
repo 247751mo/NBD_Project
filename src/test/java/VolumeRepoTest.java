@@ -72,7 +72,7 @@ class VolumeRepoTest {
 
         book1.setTitle("NowyTytul");
         book1.setGenre("ificS");
-        book1.setRented(true);
+        book1.setIsRented(1);
 
         volumeRepo.update(book1);
 

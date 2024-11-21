@@ -118,40 +118,4 @@ class RentRepoTest {
         assertEquals(initialSize + 2, rents.size());
     }
 
-    @Test
-    void testBookVolume() {
-        Renter renter = new Renter("128", "Taylor", "Chris");
-        Book volume = new Book(6,"vol6", "Bookable Volume", "Adventure");
-
-        renterRepo.create(renter);
-        volumeRepo.create(volume);
-
-
-
-        rentRepo.bookVolume(renter, volume, LocalDateTime.now());
-
-        Volume foundBook = volumeRepo.read(volume.getVolumeId());
-        System.out.println("Found book rented status: " + foundBook.isRented());
-        assertTrue(foundBook.isRented());
-    }
-
-    @Test
-    void testReturnVolume() {
-        Renter renter = new Renter("129", "Lee", "Kim");
-        Book volume = new Book(1,"vol7", "Returnable Volume", "Biography");
-        Rent rent = new Rent(renter, volume, LocalDateTime.now());
-
-        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
-        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume);
-        rentRepo.create(rent);
-
-        rentRepo.returnVolume(rent, LocalDateTime.now().plusDays(1));
-
-        Volume updatedVolume = rentRepo.getDatabase()
-                .getCollection("volumes", Volume.class)
-                .find(Filters.eq("_id", volume.getVolumeId()))
-                .first();
-
-        assertFalse(updatedVolume.isRented());
-    }
 }

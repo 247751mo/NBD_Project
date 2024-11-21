@@ -29,7 +29,7 @@ public class VolumeManager implements Serializable {
     public void removeVolume(Volume volume) {
         if (volume != null) {
             volume.setArchive(true);
-            volume.setRented(false);
+            volume.setIsRented(0);
             volumeRepo.update(volume);
         }
     }

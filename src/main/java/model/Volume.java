@@ -29,7 +29,7 @@ public abstract class Volume {
 
     @BsonProperty("isRented")
     @Setter
-    private boolean isRented;
+    private int isRented;
 
     @BsonProperty("isArchive")
     @Setter
@@ -52,7 +52,7 @@ public abstract class Volume {
         this.volumeId = volumeId;
         this.title = title;
         this.genre = genre;
-        this.isRented = false;
+        this.isRented = 0;
         this.isArchive = false;
     }
 

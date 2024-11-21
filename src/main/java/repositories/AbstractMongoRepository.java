@@ -104,7 +104,8 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                                             .append("_id", new Document("bsonType", "string"))
                                             .append("title", new Document("bsonType", "string"))
                                             .append("genre", new Document("bsonType", "string"))
-                                            .append("isAvailable", new Document("bsonType", "boolean"))
+                                            .append("isRented", new Document("bsonType", "boolean"))
+
                                     )
                     )
             ).validationAction(ValidationAction.ERROR);

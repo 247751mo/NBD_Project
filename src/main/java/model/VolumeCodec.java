@@ -26,7 +26,7 @@ public class VolumeCodec implements Codec<Volume> {
         writer.writeInt32("_id", volume.getVolumeId());
         writer.writeString("title", volume.getTitle());
         writer.writeString("genre", volume.getGenre());
-        writer.writeBoolean("isRented", volume.isRented()); // Ensure isRented is written
+        writer.writeInt32("isRented", volume.getIsRented()); // Ensure isRented is written
         writer.writeBoolean("isArchive", volume.isArchive()); // Ensure isArchive is written
 
         // Write subclass-specific fields
@@ -50,7 +50,7 @@ public class VolumeCodec implements Codec<Volume> {
         Integer id = null;
         String title = null;
         String genre = null;
-        boolean isRented = false; // Default value for isRented
+        int isRented = 0; // Default value for isRented
         boolean isArchive = false; // Default value for isArchive
         String author = null;
         String publisher = null;
@@ -71,7 +71,7 @@ public class VolumeCodec implements Codec<Volume> {
                     genre = reader.readString();
                     break;
                 case "isRented":
-                    isRented = reader.readBoolean();
+                    isRented = reader.readInt32();
                     break;
                 case "isArchive":
                     isArchive = reader.readBoolean();

@@ -31,9 +31,9 @@ public class Renter {
     @Setter
     private boolean isArchived;
 
-    @BsonProperty("rents")
+    @BsonProperty("currentRentsNumber")
     @Setter
-    private int rents;
+    private int currentRentsNumber;
 
     @BsonCreator
     public Renter(@BsonProperty("personalID") String personalID,
@@ -45,7 +45,7 @@ public class Renter {
         this.lastName = lastName;
       /*  this.renterType = renterType;*/
         this.isArchived = false;
-        this.rents = 0;
+        this.currentRentsNumber = 0;
     }
     @Override
     public boolean equals(Object o) {
@@ -53,7 +53,7 @@ public class Renter {
         if (o == null || getClass() != o.getClass()) return false;
         Renter renter = (Renter) o;
         return isArchived == renter.isArchived &&
-                rents == renter.rents &&
+                currentRentsNumber == renter.currentRentsNumber &&
                 Objects.equals(personalID, renter.personalID) &&
                 Objects.equals(firstName, renter.firstName) &&
                 Objects.equals(lastName, renter.lastName);
@@ -62,13 +62,13 @@ public class Renter {
 
     @Override
     public int hashCode() {
-        return Objects.hash(personalID, firstName, lastName, isArchived, rents);
+        return Objects.hash(personalID, firstName, lastName, isArchived, currentRentsNumber);
     }
 
     public int getMaxVolumes(int volumes) {
         int maxVolumes = this.renterType.maxVolumes(volumes);
 
-        if (this.rents >= maxVolumes) {
+        if (this.currentRentsNumber >= maxVolumes) {
             return maxVolumes;
         }
 
