@@ -18,8 +18,6 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
-import org.bson.conversions.Bson;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,17 +95,28 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
     }
 
     private void createVolumesCollection() {
-        Bson isRentedType = Filters.type("isRented", BsonType.BOOLEAN);
-        Bson isRentedYes = Filters.eq("isRented", true);
-        Bson isRentedNo = Filters.eq("isRented", false);
+        try {
+            ValidationOptions validationOptions = new ValidationOptions().validator(
+                    Filters.jsonSchema(
+                            new Document("bsonType", "object")
+                                    .append("required", List.of("_id", "title", "genre", "isAvailable"))
+                                    .append("properties", new Document()
+                                            .append("_id", new Document("bsonType", "string"))
+                                            .append("title", new Document("bsonType", "string"))
+                                            .append("genre", new Document("bsonType", "string"))
+                                            .append("isAvailable", new Document("bsonType", "boolean"))
+                                    )
+                    )
+            ).validationAction(ValidationAction.ERROR);
 
-        ValidationOptions validationOptions = new ValidationOptions()
-                .validator(Filters.type("isRented", BsonType.BOOLEAN));
+            CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions()
+                    .validationOptions(validationOptions);
 
-
-        CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions()
-                .validationOptions(validationOptions);
-        getDatabase().createCollection("volumes", createCollectionOptions);
+            getDatabase().createCollection("volumes", createCollectionOptions);
+        } catch (Exception e) {
+            System.err.println("Error creating 'volumes' collection: " + e.getMessage());
+            // Możesz dodać logowanie do systemu lub odpowiednią reakcję
+        }
     }
 
 
