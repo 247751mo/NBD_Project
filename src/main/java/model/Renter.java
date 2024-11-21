@@ -12,7 +12,6 @@ import java.util.Objects;
 public class Renter {
 
     @BsonId
-    @Getter
     private String personalID;
 
     @BsonProperty("firstName")
