@@ -9,14 +9,14 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.util.Objects;
-import java.util.UUID;
+
 
 @Getter
 @NoArgsConstructor
 @BsonDiscriminator(key = "_type", value = "volume")
 public abstract class Volume {
 
-    @BsonId // Oznacza pole jako unikalny identyfikator dla MongoDB
+    @BsonId
     private Integer volumeId;
 
     @BsonProperty("title")

@@ -1,7 +1,6 @@
 import model.Book;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,7 +20,7 @@ public class RentManagerTest {
     private static RenterRepo renterRepo;
     private static VolumeRepo volumeRepo;
     private static RentManager rentManager;
-    private Rent rentTest;
+
 
     @BeforeAll
     public static void setUp() {
@@ -51,7 +50,7 @@ public class RentManagerTest {
 
         volumeRepo.create(volume);
         renterRepo.create(renter);
-        volume.setIsRented(1); // Volume is already rented
+        volume.setIsRented(1);
 
         Exception exception = assertThrows(Exception.class, () -> rentManager.rentVolume(renter, volume, LocalDateTime.now()));
 
@@ -90,17 +89,15 @@ public class RentManagerTest {
         rentRepo.create(testRent4);
         rentRepo.create(testRent5);
 
-        // Próbujemy wypożyczyć szóstą książkę i przechwytujemy wyjątek
         Exception exception = null;
         try {
             Rent testRent6 = new Rent(renter, volume6, LocalDateTime.now());
             rentRepo.create(testRent6);
         } catch (com.mongodb.MongoWriteException e) {
-            exception = e; // Zapisujemy wyjątek
+            exception = e;
             System.out.println("Exception caught: " + e.getMessage());
         }
 
-        // Sprawdzamy, czy wyjątek został rzucony
         assertNotNull(exception, "Expected a MongoWriteException, but none was thrown.");
         assertTrue(exception instanceof com.mongodb.MongoWriteException, "Expected exception to be MongoWriteException.");
         assertTrue(exception.getMessage().contains("comparison failed"), "Exception message should indicate validation failure.");
