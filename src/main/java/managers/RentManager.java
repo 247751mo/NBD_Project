@@ -1,11 +1,10 @@
 package managers;
 
-import model.Rent;
+
 import model.Renter;
 import model.Volume;
 import repositories.RentRepo;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class RentManager {
     private final RentRepo rentRepo;
@@ -36,10 +35,5 @@ public class RentManager {
 
 
     }
-    public void returnVolume(String rentId, LocalDateTime rentEnd) {
-        Rent rent = rentRepo.read(rentId);
-        rent.endRent();
-    }
-
 
 }

@@ -20,7 +20,7 @@ public class RentManagerTest {
     private static RenterRepo renterRepo;
     private static VolumeRepo volumeRepo;
     private static RentManager rentManager;
-    private Rent rentTest;
+
 
     @BeforeAll
     public static void setUp() {

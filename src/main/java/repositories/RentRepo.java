@@ -5,6 +5,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import model.Rent;
 import model.Renter;
 import model.Volume;
@@ -49,7 +50,11 @@ public class RentRepo extends AbstractMongoRepository {
             MongoCollection<Renter> rentersCollection = getDatabase().getCollection("renters", Renter.class);
             Bson renterFilter = Filters.eq("_id", rent.getRenter().getPersonalID());
             Bson renterUpdate = Updates.inc("currentRentsNumber",1);
-            rentersCollection.updateOne(clientSession,renterFilter, renterUpdate);
+            UpdateResult result = rentersCollection.updateOne(clientSession,renterFilter, renterUpdate);
+            System.out.println("Update result: " + result.getModifiedCount());
+
+            Renter renterAfter = rentersCollection.find(renterFilter).first();
+            System.out.println("After update: " + renterAfter.getCurrentRentsNumber());
 
             clientSession.commitTransaction();
         } catch (Exception e) {
@@ -76,17 +81,6 @@ public class RentRepo extends AbstractMongoRepository {
             );
             collection.findOneAndUpdate(clientSession, rentFilter, rentUpdates);
 
-            if (rent.getEndTime() != null) {
-                MongoCollection<Volume> volumeCollection = getDatabase().getCollection("volumes", Volume.class);
-                Bson volumeFilter = Filters.eq("_id", rent.getVolume().getVolumeId());
-                Bson volumeUpdates = Updates.inc("isRented", -1);
-                volumeCollection.updateOne(clientSession, volumeFilter, volumeUpdates);
-
-                MongoCollection<Renter> rentersCollection = getDatabase().getCollection("renters", Renter.class);
-                Bson renterFilter = Filters.eq("_id", rent.getRenter().getPersonalID());
-                Bson renterUpdates = Updates.inc("currentRentsNumber", -1);
-                rentersCollection.updateOne(clientSession, renterFilter, renterUpdates);
-            }
 
             clientSession.commitTransaction();
         } catch (Exception e) {
@@ -110,7 +104,7 @@ public class RentRepo extends AbstractMongoRepository {
             if (rent.getEndTime() != null) {
                 MongoCollection<Volume> volumeCollection = getDatabase().getCollection("volumes", Volume.class);
                 Bson vmFilter = Filters.eq("_id", rent.getVolume().getVolumeId());
-                Bson updates = Updates.inc("isRented", 1);
+                Bson updates = Updates.inc("isRented", -1);
                 volumeCollection.updateOne(clientSession, vmFilter, updates);
 
                 MongoCollection<Renter> rentersCollection = getDatabase().getCollection("renters", Renter.class);

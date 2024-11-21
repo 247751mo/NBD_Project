@@ -26,6 +26,7 @@ public class Renter {
     @Setter
     private boolean isArchived;
 
+    @Setter
     @BsonProperty("currentRentsNumber")
     private int currentRentsNumber;
 

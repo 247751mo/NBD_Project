@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonId;
-import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.time.LocalDateTime;
@@ -53,14 +52,5 @@ public class Rent {
         this.beginTime = beginTime != null ? beginTime.truncatedTo(ChronoUnit.SECONDS) : LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     }
 
-    @BsonIgnore
-    public void endRent()
-    {
-        setEndTime(LocalDateTime.now());
-    }
 
-    @BsonIgnore
-    public long getRentDuration() {
-        return java.time.Duration.between(beginTime, endTime).toDays();
-    }
 }
