@@ -177,6 +177,7 @@ public class RentRepo extends AbstractMongoRepository {
             rentersCollection.updateOne(clientSession, renterFilter, renterUpdates);
             Renter updatedRenter = rentersCollection.find(renterFilter).first();
             rent.getRenter().setCurrentRentsNumber(updatedRenter.getCurrentRentsNumber());
+            getDatabase().getCollection("renters").find(filter).forEach(doc ->System.out.println(doc.toJson()));
 
             clientSession.commitTransaction();
         } catch (Exception e) {
