@@ -12,8 +12,13 @@ import java.util.ArrayList;
 public class VolumeRepo extends AbstractMongoRepository {
 
     public void create(Volume volume) {
-        MongoCollection<Volume> collection = getDatabase().getCollection("volumes", Volume.class);
-        collection.insertOne(volume);
+        try {
+            MongoCollection<Volume> collection = getDatabase().getCollection("volumes", Volume.class);
+            collection.insertOne(volume);
+            System.out.println("Inserted volume with ID: " + volume.getVolumeId());
+        } catch (Exception e) {
+            throw new RuntimeException("Error inserting volume: " + e.getMessage(), e);
+        }
     }
 
     public Volume read(Object id) {

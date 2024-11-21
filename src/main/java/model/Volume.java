@@ -40,6 +40,9 @@ public abstract class Volume {
                   @BsonProperty("title") String title,
                   @BsonProperty("genre") String genre) {
 
+        if (volumeId == null) {
+            throw new IllegalArgumentException("Volume ID cannot be null!");
+        }
         if (title == null || title.isEmpty()) {
             throw new IllegalArgumentException("Invalid title (can't be empty)!");
         }
