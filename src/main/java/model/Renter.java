@@ -23,27 +23,20 @@ public class Renter {
     @Setter
     private String lastName;
 
-    @BsonProperty("renterType")
-    @Setter
-    private RenterType renterType;
-
     @BsonProperty("isArchived")
     @Setter
     private boolean isArchived;
 
     @BsonProperty("currentRentsNumber")
-    @Setter
     private int currentRentsNumber;
 
     @BsonCreator
     public Renter(@BsonProperty("personalID") String personalID,
                   @BsonProperty("firstName") String firstName,
-                  @BsonProperty("lastName") String lastName/*,
-                  @BsonProperty("renterType") RenterType renterType*/){
+                  @BsonProperty("lastName") String lastName){
         this.personalID = personalID;
         this.firstName = firstName;
         this.lastName = lastName;
-      /*  this.renterType = renterType;*/
         this.isArchived = false;
         this.currentRentsNumber = 0;
     }

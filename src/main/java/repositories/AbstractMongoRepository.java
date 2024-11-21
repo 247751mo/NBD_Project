@@ -32,10 +32,9 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                     PojoCodecProvider.builder()
                             .automatic(true)
                             .conventions(Conventions.DEFAULT_CONVENTIONS)
-                            .register(Book.class,Card.class,Monthly.class, NoCard.class, Publication.class, Rent.class, Renter.class, RenterType.class,Volume.class,Weekly.class)
+                            .register(Book.class, Monthly.class, Publication.class, Rent.class, Renter.class,Volume.class,Weekly.class)
                             .build()
-            ),
-            CodecRegistries.fromCodecs(new RenterTypeCodec())
+            )
     );
 
     private MongoClient mongoClient;
