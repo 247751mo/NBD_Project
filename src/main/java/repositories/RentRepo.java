@@ -68,15 +68,17 @@ public class RentRepo extends AbstractMongoRepository {
             if (existingVolume == null || existingVolume.isRented()) {
                 throw new IllegalStateException("Booking failed: Volume does not exist or is already unavailable.");
             }
-            Bson updateRented = Updates.set("isRented", true);
-            volumeCollection.updateOne(clientSession, volumeFilter, updateRented);
 
+            // Update `isRented` directly in the database
+            volumeCollection.updateOne(clientSession, volumeFilter, Updates.set("isRented", true));
 
+            // Increment rent count for the renter
             renterCollection.findOneAndUpdate(clientSession, renterFilter, Updates.inc("rents", 1));
 
             Renter updatedRenter = renterCollection.find(renterFilter).first();
             Volume updatedVolume = volumeCollection.find(volumeFilter).first();
 
+            // Insert the rent record
             Rent rent = new Rent(updatedRenter, updatedVolume, beginTime);
             rentCollection.insertOne(clientSession, rent);
 
@@ -85,6 +87,7 @@ public class RentRepo extends AbstractMongoRepository {
             throw new RuntimeException("Booking volume failed", e);
         }
     }
+
 
 
 

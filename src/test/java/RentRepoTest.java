@@ -131,7 +131,7 @@ class RentRepoTest {
         rentRepo.bookVolume(renter, volume, LocalDateTime.now());
 
         Volume foundBook = volumeRepo.read(volume.getVolumeId());
-
+        System.out.println("Found book rented status: " + foundBook.isRented());
         assertTrue(foundBook.isRented());
     }
 
