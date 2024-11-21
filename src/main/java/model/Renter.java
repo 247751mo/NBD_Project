@@ -65,13 +65,5 @@ public class Renter {
         return Objects.hash(personalID, firstName, lastName, isArchived, currentRentsNumber);
     }
 
-    public int getMaxVolumes(int volumes) {
-        int maxVolumes = this.renterType.maxVolumes(volumes);
 
-        if (this.currentRentsNumber >= maxVolumes) {
-            return maxVolumes;
-        }
-
-        return Math.min(maxVolumes, volumes);
-    }
 }

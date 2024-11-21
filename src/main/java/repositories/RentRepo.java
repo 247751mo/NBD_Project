@@ -175,6 +175,8 @@ public class RentRepo extends AbstractMongoRepository {
             Bson renterFilter = Filters.eq("_id", rent.getRenter().getPersonalID());
             Bson renterUpdates = Updates.inc("currentRentsNumber", 1);
             rentersCollection.updateOne(clientSession, renterFilter, renterUpdates);
+            Renter updatedRenter = rentersCollection.find(renterFilter).first();
+            rent.getRenter().setCurrentRentsNumber(updatedRenter.getCurrentRentsNumber());
 
             clientSession.commitTransaction();
         } catch (Exception e) {
