@@ -26,12 +26,14 @@ public class VolumeCodec implements Codec<Volume> {
         writer.writeInt32("_id", volume.getVolumeId());
         writer.writeString("title", volume.getTitle());
         writer.writeString("genre", volume.getGenre());
+        writer.writeBoolean("isRented", volume.isRented()); // Ensure isRented is written
+        writer.writeBoolean("isArchive", volume.isArchive()); // Ensure isArchive is written
 
         // Write subclass-specific fields
         if (volume instanceof Book book) {
             writer.writeString("author", book.getAuthor());
         } else if (volume instanceof Monthly monthly) {
-            writer.writeString("editor", monthly.getPublisher());
+            writer.writeString("publisher", monthly.getPublisher());
         } else if (volume instanceof Publication publication) {
             writer.writeString("publisher", publication.getPublisher());
         }
@@ -43,18 +45,15 @@ public class VolumeCodec implements Codec<Volume> {
     public Volume decode(BsonReader reader, DecoderContext decoderContext) {
         reader.readStartDocument();
 
+        // Variables to hold the field values
         String type = null;
         Integer id = null;
         String title = null;
         String genre = null;
-        boolean isAvailable = false;
-        boolean isRented = false;
+        boolean isRented = false; // Default value for isRented
+        boolean isArchive = false; // Default value for isArchive
         String author = null;
-        int pageCount = 0;
-        String editor = null;
-        String publicationMonth = null;
         String publisher = null;
-        int issueNumber = 0;
 
         while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
             String fieldName = reader.readName();
@@ -71,29 +70,17 @@ public class VolumeCodec implements Codec<Volume> {
                 case "genre":
                     genre = reader.readString();
                     break;
-                case "isAvailable":
-                    isAvailable = reader.readBoolean();
-                    break;
                 case "isRented":
                     isRented = reader.readBoolean();
+                    break;
+                case "isArchive":
+                    isArchive = reader.readBoolean();
                     break;
                 case "author":
                     author = reader.readString();
                     break;
-                case "pageCount":
-                    pageCount = reader.readInt32();
-                    break;
-                case "editor":
-                    editor = reader.readString();
-                    break;
-                case "publicationMonth":
-                    publicationMonth = reader.readString();
-                    break;
                 case "publisher":
                     publisher = reader.readString();
-                    break;
-                case "issueNumber":
-                    issueNumber = reader.readInt32();
                     break;
                 default:
                     reader.skipValue();
@@ -108,7 +95,7 @@ public class VolumeCodec implements Codec<Volume> {
             case "book" -> new Book(id, title, genre, author);
             case "monthly" -> new Monthly(id, title, genre, publisher);
             case "publication" -> new Publication(id, title, genre, publisher);
-            case null, default -> throw new IllegalArgumentException("Unsupported volume type: " + type);
+            default -> throw new IllegalArgumentException("Unsupported volume type: " + type);
         };
     }
 

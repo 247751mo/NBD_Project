@@ -102,7 +102,8 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
         Bson isRentedNo = Filters.eq("isRented", false);
 
         ValidationOptions validationOptions = new ValidationOptions()
-                .validator(Filters.and(isRentedType, isRentedYes, isRentedNo));
+                .validator(Filters.type("isRented", BsonType.BOOLEAN));
+
 
         CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions()
                 .validationOptions(validationOptions);
