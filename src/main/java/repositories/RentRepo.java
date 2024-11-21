@@ -5,6 +5,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import model.Rent;
 import model.Renter;
 import model.Volume;
@@ -174,7 +175,11 @@ public class RentRepo extends AbstractMongoRepository {
             MongoCollection<Renter> rentersCollection = getDatabase().getCollection("renters", Renter.class);
             Bson renterFilter = Filters.eq("_id", rent.getRenter().getPersonalID());
             Bson renterUpdate = Updates.inc("currentRentsNumber",1);
-            rentersCollection.updateOne(clientSession,renterFilter, renterUpdate);
+            UpdateResult result = rentersCollection.updateOne(clientSession,renterFilter, renterUpdate);
+            System.out.println("Update result: " + result.getModifiedCount());
+
+            Renter renterAfter = rentersCollection.find(renterFilter).first();
+            System.out.println("After update: " + renterAfter.getCurrentRentsNumber());
 
             clientSession.commitTransaction();
         } catch (Exception e) {
