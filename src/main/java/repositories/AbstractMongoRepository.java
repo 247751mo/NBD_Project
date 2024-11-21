@@ -68,7 +68,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
             ValidationOptions validationOptions = new ValidationOptions().validator(
                     Filters.jsonSchema(
                             new Document("bsonType", "object")
-                                    .append("required", List.of("_id", "firstName", "lastName", "renterType", "rents"))
+                                    .append("required", List.of("_id", "firstName", "lastName", "currentRentsNumber"))
                                     .append("properties", new Document()
                                             .append("_id", new Document("bsonType", "string"))
                                             .append("firstName", new Document("bsonType", "string"))
@@ -77,8 +77,8 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                                                     .append("required", List.of("_type"))
                                                     .append("properties", new Document()
                                                             .append("_type", new Document("bsonType", "string"))))
-                                            .append("isArchived", new Document("bsonType", "boolean"))
-                                            .append("rents", new Document("bsonType", "int")
+                                            .append("isArchived", new Document("bsonType", "bool"))
+                                            .append("currentRentsNumber", new Document("bsonType", "int")
                                                     .append("minimum", 0)
                                                     .append("maximum", 10))
                                     )
@@ -99,12 +99,13 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
             ValidationOptions validationOptions = new ValidationOptions().validator(
                     Filters.jsonSchema(
                             new Document("bsonType", "object")
-                                    .append("required", List.of("_id", "title", "genre", "isAvailable"))
+                                    .append("required", List.of("_id", "title", "genre"))
                                     .append("properties", new Document()
-                                            .append("_id", new Document("bsonType", "string"))
+                                            .append("_id", new Document("bsonType", "int"))
                                             .append("title", new Document("bsonType", "string"))
                                             .append("genre", new Document("bsonType", "string"))
-                                            .append("isRented", new Document("bsonType", "boolean"))
+                                            .append("isRented", new Document("bsonType", "int"))
+                                            .append("isAvailable", new Document("bsonType", "bool"))
 
                                     )
                     )
