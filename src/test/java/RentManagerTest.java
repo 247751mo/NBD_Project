@@ -84,13 +84,18 @@ public class RentManagerTest {
         volumeRepo.create(volume6);
         renterRepo.create(renter);
         Rent testRent1 = new Rent(renter, volume1, LocalDateTime.now());
+        System.out.println("PojoCodecProvider registered"+ renter.getCurrentRentsNumber());
         Rent testRent2 = new Rent(renter, volume2, LocalDateTime.now());
+        System.out.println("PojoCodecProvider registered"+ renter.getCurrentRentsNumber());
         Rent testRent3 = new Rent(renter, volume3, LocalDateTime.now());
+        System.out.println("PojoCodecProvider registered"+ renter.getCurrentRentsNumber());
         Rent testRent4 = new Rent(renter, volume4, LocalDateTime.now());
+        System.out.println("PojoCodecProvider registered"+ renter.getCurrentRentsNumber());
         Rent testRent5 = new Rent(renter, volume5, LocalDateTime.now());
+        System.out.println("PojoCodecProvider registered"+ renter.getCurrentRentsNumber());
         Rent testRent6 = new Rent(renter, volume6, LocalDateTime.now());
         Exception exception = assertThrows(Exception.class, () -> rentManager.rentVolume(renter, volume6, LocalDateTime.now()));
-
+        System.out.println("PojoCodecProvider registered"+ renter.getCurrentRentsNumber());
         String expected = "Renter has reached the maximum number of rents: " + renter.getPersonalID();
         String actual = exception.getMessage();
 
