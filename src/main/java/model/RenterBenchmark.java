@@ -1,6 +1,6 @@
 package model;
 
-public class Benchmark {
+public class RenterBenchmark {
     public static void main(String[] args) throws Exception {
         org.openjdk.jmh.Main.main(args);
     }
