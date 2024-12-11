@@ -9,34 +9,39 @@ import managers.RentManager;
 import model.Rent;
 import model.Renter;
 import model.Volume;
-import repositories.MongoRenterRepo;
-import repositories.MongoVolumeRepo;
+import repositories.*;
 
 import java.time.LocalDateTime;
 
 public class RentManagerTest {
-    private static RentRepo rentRepo;
-    private static MongoRenterRepo mongoRenterRepo;
+    private static MongoRentRepo rentRepo;
+    private static final RedisRenterRepo redisRepo = new RedisRenterRepo();
+    private static MongoRenterRepo mongoRepo;
+    private static final RenterRepo renterRepo = new RenterRepo(redisRepo, mongoRepo);
     private static MongoVolumeRepo mongoVolumeRepo;
     private static RentManager rentManager;
 
 
+
     @BeforeAll
     public static void setUp() {
-        rentRepo = new RentRepo();
-        mongoRenterRepo = new MongoRenterRepo();
+        rentRepo = new MongoRentRepo();
+        mongoRepo = new MongoRenterRepo();
         mongoVolumeRepo = new MongoVolumeRepo();
         rentManager = new RentManager(rentRepo);
+        redisRepo.clearCache();
     }
 
     @AfterAll
     public static void tearDown() {
         rentRepo.getDatabase().getCollection("rents", Rent.class).drop();
         mongoVolumeRepo.getDatabase().getCollection("volumes", Volume.class).drop();
-        mongoRenterRepo.getDatabase().getCollection("renters", Renter.class).drop();
+        mongoRepo.getDatabase().getCollection("renters", Renter.class).drop();
         rentRepo.close();
-        mongoRenterRepo.close();
+        mongoRepo.close();
         mongoVolumeRepo.close();
+        redisRepo.clearCache();
+        redisRepo.close();
     }
 
     @Test

@@ -3,14 +3,15 @@ package managers;
 
 import model.Renter;
 import model.Volume;
+import repositories.MongoRentRepo;
 
 import java.time.LocalDateTime;
 
 public class RentManager {
-    private final RentRepo rentRepo;
+    private final MongoRentRepo rentRepo;
 
 
-    public RentManager(RentRepo rentRepo) {
+    public RentManager(MongoRentRepo rentRepo) {
         if (rentRepo == null) {
             throw new IllegalArgumentException("rentRepo cannot be null");
         }
