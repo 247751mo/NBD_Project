@@ -1,5 +1,7 @@
 package model;
 
+import jakarta.json.bind.annotation.JsonbCreator;
+import jakarta.json.bind.annotation.JsonbProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonCreator;
@@ -14,26 +16,31 @@ public class Renter {
     @BsonId
     private String personalID;
 
+    @JsonbProperty("firstName")
     @BsonProperty("firstName")
     @Setter
     private String firstName;
 
+    @JsonbProperty("lastName")
     @BsonProperty("lastName")
     @Setter
     private String lastName;
 
+    @JsonbProperty("isArchived")
     @BsonProperty("isArchived")
     @Setter
     private boolean isArchived;
 
     @Setter
     @BsonProperty("currentRentsNumber")
+    @JsonbProperty("currentRentsNumber")
     private int currentRentsNumber;
 
     @BsonCreator
-    public Renter(@BsonProperty("personalID") String personalID,
-                  @BsonProperty("firstName") String firstName,
-                  @BsonProperty("lastName") String lastName){
+    @JsonbCreator
+    public Renter(@BsonProperty("personalID") @JsonbProperty("personalID") String personalID,
+                  @BsonProperty("firstName") @JsonbProperty("firstName") String firstName,
+                  @BsonProperty("lastName") @JsonbProperty("lastName") String lastName){
         this.personalID = personalID;
         this.firstName = firstName;
         this.lastName = lastName;
