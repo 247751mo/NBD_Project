@@ -10,11 +10,8 @@ public class RedisRenterRepo extends AbstractRedisRepository {
     private static final String HASH_PREFIX = "renter:";
     private final Jsonb jsonb = JsonbBuilder.create();
 
-    public Renter read(String id) {
-        String jsonRenter = (String) getPool().jsonGet(HASH_PREFIX + id);
-        if (jsonRenter == null) {
-            return null;
-        }
+    public Renter read(Object id) {
+        String jsonRenter = jsonb.toJson(getPool().jsonGet(HASH_PREFIX + id));
         return jsonb.fromJson(jsonRenter, Renter.class);
     }
 
