@@ -1,4 +1,4 @@
-package org.example.repositories;
+package repositories;
 
 import redis.clients.jedis.DefaultJedisClientConfig;
 import redis.clients.jedis.HostAndPort;

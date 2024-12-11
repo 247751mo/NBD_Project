@@ -3,27 +3,25 @@ package repositories;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import model.Renter;
-
 import java.util.ArrayList;
 
-
-public class RedisRenterRepo extends org.example.repositories.AbstractRedisRepository {
+public class RedisRenterRepo extends AbstractRedisRepository {
 
     private static final String HASH_PREFIX = "renter:";
     private final Jsonb jsonb = JsonbBuilder.create();
 
-    public Renter findById(String id) {
-        String jsonRenter = getPool().jsonGet(HASH_PREFIX + id);
-        if (jsonRenter != null) {
-            return jsonb.fromJson(jsonRenter, Renter.class);
+    public Renter read(String id) {
+        String jsonRenter = (String) getPool().jsonGet(HASH_PREFIX + id);
+        if (jsonRenter == null) {
+            return null;
         }
-        return null;
+        return jsonb.fromJson(jsonRenter, Renter.class);
     }
 
-    public ArrayList<Renter> findAll() {
+    public ArrayList<Renter> readAll() {
         ArrayList<Renter> renters = new ArrayList<>();
         getPool().keys(HASH_PREFIX + "*").forEach(key -> {
-            String jsonRenter = getPool().jsonGet(key);
+            String jsonRenter = (String) getPool().jsonGet(key);
             if (jsonRenter != null) {
                 renters.add(jsonb.fromJson(jsonRenter, Renter.class));
             }
@@ -31,18 +29,33 @@ public class RedisRenterRepo extends org.example.repositories.AbstractRedisRepos
         return renters;
     }
 
-    public void add(Renter renter) {
+    public void create(Renter renter) {
         String jsonRenter = jsonb.toJson(renter);
-        getPool().jsonSet(HASH_PREFIX + renter.getPersonalID(), jsonRenter);
-        getPool().expire(HASH_PREFIX + renter.getPersonalID(), 3600); // TTL 1 godzina
+        try {
+            getPool().jsonSet(HASH_PREFIX + renter.getPersonalID(), jsonRenter);
+            getPool().expire(HASH_PREFIX + renter.getPersonalID(), 60);
+        } catch (Exception e) {
+            System.out.println("Error creating renter: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void delete(Renter renter) {
+        try {
+            getPool().del(HASH_PREFIX + renter.getPersonalID());
+        } catch (Exception e) {
+            System.out.println("Error deleting renter: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public void update(Renter renter) {
         String jsonRenter = jsonb.toJson(renter);
-        getPool().jsonSet(HASH_PREFIX + renter.getPersonalID(), jsonRenter);
-    }
-
-    public void delete(Renter renter) {
-        getPool().del(HASH_PREFIX + renter.getPersonalID());
+        try {
+            getPool().jsonSet(HASH_PREFIX + renter.getPersonalID(), jsonRenter);
+        } catch (Exception e) {
+            System.out.println("Error updating renter: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

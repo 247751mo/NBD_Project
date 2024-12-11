@@ -1,55 +1,58 @@
 package repositories;
 
 import model.Renter;
-
 import java.util.ArrayList;
 
 public class RenterRepo {
 
-    private final RedisRenterRepo redisRenterRepo;
-    private final MongoRenterRepo mongoRenterRepo;
+    private final RedisRenterRepo redisRepo;
+    private final MongoRenterRepo mongoRepo;
 
-    public RenterRepo(RedisRenterRepo redisRenterRepo, MongoRenterRepo mongoRenterRepo) {
-        this.redisRenterRepo = redisRenterRepo;
-        this.mongoRenterRepo = mongoRenterRepo;
+    public RenterRepo(RedisRenterRepo redisRepo, MongoRenterRepo mongoRepo) {
+        this.redisRepo = redisRepo;
+        this.mongoRepo = mongoRepo;
     }
 
-    public Renter findById(String id) {
-        Renter cachedRenter = redisRenterRepo.findById(id);
-        if (cachedRenter != null) {
-            return cachedRenter;
-        } else {
-            Renter renter = mongoRenterRepo.read(id);
-            if (renter != null) {
-                redisRenterRepo.add(renter);
-            }
+    public Renter read(String id) {
+        // Najpierw szukaj w Redis
+        Renter renter = redisRepo.read(id);
+        if (renter != null) {
             return renter;
         }
+        // Jeśli nie znaleziono, szukaj w Mongo i zapisuj w Redis
+        renter = mongoRepo.read(id);
+        if (renter != null) {
+            redisRepo.create(renter);
+        }
+        return renter;
     }
 
-    public ArrayList<Renter> findAll() {
-        ArrayList<Renter> renters = mongoRenterRepo.readAll();
+    public ArrayList<Renter> readAll() {
+        // Odczyt z Mongo i cache'owanie w Redis
+        ArrayList<Renter> renters = mongoRepo.readAll();
         renters.forEach(renter -> {
-            Renter cachedRenter = redisRenterRepo.findById(renter.getPersonalID());
-            if (cachedRenter == null) {
-                redisRenterRepo.add(renter);
+            if (redisRepo.read(renter.getPersonalID()) == null) {
+                redisRepo.create(renter);
             }
         });
         return renters;
     }
 
-    public void add(Renter renter) {
-        mongoRenterRepo.create(renter);
-        redisRenterRepo.add(renter);
-    }
-
-    public void update(Renter renter) {
-        mongoRenterRepo.update(renter);
-        redisRenterRepo.update(renter);
+    public void create(Renter renter) {
+        // Tworzenie w Mongo i Redis
+        mongoRepo.create(renter);
+        redisRepo.create(renter);
     }
 
     public void delete(Renter renter) {
-        mongoRenterRepo.delete(renter);
-        redisRenterRepo.delete(renter);
+        // Usuwanie z Mongo i Redis
+        mongoRepo.delete(renter);
+        redisRepo.delete(renter);
+    }
+
+    public void update(Renter renter) {
+        // Aktualizacja w Mongo i Redis
+        mongoRepo.update(renter);
+        redisRepo.update(renter);
     }
 }
