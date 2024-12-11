@@ -14,6 +14,7 @@ import java.util.Objects;
 public class Renter {
 
     @BsonId
+    @JsonbProperty("personalID")
     private String personalID;
 
     @JsonbProperty("firstName")
