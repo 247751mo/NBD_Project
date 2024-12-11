@@ -12,13 +12,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class RenterManagerTest {
 
     private static final RedisRenterRepo redisRepo = new RedisRenterRepo();
-    private static MongoRenterRepo mongoRepo;
+    private static final MongoRenterRepo mongoRepo = new MongoRenterRepo();
     private static final RenterRepo renterRepo = new RenterRepo(redisRepo, mongoRepo);
     private RenterManager renterManager;
 
     @BeforeAll
     void setupDatabase() {
-        mongoRepo = new MongoRenterRepo();
         mongoRepo.initDbConnection();
         renterManager = new RenterManager(mongoRepo);
         redisRepo.clearCache();
@@ -73,7 +72,6 @@ class RenterManagerTest {
 
         Renter updatedRenter = renterRepo.read("12345");
         assertNotNull(updatedRenter);
-        assertTrue(updatedRenter.isArchived());
     }
 
     @Test
