@@ -9,7 +9,7 @@ import model.Volume;
 import java.util.ArrayList;
 
 
-public class VolumeRepo extends AbstractMongoRepository {
+public class MongoVolumeRepo extends AbstractMongoRepository {
 
     public void create(Volume volume) {
         try {

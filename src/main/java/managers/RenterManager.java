@@ -1,33 +1,33 @@
 package managers;
 
 import model.Renter;
-import repositories.RenterRepo;
+import repositories.MongoRenterRepo;
 
 import java.io.Serializable;
 
 public class RenterManager implements Serializable {
 
-    private final RenterRepo renterRepo;
+    private final MongoRenterRepo mongoRenterRepo;
 
-    public RenterManager(RenterRepo renterRepo) {
-        if (renterRepo == null) {
+    public RenterManager(MongoRenterRepo mongoRenterRepo) {
+        if (mongoRenterRepo == null) {
             throw new IllegalArgumentException("clientRepository cannot be null");
         } else {
-            this.renterRepo = renterRepo;
+            this.mongoRenterRepo = mongoRenterRepo;
         }
     }
 
     public void registerRenter(Renter renter) {
-        if (renterRepo.read(renter.getPersonalID()) != null) {
+        if (mongoRenterRepo.read(renter.getPersonalID()) != null) {
             throw new IllegalArgumentException("Client with the same ID already exists.");
         }
-        renterRepo.create(renter);
+        mongoRenterRepo.create(renter);
     }
 
     public void unregisterRenter(Renter renter) {
         if (renter != null) {
             renter.setArchived(true);
-            renterRepo.update(renter);
+            mongoRenterRepo.update(renter);
         }
     }
 }

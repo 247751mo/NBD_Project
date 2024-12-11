@@ -1,27 +1,27 @@
 package managers;
 import model.Volume;
-import repositories.VolumeRepo;
+import repositories.MongoVolumeRepo;
 import java.io.Serializable;
 
 public class VolumeManager implements Serializable {
 
-    private VolumeRepo volumeRepo;
+    private MongoVolumeRepo mongoVolumeRepo;
 
-    public VolumeManager(VolumeRepo volumeRepo) {
-        if (volumeRepo == null) {
+    public VolumeManager(MongoVolumeRepo mongoVolumeRepo) {
+        if (mongoVolumeRepo == null) {
             throw new IllegalArgumentException("volumeRepo cannot be null");
         } else {
-            this.volumeRepo = volumeRepo;
+            this.mongoVolumeRepo = mongoVolumeRepo;
         }
     }
 
     public void addVolume(Volume volume) {
         if (volume.getVolumeId() == null) {
-            volumeRepo.create(volume);
-        } else if (volumeRepo.read(volume.getVolumeId()) != null) {
+            mongoVolumeRepo.create(volume);
+        } else if (mongoVolumeRepo.read(volume.getVolumeId()) != null) {
             throw new IllegalArgumentException("Volume already exists");
         } else {
-            volumeRepo.create(volume);
+            mongoVolumeRepo.create(volume);
         }
     }
 
@@ -30,7 +30,7 @@ public class VolumeManager implements Serializable {
         if (volume != null) {
             volume.setArchive(true);
             volume.setIsRented(0);
-            volumeRepo.update(volume);
+            mongoVolumeRepo.update(volume);
         }
     }
 }

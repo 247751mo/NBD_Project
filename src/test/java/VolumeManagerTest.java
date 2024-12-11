@@ -1,8 +1,7 @@
 import model.Book;
 import model.Volume;
 import org.junit.jupiter.api.*;
-import repositories.VolumeRepo;
-import java.util.List;
+import repositories.MongoVolumeRepo;
 import managers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,24 +9,24 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class VolumeManagerTest {
 
-    private VolumeRepo volumeRepo;
+    private MongoVolumeRepo mongoVolumeRepo;
     private VolumeManager volumeManager;
 
     @BeforeAll
     void setupDatabase() {
-        volumeRepo = new VolumeRepo();
-        volumeRepo.initDbConnection();
-        volumeManager = new VolumeManager(volumeRepo);
+        mongoVolumeRepo = new MongoVolumeRepo();
+        mongoVolumeRepo.initDbConnection();
+        volumeManager = new VolumeManager(mongoVolumeRepo);
     }
 
     @AfterAll
     void closeDatabase() {
-        volumeRepo.close();
+        mongoVolumeRepo.close();
     }
 
     @BeforeEach
     void cleanUp() {
-        volumeRepo.readAll().forEach(volumeRepo::delete);
+        mongoVolumeRepo.readAll().forEach(mongoVolumeRepo::delete);
     }
 
     @Test
@@ -38,7 +37,7 @@ class VolumeManagerTest {
 
         volumeManager.addVolume(volume);
 
-        Volume retrievedVolume = volumeRepo.read(1);
+        Volume retrievedVolume = mongoVolumeRepo.read(1);
         assertNotNull(retrievedVolume);
         assertEquals("asda", retrievedVolume.getTitle());
         assertEquals("adsadas", retrievedVolume.getGenre());
@@ -49,7 +48,7 @@ class VolumeManagerTest {
     void testAddVolume_whenVolumeAlreadyExists_shouldThrowException() {
         Book volume1 = new Book(1,"asda","adsadas","asdadaaa");
 
-        volumeRepo.create(volume1); // Dodajemy istniejący rekord
+        mongoVolumeRepo.create(volume1); // Dodajemy istniejący rekord
 
         Book volume2 = new Book(1,"asda2","adsadas2","asdadaaa2");
 
@@ -61,7 +60,7 @@ class VolumeManagerTest {
     void testRemoveVolume_shouldArchiveAndMarkAsNotRented() {
         Book volume1 = new Book(1,"asda","adsadas","asdadaaa");
 
-        volumeRepo.create(volume1);
+        mongoVolumeRepo.create(volume1);
 
         volumeManager.removeVolume(volume1);
 

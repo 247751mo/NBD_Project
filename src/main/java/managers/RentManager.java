@@ -3,7 +3,7 @@ package managers;
 
 import model.Renter;
 import model.Volume;
-import repositories.RentRepo;
+
 import java.time.LocalDateTime;
 
 public class RentManager {
