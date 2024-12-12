@@ -38,7 +38,6 @@ public class RenterRepoTest {
 
     @Test
     public void readAll_TwoRentersInMongo_TwoRentersCachedAndReturned() {
-        // Dodanie dwóch renterów do MongoDB
         Renter renter1 = new Renter("12345678902", "Alice", "Smith");
         Renter renter2 = new Renter("12345678903", "Bob", "Johnson");
         REDIS_RENTER_REPO.create(renter1);

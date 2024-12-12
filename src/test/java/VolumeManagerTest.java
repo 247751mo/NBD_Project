@@ -48,7 +48,7 @@ class VolumeManagerTest {
     void testAddVolume_whenVolumeAlreadyExists_shouldThrowException() {
         Book volume1 = new Book(1,"asda","adsadas","asdadaaa");
 
-        mongoVolumeRepo.create(volume1); // Dodajemy istniejący rekord
+        mongoVolumeRepo.create(volume1);
 
         Book volume2 = new Book(1,"asda2","adsadas2","asdadaaa2");
 
