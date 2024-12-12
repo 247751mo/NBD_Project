@@ -37,7 +37,7 @@ public class RedisRenterRepoTest {
     public void findById_RenterInDB_RenterCachedAndReturned() {
         // Dodanie Rentera do MongoDB
         Renter renter = new Renter("12345678901", "John", "Doe");
-        MONGO_RENTER_REPO.create(renter);
+        RENTER_REPOSITORY.create(renter);
 
         // Weryfikacja, że Renter jest zwracany z Mongo
         Renter foundRenter = RENTER_REPOSITORY.read("12345678901");
@@ -53,8 +53,8 @@ public class RedisRenterRepoTest {
         // Dodanie dwóch renterów do MongoDB
         Renter renter1 = new Renter("12345678902", "Alice", "Smith");
         Renter renter2 = new Renter("12345678903", "Bob", "Johnson");
-        MONGO_RENTER_REPO.create(renter1);
-        MONGO_RENTER_REPO.create(renter2);
+        RENTER_REPOSITORY.create(renter1);
+        RENTER_REPOSITORY.create(renter2);
 
         List<Renter> addedRenters = List.of(renter1, renter2);
         List<Renter> foundRenters = RENTER_REPOSITORY.readAll();
@@ -111,6 +111,7 @@ public class RedisRenterRepoTest {
         // Weryfikacja, że Renter istnieje w MongoDB i Redis przed usunięciem
         assertNotNull(MONGO_RENTER_REPO.read("12345678906"));
         assertNotNull(REDIS_RENTER_REPO.read("12345678906"));
+        assertNotNull(RENTER_REPOSITORY.read("12345678906"));
 
         // Usunięcie Rentera
         RENTER_REPOSITORY.delete(renter);
