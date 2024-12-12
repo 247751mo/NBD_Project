@@ -14,12 +14,10 @@ public class RenterRepo {
     }
 
     public Renter read(String id) {
-        // Najpierw szukaj w Redis
         Renter renter = redisRepo.read(id);
         if (renter != null) {
             return renter;
         }
-        // Jeśli nie znaleziono, szukaj w Mongo i zapisuj w Redis
         renter = mongoRepo.read(id);
         if (renter != null) {
             redisRepo.create(renter);
@@ -28,10 +26,10 @@ public class RenterRepo {
     }
 
     public ArrayList<Renter> readAll() {
-        // Odczyt z Mongo i cache'owanie w Redis
         ArrayList<Renter> renters = mongoRepo.readAll();
         renters.forEach(renter -> {
-            if (redisRepo.read(renter.getPersonalID()) == null) {
+            Renter cachedRenter = redisRepo.read(renter.getPersonalID());
+            if (cachedRenter == null) {
                 redisRepo.create(renter);
             }
         });

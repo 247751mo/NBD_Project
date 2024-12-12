@@ -15,10 +15,12 @@ public class RedisRenterRepo extends AbstractRedisRepository {
         return jsonb.fromJson(jsonRenter, Renter.class);
     }
 
+
+
     public ArrayList<Renter> readAll() {
         ArrayList<Renter> renters = new ArrayList<>();
         getPool().keys(HASH_PREFIX + "*").forEach(key -> {
-            String jsonRenter = (String) getPool().jsonGet(key);
+            String jsonRenter = jsonb.toJson(getPool().jsonGet(key));
             if (jsonRenter != null) {
                 renters.add(jsonb.fromJson(jsonRenter, Renter.class));
             }
