@@ -32,7 +32,7 @@ public class RedisRenterRepoTest {
     }
 
     @Test
-    public void findById_RenterInDB_RenterCachedAndReturned() {
+    public void read_RenterInDB_RenterCachedAndReturned() {
         Renter renter = new Renter("12345678901", "John", "Doe");
         RENTER_REPOSITORY.create(renter);
 

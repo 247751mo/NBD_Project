@@ -30,7 +30,7 @@ public class RedisRenterRepo extends AbstractRedisRepository {
         String jsonRenter = jsonb.toJson(renter);
         try {
             getPool().jsonSet(HASH_PREFIX + renter.getPersonalID(), jsonRenter);
-            getPool().expire(HASH_PREFIX + renter.getPersonalID(), 60);
+            getPool().expire(HASH_PREFIX + renter.getPersonalID(), 600);
         } catch (Exception e) {
             System.out.println("Error creating renter: " + e.getMessage());
             e.printStackTrace();
