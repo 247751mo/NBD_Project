@@ -56,7 +56,7 @@ public class RenterRepoTest {
     }
 
     @Test
-    public void add_ValidRenter_RenterAddedToMongoAndRedis() {
+    public void create_ValidRenter_RenterAddedToMongoAndRedis() {
         Renter renter = new Renter("12345678904", "Eve", "Adams");
         REDIS_RENTER_REPO.create(renter);
 
