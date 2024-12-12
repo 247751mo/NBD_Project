@@ -44,7 +44,7 @@ public class RedisRenterRepoTest {
     }
 
     @Test
-    public void findAll_TwoRentersInMongo_TwoRentersCachedAndReturned() {
+    public void readAll_TwoRentersInMongo_TwoRentersCachedAndReturned() {
         Renter renter1 = new Renter("12345678902", "Alice", "Smith");
         Renter renter2 = new Renter("12345678903", "Bob", "Johnson");
         RENTER_REPOSITORY.create(renter1);

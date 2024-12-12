@@ -15,8 +15,6 @@ public class RedisRenterRepo extends AbstractRedisRepository {
         return jsonb.fromJson(jsonRenter, Renter.class);
     }
 
-
-
     public ArrayList<Renter> readAll() {
         ArrayList<Renter> renters = new ArrayList<>();
         getPool().keys(HASH_PREFIX + "*").forEach(key -> {

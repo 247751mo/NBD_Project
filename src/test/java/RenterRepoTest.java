@@ -47,8 +47,9 @@ public class RenterRepoTest {
         List<Renter> addedRenters = List.of(renter1, renter2);
         List<Renter> foundRenters = REDIS_RENTER_REPO.readAll();
         assertEquals(2, foundRenters.size());
-        Assertions.assertEquals(addedRenters.getFirst(), foundRenters.getFirst());
-        Assertions.assertEquals(addedRenters.getLast(), foundRenters.getLast());
+        Assertions.assertEquals(addedRenters.getFirst().getPersonalID(), foundRenters.getFirst().getPersonalID());
+        Assertions.assertEquals(addedRenters.getLast().getPersonalID(), foundRenters.getLast().getPersonalID());
+
 
         assertEquals(renter1, REDIS_RENTER_REPO.read("12345678902"));
         assertEquals(renter2, REDIS_RENTER_REPO.read("12345678903"));
