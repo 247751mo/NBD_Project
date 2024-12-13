@@ -37,19 +37,16 @@ public class RenterRepo {
     }
 
     public void create(Renter renter) {
-        // Tworzenie w Mongo i Redis
         mongoRepo.create(renter);
         redisRepo.create(renter);
     }
 
     public void delete(Renter renter) {
-        // Usuwanie z Mongo i Redis
         mongoRepo.delete(renter);
         redisRepo.delete(renter);
     }
 
     public void update(Renter renter) {
-        // Aktualizacja w Mongo i Redis
         mongoRepo.update(renter);
         redisRepo.update(renter);
     }
