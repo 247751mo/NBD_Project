@@ -2,10 +2,9 @@ package model;
 
 import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
 import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 import exceptions.ParameterException;
-import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

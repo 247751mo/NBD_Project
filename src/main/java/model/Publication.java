@@ -1,7 +1,7 @@
 package model;
 
 import com.datastax.oss.driver.api.mapper.annotations.CqlName;
-import jakarta.persistence.*;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

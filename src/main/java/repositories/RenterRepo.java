@@ -7,6 +7,7 @@ import com.datastax.oss.driver.api.core.type.DataTypes;
 import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
 import dao.RenterDao;
 import mapper.RenterMapper;
+import mapper.RenterMapperBuilder;
 import model.Renter;
 
 
