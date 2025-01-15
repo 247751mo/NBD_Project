@@ -1,65 +1,53 @@
 package repositories;
 
-import jakarta.persistence.EntityManager;
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.type.DataTypes;
+import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
+import dao.RenterDao;
+import mapper.RenterMapper;
 import model.Renter;
-import java.util.List;
-import java.util.UUID;
 
-public class RenterRepo implements Repo<Renter> {
 
-    private final EntityManager em;
+public class RenterRepository {
 
-    public RenterRepo(EntityManager entityManager) {
-        this.em = entityManager;
+    private final CqlSession session;
+    private final RenterMapper renterMapper;
+    private final RenterDao renterDao;
+
+    public RenterRepository(CqlSession session) {
+        this.session = session;
+        makeTable();
+        this.renterMapper = new RenterMapperBuilder(session).build();
+        this.renterDao = renterMapper.renterDao();
     }
 
-    @Override
-    public Renter get(UUID id) {
-        return em.find(Renter.class, id);
+    public void makeTable() {
+        SimpleStatement createRenters =
+                SchemaBuilder.createTable(CqlIdentifier.fromCql("renters"))
+                        .ifNotExists()
+                        .withPartitionKey(CqlIdentifier.fromCql("personal_id"), DataTypes.TEXT)
+                        .withColumn("type", DataTypes.TEXT)
+                        .withColumn("first_name", DataTypes.TEXT)
+                        .withColumn("last_name", DataTypes.TEXT)
+                        .build();
+        session.execute(createRenters);
     }
-    @Override
-    public List<Renter> getAll() {
-        return em.createQuery("SELECT r FROM Renter r", Renter.class).getResultList();
+
+    public void create(Renter renter) {
+        renterDao.create(renter);
     }
-    @Override
-    public Renter add(Renter renter) {
-        try {
-            em.getTransaction().begin();
-            em.persist(renter);
-            em.getTransaction().commit();
-            return renter;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to add renter: " + renter.getId(), e);
-        }
+
+    public Renter read(long personalID) {
+        return renterDao.findById(personalID);
     }
-    @Override
-    public void delete(Renter renter) {
-        try {
-            em.getTransaction().begin();
-            Renter managedRenter = em.contains(renter) ? renter : em.merge(renter);
-            em.remove(managedRenter);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to remove renter: " + renter.getId(), e);
-        }
-    }
-    @Override
+
     public void update(Renter renter) {
-        try {
-            em.getTransaction().begin();
-            em.merge(renter);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to update renter: " + renter.getId(), e);
-        }
+        renterDao.update(renter);
+    }
+
+    public void delete(long personalID) {
+        renterDao.remove(personalID);
     }
 }
