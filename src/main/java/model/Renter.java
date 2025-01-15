@@ -10,14 +10,14 @@ import jakarta.validation.Valid;
 import java.io.Serializable;
 import java.util.UUID;
 
-@Entity(defaultKeyspace = SchemaConst.RENT_A_VOLUME)
-@CqlName(SchemaConst.Renters)
+@Entity(defaultKeyspace = "rent_a_volume")
+@CqlName("renters")
 @Data
 @NoArgsConstructor
 public class Renter {
     @PartitionKey
+    @CqlName("personal_id")
     private String personalID;
-    @ClusteringColumn
     private String type = "RENTER";
     private String firstName;
     private String lastName;
