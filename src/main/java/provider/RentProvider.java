@@ -12,6 +12,7 @@ import com.datastax.oss.driver.api.querybuilder.delete.Delete;
 import com.datastax.oss.driver.api.querybuilder.insert.Insert;
 import com.datastax.oss.driver.api.querybuilder.relation.Relation;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
+import com.datastax.oss.driver.api.querybuilder.update.Update;
 import model.Rent;
 import model.Renter;
 
@@ -42,7 +43,31 @@ public class RentProvider {
         session.execute(insertRent.build());
     }
 
+    public Rent findById(long rentID) {
+        Select selectRent = QueryBuilder.selectFrom(RENT_A_VOLUME)
+                .all()
+                .where(Relation.column(RENT_ID).isEqualTo(QueryBuilder.literal(rentID)));
+        ResultSet resultSet = session.execute(selectRent.build());
+        Row row = resultSet.one();
 
+        if (row == null) {
+            return null;
+        }
+
+        return new Rent(
+                row.getLong(RENT_ID),
+                row.getString(START_DATE),
+                row.getLong(PERSONAL_ID),
+                row.getLong(VOLUME_ID)
+        );
+    }
+
+    public void update(Rent rent) {
+        Update updateRenter = QueryBuilder.update(RENT_A_VOLUME)
+                .setColumn(START_DATE, QueryBuilder.literal(rent.getStartDate()))
+                .where(Relation.column(RENT_ID).isEqualTo(QueryBuilder.literal(rent.getRentID())));
+        session.execute(updateRenter.build());
+    }
 
     public void remove(Rent rent) {
         Delete deleteRent = QueryBuilder.deleteFrom(RENT_A_VOLUME)

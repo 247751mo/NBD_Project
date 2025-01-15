@@ -41,6 +41,14 @@ public class RentRepository {
         rentDao.create(rent);
     }
 
+    public void update(Rent rent) {
+        rentDao.update(rent);
+    }
+
+    public Rent findbyID(long rentID){
+        return rentDao.findById(rentID);
+    }
+
     public void delete(Rent rent) {
         rentDao.remove(rent);
     }
