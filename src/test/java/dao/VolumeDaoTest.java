@@ -37,6 +37,29 @@ class VolumeDaoTest {
         Book book = new Book(1, "book", "W pustyni i w puszczy", "Powiesc", "Henryk Sienkiewicz", false);
         volumeDao.create(book);
     }
+
+    @Test
+    void addPublication(){
+        Publication publication = new Publication(2, "publication", "Bravo Sport", "Sport", "Niedziela", false);
+        volumeDao.create(publication);
+    }
+
+    @Test
+    void findById() {
+        Volume volume = volumeDao.findById(1);
+        System.out.println(volume);
+    }
+    @Test
+    void delete() {
+        Book book = new Book(32, "book","Book1", "BookGenre", "BookAuthor", false);
+        volumeDao.create(book);
+        Volume volume2 = volumeDao.findById(32);
+        assertNotNull(volume2);
+        volumeDao.remove(32);
+        Volume volume = volumeDao.findById(32);
+        assertNull(volume);
+        System.out.println(volume);
+    }
 }
 
 
