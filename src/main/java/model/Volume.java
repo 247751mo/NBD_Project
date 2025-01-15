@@ -21,14 +21,16 @@ public class Volume {
     @PartitionKey
     @CqlName("volume_id")
     private long volumeId;
-
+    private String discriminator;
     private String title;
     private String genre;
     private boolean isRented = false;
-    public Volume(long volumeId, String title, String genre) {
+    public Volume(long volumeId,String discriminator, String title, String genre) {
         this.volumeId = volumeId;
+        this.discriminator = discriminator;
         this.title = title;
         this.genre = genre;
+        this.isRented = false;
     }
 
 

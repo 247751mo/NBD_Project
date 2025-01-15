@@ -12,8 +12,8 @@ public class Book extends Volume {
 
     private String author;
 
-    public Book(long volumeID,String author, String title, String genre) {
-        super(volumeID, title, genre);
+    public Book(long volumeID, String discriminator, String author, String title, String genre) {
+        super(volumeID, discriminator, title, genre);
         this.author = author;
     }
 
