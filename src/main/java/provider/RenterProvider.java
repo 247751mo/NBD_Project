@@ -18,7 +18,7 @@ public class RenterProvider {
     private final CqlSession session;
 
     public static final CqlIdentifier RENTERS = CqlIdentifier.fromCql("renters");
-    public static final CqlIdentifier RENTER_ID = CqlIdentifier.fromCql("renter_id");
+    public static final CqlIdentifier PERSONAL_ID = CqlIdentifier.fromCql("personal_id");
     public static final CqlIdentifier FIRST_NAME = CqlIdentifier.fromCql("first_name");
     public static final CqlIdentifier LAST_NAME = CqlIdentifier.fromCql("last_name");
 
@@ -28,7 +28,7 @@ public class RenterProvider {
 
     public void create(Renter renter) {
         Insert insertRenter = QueryBuilder.insertInto(RENTERS)
-                .value(RENTER_ID, QueryBuilder.literal(renter.getPersonalID()))
+                .value(PERSONAL_ID, QueryBuilder.literal(renter.getPersonalId()))
                 .value(FIRST_NAME, QueryBuilder.literal(renter.getFirstName()))
                 .value(LAST_NAME, QueryBuilder.literal(renter.getLastName()))
                 .ifNotExists();
@@ -39,7 +39,7 @@ public class RenterProvider {
     public Renter findById(long personalID) {
         Select selectRenter = QueryBuilder.selectFrom(RENTERS)
                 .all()
-                .where(Relation.column(RENTER_ID).isEqualTo(QueryBuilder.literal(personalID)));
+                .where(Relation.column(PERSONAL_ID).isEqualTo(QueryBuilder.literal(personalID)));
         ResultSet resultSet = session.execute(selectRenter.build());
         Row row = resultSet.one();
 
@@ -48,7 +48,7 @@ public class RenterProvider {
         }
 
         return new Renter(
-                row.getString(RENTER_ID),
+                row.getLong(PERSONAL_ID),
                 row.getString(FIRST_NAME),
                 row.getString(LAST_NAME)
         );
@@ -58,13 +58,13 @@ public class RenterProvider {
         Update updateRenter = QueryBuilder.update(RENTERS)
                 .setColumn(FIRST_NAME, QueryBuilder.literal(renter.getFirstName()))
                 .setColumn(LAST_NAME, QueryBuilder.literal(renter.getLastName()))
-                .where(Relation.column(RENTER_ID).isEqualTo(QueryBuilder.literal(renter.getPersonalID())));
+                .where(Relation.column(PERSONAL_ID).isEqualTo(QueryBuilder.literal(renter.getPersonalId())));
         session.execute(updateRenter.build());
     }
 
     public void remove(long personalID) {
         Delete deleteRenter = QueryBuilder.deleteFrom(RENTERS)
-                .where(Relation.column(RENTER_ID).isEqualTo(QueryBuilder.literal(personalID)));
+                .where(Relation.column(PERSONAL_ID).isEqualTo(QueryBuilder.literal(personalID)));
 
         session.execute(deleteRenter.build());
     }

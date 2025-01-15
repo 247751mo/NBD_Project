@@ -25,7 +25,15 @@ class RenterDaoTest {
 
     @Test
     void test() {
-        Renter renter = new Renter("1", "Jan", "Kowalski");
+        Renter renter = new Renter(1, "Jan", "Kowalski");
         renterDao.create(renter);
+    }
+
+    @Test
+    void getRenterById() {
+        Renter retrievedRenter = renterDao.findById(1);
+        Assertions.assertNotNull(retrievedRenter, "Renter should not be null");
+        Assertions.assertEquals("Jan", retrievedRenter.getFirstName());
+        Assertions.assertEquals("Kowalski", retrievedRenter.getLastName());
     }
 }

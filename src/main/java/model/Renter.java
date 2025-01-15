@@ -18,15 +18,15 @@ import java.util.UUID;
 public class Renter {
     @PartitionKey
     @CqlName("personal_id")
-    private String personalID;
+    private long personalId;
     private String type = "RENTER";
     private String firstName;
     private String lastName;
 
-    public Renter(String personalID, String firstName, String lastName) {
+    public Renter(long personalID, String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.personalID = personalID;
+        this.personalId = personalId;
 
     }
 

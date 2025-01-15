@@ -28,7 +28,7 @@ public class RenterRepo {
         SimpleStatement createRenters =
                 SchemaBuilder.createTable(CqlIdentifier.fromCql("renters"))
                         .ifNotExists()
-                        .withPartitionKey(CqlIdentifier.fromCql("personal_id"), DataTypes.TEXT)
+                        .withPartitionKey(CqlIdentifier.fromCql("personal_id"), DataTypes.BIGINT)
                         .withColumn("type", DataTypes.TEXT)
                         .withColumn("first_name", DataTypes.TEXT)
                         .withColumn("last_name", DataTypes.TEXT)
