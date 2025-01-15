@@ -5,9 +5,10 @@ import com.datastax.oss.driver.api.mapper.annotations.Dao;
 import com.datastax.oss.driver.api.mapper.annotations.QueryProvider;
 import com.datastax.oss.driver.api.mapper.annotations.StatementAttributes;
 import model.Renter;
+import provider.RenterProvider;
 
 @Dao
-public class RenterDao {
+public interface RenterDao {
 
     @StatementAttributes(consistencyLevel = "QUORUM")
     @QueryProvider(providerClass = RenterProvider.class)

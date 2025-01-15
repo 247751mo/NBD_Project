@@ -8,9 +8,10 @@ import model.Book;
 import model.Publication;
 import model.Renter;
 import model.Volume;
+import provider.VolumeProvider;
 
 @Dao
-public class VolumeDao {
+public interface VolumeDao {
 
     @StatementAttributes(consistencyLevel = "QUORUM")
     @QueryProvider(providerClass = VolumeProvider.class, entityHelpers = {Book.class, Publication.class})
@@ -18,7 +19,7 @@ public class VolumeDao {
 
     @StatementAttributes(consistencyLevel = "ONE", pageSize = 100)
     @QueryProvider(providerClass = VolumeProvider.class, entityHelpers = {Book.class, Publication.class})
-    Volume findById(long vehicleId);
+    Volume findById(long volumeId);
 
     @StatementAttributes(consistencyLevel = "QUORUM")
     @QueryProvider(providerClass = VolumeProvider.class, entityHelpers = {Book.class, Publication.class})
@@ -26,5 +27,5 @@ public class VolumeDao {
 
     @StatementAttributes(consistencyLevel = "QUORUM")
     @QueryProvider(providerClass = VolumeProvider.class, entityHelpers = {Book.class, Publication.class})
-    void remove(long vehicleId);
+    void remove(long volumeId);
 }
