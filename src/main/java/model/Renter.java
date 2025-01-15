@@ -4,13 +4,14 @@ import exceptions.ParameterException;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
 @Valid
 @Table(name = "Renter")
 @Access(AccessType.FIELD)
-public class Renter extends AbstractEntity {
+public class Renter implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
