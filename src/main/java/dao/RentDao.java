@@ -12,13 +12,6 @@ public interface RentDao {
     @QueryProvider(providerClass = RentProvider.class)
     void create(Rent rent);
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
-    @QueryProvider(providerClass = RentProvider.class)
-    void update(Rent rent);
-
-    @StatementAttributes(consistencyLevel = "ONE", pageSize = 100)
-    @QueryProvider(providerClass = RentProvider.class)
-    Rent findById (long rentID);
 
     @StatementAttributes(consistencyLevel = "QUORUM")
     @QueryProvider(providerClass = RentProvider.class)
