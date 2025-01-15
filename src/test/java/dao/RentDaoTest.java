@@ -15,7 +15,7 @@ import repositories.RentRepository;
 import repositories.RenterRepo;
 import repositories.VolumeRepo;
 
-public class RentTest {
+public class RentDaoTest {
     private static CqlSession session;
     private static RentRepository rentRepo;
     private static RentDao rentDao;
