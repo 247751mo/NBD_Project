@@ -49,7 +49,7 @@ public class RentRepository {
         return rentDao.findById(rentID);
     }
 
-    public void delete(Rent rent) {
+    public void remove(Rent rent) {
         rentDao.remove(rent);
     }
 }
