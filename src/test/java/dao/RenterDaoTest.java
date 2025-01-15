@@ -24,7 +24,7 @@ class RenterDaoTest {
     }
 
     @Test
-    void test() {
+    void create() {
         Renter renter = new Renter(1, "Jan", "Kowalski");
         renterDao.create(renter);
     }
