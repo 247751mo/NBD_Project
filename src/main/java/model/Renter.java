@@ -23,10 +23,10 @@ public class Renter {
     private String firstName;
     private String lastName;
 
-    public Renter(long personalID, String firstName, String lastName) {
+    public Renter(long personalId, String firstName, String lastName) {
+        this.personalId = personalId;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.personalId = personalId;
 
     }
 

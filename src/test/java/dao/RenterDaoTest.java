@@ -32,8 +32,27 @@ class RenterDaoTest {
     @Test
     void getRenterById() {
         Renter retrievedRenter = renterDao.findById(1);
-        Assertions.assertNotNull(retrievedRenter, "Renter should not be null");
         Assertions.assertEquals("Jan", retrievedRenter.getFirstName());
         Assertions.assertEquals("Kowalski", retrievedRenter.getLastName());
+    }
+    @Test
+    void updateRenter() {
+        Renter renter = new Renter(2, "Janusz", "Nowak");
+        String newName = "Jan";
+        renter.setFirstName(newName);
+        renterDao.update(renter);
+        Renter retrievedRenter = renterDao.findById(2);
+        Assertions.assertEquals("Jan", retrievedRenter.getFirstName());
+        Assertions.assertEquals("Nowak", retrievedRenter.getLastName());
+    }
+
+    @Test
+    void deleteRenter() {
+        Renter renter = new Renter(3, "Pawel", "Marczak");
+        renterDao.create(renter);
+        Assertions.assertNotNull(renterDao.findById(3));
+        renterDao.remove(3);
+        Renter retrievedRenter = renterDao.findById(3);
+        Assertions.assertNull(retrievedRenter);
     }
 }
