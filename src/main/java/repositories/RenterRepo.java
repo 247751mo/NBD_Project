@@ -10,13 +10,13 @@ import mapper.RenterMapper;
 import model.Renter;
 
 
-public class RenterRepository {
+public class RenterRepo {
 
     private final CqlSession session;
     private final RenterMapper renterMapper;
     private final RenterDao renterDao;
 
-    public RenterRepository(CqlSession session) {
+    public RenterRepo(CqlSession session) {
         this.session = session;
         makeTable();
         this.renterMapper = new RenterMapperBuilder(session).build();
