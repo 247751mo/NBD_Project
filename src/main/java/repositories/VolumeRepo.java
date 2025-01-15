@@ -28,13 +28,12 @@ public class VolumeRepo {
                 SchemaBuilder.createTable(CqlIdentifier.fromCql("volumes"))
                         .ifNotExists()
                         .withPartitionKey(CqlIdentifier.fromCql("volume_id"), DataTypes.BIGINT)
-                        .withColumn("isRented", DataTypes.BOOLEAN)
+                        .withColumn("rented", DataTypes.BOOLEAN)
                         .withColumn("title", DataTypes.TEXT)
                         .withColumn("genre", DataTypes.TEXT)
                         .withColumn("author", DataTypes.TEXT)
                         .withColumn("discriminator", DataTypes.TEXT)
                         .withColumn("publisher", DataTypes.TEXT)
-                        .withColumn("rented", DataTypes.BOOLEAN)
                         .build();
         session.execute(createVolumes);
     }

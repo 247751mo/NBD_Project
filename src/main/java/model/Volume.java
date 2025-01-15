@@ -24,13 +24,13 @@ public class Volume {
     private String discriminator;
     private String title;
     private String genre;
-    private boolean isRented = false;
-    public Volume(long volumeId,String discriminator, String title, String genre) {
+    private boolean rented = false;
+    public Volume(long volumeId, String discriminator, String title, String genre, boolean rented) {
         this.volumeId = volumeId;
         this.discriminator = discriminator;
         this.title = title;
         this.genre = genre;
-        this.isRented = false;
+        this.rented = rented;
     }
 
 

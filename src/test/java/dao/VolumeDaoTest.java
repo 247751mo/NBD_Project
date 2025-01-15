@@ -29,11 +29,12 @@ class VolumeDaoTest {
         cassandraRepository.initSession();
         session = cassandraRepository.getSession();
         volumeRepo = new VolumeRepo(session);
+        volumeDao = new VolumeMapperBuilder(session).build().volumeDao();
     }
 
     @Test
     void addBook(){
-        Book book = new Book(1, "Book", "W pustyni i w puszczy", "Henryk Sienkiewicz", "Powiesc");
+        Book book = new Book(1, "book", "W pustyni i w puszczy", "Powiesc", "Henryk Sienkiewicz", false);
         volumeDao.create(book);
     }
 }

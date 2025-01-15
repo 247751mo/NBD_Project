@@ -36,7 +36,7 @@ public class VolumeProvider {
                                 .setString("title", book.getTitle())
                                 .setString("author", book.getAuthor())
                                 .setString("genre", book.getGenre())
-                                .setBoolean("isRented", book.isRented());
+                                .setBoolean("rented", book.isRented());
                     }
                     case "publication" -> {
                         Publication publication = (Publication) volume;
@@ -47,7 +47,7 @@ public class VolumeProvider {
                                 .setString("title", publication.getTitle())
                                 .setString("publisher", publication.getPublisher())
                                 .setString("genre", publication.getGenre())
-                                .setBoolean("isRented", publication.isRented());
+                                .setBoolean("rented", publication.isRented());
                     }
                     default -> throw new IllegalArgumentException();
                 }
@@ -76,7 +76,8 @@ public class VolumeProvider {
             row.getString("discriminator"),
             row.getString("title"),
             row.getString("author"),
-            row.getString("genre")
+            row.getString("genre"),
+            row.getBoolean("rented")
     );
 
     }
@@ -86,7 +87,8 @@ public class VolumeProvider {
                 row.getString("discriminator"),
                 row.getString("title"),
                 row.getString("publisher"),
-                row.getString("genre")
+                row.getString("genre"),
+                row.getBoolean("rented")
         );
     }
 
@@ -102,7 +104,7 @@ public class VolumeProvider {
                                     .setString("title", book.getTitle())
                                     .setString("author", book.getAuthor())
                                     .setString("genre", book.getGenre())
-                                    .setBoolean("isRented", book.isRented());
+                                    .setBoolean("rented", book.isRented());
                         }
                         case "publication" -> {
                             Publication publication = (Publication) volume;
@@ -112,7 +114,7 @@ public class VolumeProvider {
                                     .setString("title", publication.getTitle())
                                     .setString("publisher", publication.getPublisher())
                                     .setString("genre", publication.getGenre())
-                                    .setBoolean("isRented", publication.isRented());
+                                    .setBoolean("rented", publication.isRented());
                         }
                         default -> throw new IllegalArgumentException();
                     }

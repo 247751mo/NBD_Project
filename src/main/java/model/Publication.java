@@ -13,8 +13,8 @@ public class Publication extends Volume {
 
     private String publisher;
 
-    public Publication(long volumeID, String discriminator, String title, String genre, String publisher) {
-        super(volumeID, discriminator, title, genre);
+    public Publication(long volumeID, String discriminator, String title, String genre, String publisher, boolean rented) {
+        super(volumeID, discriminator, title, genre, false);
         this.publisher = publisher;
     }
 
