@@ -1,109 +1,65 @@
-version: '3.8'
 services:
-  mongo_1:
-    build: .
-    image: mongocustom:8.0.1
-    container_name: mongodb1
-    hostname: mongodb1
-    networks:
-      - mongonet
+  cassandra1:
+    image: docker.io/bitnami/cassandra:latest
+    hostname: cassandra1
     ports:
-      - "27017:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
-      - MONGO_INITDB_DATABASE=hotel
-    command: --config /etc/mongod.conf --port 27017
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 2s
-      retries: 5
+      - 7000:7000
+      - 9042:9042
     volumes:
-      - mongo-db-data-1:/data/db
-      - mongo-configdb-data-1:/data/configdb
-
-  mongo_2:
-    build: .
-    image: mongocustom:8.0.1
-    container_name: mongodb2
-    hostname: mongodb2
+      - ./cassandra/conf/cassandra1:/opt/bitnami/cassandra/conf
+      - cassandra1_data:/bitnami
     networks:
-      - mongonet
+      - cassandranet
+    environment:
+      - CASSANDRA_LISTEN_ADDRESS=cassandra1
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra1
+      - CASSANDRA_SEEDS=cassandra1,cassandra2
+      - CASSANDRA_CLUSTER_NAME=nbd-cassandra-cluster
+      - CASSANDRA_DATACENTER=dc1
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_USER=cassandra
+      - CASSANDRA_PASSWORD=cassandrapassword
+      - MAX_HEAP_SIZE=2G
+      - HEAP_NEWSIZE=200M
+    healthcheck:
+      test: [ "CMD-SHELL", "[ $$ (nodetool statusgossip) = running ]" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  cassandra2:
+    image: docker.io/bitnami/cassandra:latest
+    hostname: cassandra2
     ports:
-      - "27018:27018"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
-      - MONGO_INITDB_DATABASE=hotel
-    command: --config /etc/mongod.conf --port 27018
-    healthcheck:
-      test: ["CMD", "mongosh", "--port", "27018" , "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 2s
-      retries: 5
+      - 7001:7000
+      - 9043:9042
     volumes:
-      - mongo-db-data-2:/data/db
-      - mongo-configdb-data-2:/data/configdb
-
-  mongo_3:
-    build: .
-    image: mongocustom:8.0.1
-    container_name: mongodb3
-    hostname: mongodb3
+      - ./cassandra/conf/cassandra2:/opt/bitnami/cassandra/conf
+      - cassandra2_data:/bitnami
     networks:
-      - mongonet
-    ports:
-      - "27019:27019"
+      - cassandranet
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
-      - MONGO_INITDB_DATABASE=hotel
-    command: --config /etc/mongod.conf --port 27019
+      - CASSANDRA_LISTEN_ADDRESS=cassandra2
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra2
+      - CASSANDRA_SEEDS=cassandra1,cassandra2
+      - CASSANDRA_CLUSTER_NAME=nbd-cassandra-cluster
+      - CASSANDRA_DATACENTER=dc1
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_USER=cassandra
+      - CASSANDRA_PASSWORD=cassandrapassword
+      - MAX_HEAP_SIZE=2G
+      - HEAP_NEWSIZE=200M
     healthcheck:
-      test: ["CMD", "mongosh", "--port", "27019" , "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 2s
+      test: [ "CMD-SHELL", "[ $$ (nodetool statusgossip) = running ]" ]
+      interval: 30s
+      timeout: 10s
       retries: 5
-    volumes:
-      - mongo-db-data-3:/data/db
-      - mongo-configdb-data-3:/data/configdb
-
-  mongoinit:
-    build: .
-    image: mongocustom:8.0.1
-    hostname: mongodbinit
-    container_name: mongodbinit
-    networks:
-      - mongonet
-    depends_on:
-      mongo_1:
-        condition: service_healthy
-      mongo_2:
-        condition: service_healthy
-      mongo_3:
-        condition: service_healthy
-    command: >
-      mongosh --host mongodb1:27017 --username admin --password adminpassword --authenticationDatabase admin --eval '
-      rs.initiate(
-        {
-          _id: "replica_set_single",
-          version: 1,
-          members: [
-            { _id: 0, host: "mongodb1:27017" },
-            { _id: 1, host: "mongodb2:27018" },
-            { _id: 2, host: "mongodb3:27019" }
-          ]
-        }
-      );'
 
 volumes:
-  mongo-db-data-1:
-  mongo-configdb-data-1:
-  mongo-db-data-2:
-  mongo-configdb-data-2:
-  mongo-db-data-3:
-  mongo-configdb-data-3:
+  cassandra1_data:
+  cassandra2_data:
 
 networks:
-  mongonet: {}
+  cassandranet: {}
