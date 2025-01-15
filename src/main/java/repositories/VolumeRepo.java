@@ -31,6 +31,10 @@ public class VolumeRepo {
                         .withColumn("isRented", DataTypes.BOOLEAN)
                         .withColumn("title", DataTypes.TEXT)
                         .withColumn("genre", DataTypes.TEXT)
+                        .withColumn("author", DataTypes.TEXT)
+                        .withColumn("discriminator", DataTypes.TEXT)
+                        .withColumn("publisher", DataTypes.TEXT)
+                        .withColumn("rented", DataTypes.BOOLEAN)
                         .build();
         session.execute(createVolumes);
     }
