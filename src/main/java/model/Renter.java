@@ -6,6 +6,8 @@ import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 import exceptions.ParameterException;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.UUID;
