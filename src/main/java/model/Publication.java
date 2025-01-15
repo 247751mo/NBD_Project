@@ -1,18 +1,20 @@
 package model;
 
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
-@Entity
-@DiscriminatorValue("Publication")
-@Access(AccessType.FIELD)
+@Entity(defaultKeyspace = "rent_a_volume")
+@CqlName("volumes")
+@Data
 public class Publication extends Volume {
 
-    @Column(nullable = true)
     private String publisher;
 
-    public Publication(String title, String genre, String publisher) {
-        super(title, genre);
+    public Publication(long volumeID, String title, String genre, String publisher) {
+        super(volumeID, title, genre);
         this.publisher = publisher;
     }
 
@@ -20,12 +22,5 @@ public class Publication extends Volume {
 
     }
 
-    public String getPublisher() {
-        return publisher;
-    }
 
-    @Override
-    public String volumeInfo() {
-        return super.volumeInfo();
-    }
 }
