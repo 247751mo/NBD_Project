@@ -1,6 +1,9 @@
 package dao;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import mapper.RentMapperBuilder;
+import mapper.RenterMapperBuilder;
+import mapper.VolumeMapperBuilder;
 import model.Book;
 import model.Rent;
 import model.Renter;
@@ -40,7 +43,7 @@ public class RentTest {
         volumeDao.create(book);
         renterDao.create(renter);
 
-        Rent rent = new Rent(1, "1 stycznia", book, renter);
+        Rent rent = new Rent(1, "1.01.2025", book, renter);
         rentDao.create(rent);
     }
 
