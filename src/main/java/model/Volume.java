@@ -39,49 +39,5 @@ public abstract class Volume implements Serializable {
         }
     }
 
-    public UUID getVolumeId() {
-        return volumeId;
-    }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public boolean checkIfRented() {
-        return isRented;
-    }
-
-    public boolean checkIfArchived() {
-        return isArchive;
-    }
-
-    public void setTitle(String newTitle) {
-        if (newTitle != null && !newTitle.isEmpty()) {
-            this.title = newTitle;
-        }
-    }
-
-    public void setGenre(String newGenre) {
-        if (newGenre != null && !newGenre.isEmpty()) {
-            this.genre = newGenre;
-        }
-    }
-
-    public void setRentedStatus(boolean isRented) {
-        this.isRented = isRented;
-    }
-
-    public void setArchiveStatus(boolean isArchive) {
-        if (this.isArchive != isArchive) {
-            this.isArchive = isArchive;
-        }
-    }
-
-    public String volumeInfo() {
-        return "Title: " + getTitle() + "\nGenre: " + getGenre();
-    }
 }
