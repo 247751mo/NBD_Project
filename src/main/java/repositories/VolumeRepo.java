@@ -1,67 +1,53 @@
 package repositories;
 
-import jakarta.persistence.EntityManager;
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.type.DataTypes;
+import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
+import dao.VolumeDao;
+import mapper.VolumeMapper;
+import mapper.VolumeMapperBuilder;
 import model.Volume;
-import java.util.List;
-import java.util.UUID;
 
-public class VolumeRepo implements Repo<Volume> {
+public class VolumeRepo {
 
-    private final EntityManager em;
+    private final CqlSession session;
+    private final VolumeMapper volumeMapper;
+    private final VolumeDao volumeDao;
 
-    public VolumeRepo(EntityManager entityManager) {
-        this.em = entityManager;
+    public VolumeRepo(CqlSession session) {
+        this.session = session;
+        makeTable();
+        this.volumeMapper = new VolumeMapperBuilder(session).build();
+        this.volumeDao = volumeMapper.volumeDao();
     }
 
-    @Override
-    public Volume get(UUID id) {
-        return em.find(Volume.class, id);
+    public void makeTable() {
+        SimpleStatement createVolumes =
+                SchemaBuilder.createTable(CqlIdentifier.fromCql("volumes"))
+                        .ifNotExists()
+                        .withPartitionKey(CqlIdentifier.fromCql("volume_id"), DataTypes.BIGINT)
+                        .withColumn("isRented", DataTypes.BOOLEAN)
+                        .withColumn("title", DataTypes.TEXT)
+                        .withColumn("genre", DataTypes.TEXT)
+                        .build();
+        session.execute(createVolumes);
     }
 
-    @Override
-    public Volume add(Volume volume) {
-        try {
-            em.getTransaction().begin();
-            em.persist(volume);
-            em.getTransaction().commit();
-            return volume;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to add volume: " + volume.getVolumeId(), e);
-        }
+    public void create(Volume volume) {
+        volumeDao.create(volume);
     }
 
-    @Override
-    public void delete(Volume volume) {
-        try {
-            em.getTransaction().begin();
-            Volume managedVolume = em.contains(volume) ? volume : em.merge(volume);
-            em.remove(managedVolume);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to remove volume: " + volume.getVolumeId(), e);
-        }
+    public Volume read(long volumeId) {
+        return volumeDao.findById(volumeId);
     }
-    @Override
-    public List<Volume> getAll() {
-        return em.createQuery("SELECT v FROM Volume v", Volume.class).getResultList();
-    }
-    @Override
+
     public void update(Volume volume) {
-        try {
-            em.getTransaction().begin();
-            em.merge(volume);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Failed to update volume: " + volume.getVolumeId(), e);
-        }
+        volumeDao.update(volume);
+    }
+
+    public void delete(long volumeId) {
+        volumeDao.remove(volumeId);
     }
 }
