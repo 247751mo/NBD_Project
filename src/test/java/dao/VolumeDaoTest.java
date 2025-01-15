@@ -60,6 +60,16 @@ class VolumeDaoTest {
         assertNull(volume);
         System.out.println(volume);
     }
+
+    @Test
+    void update() {
+        Book book = new Book(33, "book", "Book1", "BookGenre", "BookAuthor", false);
+        volumeDao.create(book);
+        book.setTitle("Book2");
+        volumeDao.update(book);
+        Volume retrievedVolume = volumeDao.findById(33);
+        assertEquals("Book2", retrievedVolume.getTitle());
+    }
 }
 
 
