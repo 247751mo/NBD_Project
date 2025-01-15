@@ -31,6 +31,8 @@ class RenterDaoTest {
 
     @Test
     void getRenterById() {
+        Renter renter = new Renter(1, "Jan", "Kowalski");
+        renterDao.create(renter);
         Renter retrievedRenter = renterDao.findById(1);
         Assertions.assertEquals("Jan", retrievedRenter.getFirstName());
         Assertions.assertEquals("Kowalski", retrievedRenter.getLastName());

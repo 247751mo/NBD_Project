@@ -19,7 +19,6 @@ public class Renter {
     @PartitionKey
     @CqlName("personal_id")
     private long personalId;
-    private String type = "RENTER";
     private String firstName;
     private String lastName;
 
