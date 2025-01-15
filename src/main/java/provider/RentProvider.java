@@ -23,6 +23,8 @@ public class RentProvider {
     public static final CqlIdentifier RENT_A_VOLUME = CqlIdentifier.fromCql("rent_a_volume");
     public static final CqlIdentifier RENT_ID = CqlIdentifier.fromCql("rent_id");
     public static final CqlIdentifier START_DATE = CqlIdentifier.fromCql("start_date");
+    public static final CqlIdentifier PERSONAL_ID = CqlIdentifier.fromCql("personal_id");
+    public static final CqlIdentifier VOLUME_ID = CqlIdentifier.fromCql("volume_id");
 
 
     public RentProvider(MapperContext ctx) {
@@ -30,12 +32,14 @@ public class RentProvider {
     }
 
     public void create(Rent rent) {
-        Insert insertRenter = QueryBuilder.insertInto(RENT_A_VOLUME)
+        Insert insertRent = QueryBuilder.insertInto(RENT_A_VOLUME)
                 .value(RENT_ID, literal(rent.getRentID()))
                 .value(START_DATE, literal(rent.getStartDate()))
+                .value(VOLUME_ID, literal(rent.getVolumeID()))
+                .value(PERSONAL_ID, literal(rent.getPersonalID()))
                 .ifNotExists();
 
-        session.execute(insertRenter.build());
+        session.execute(insertRent.build());
     }
 
 

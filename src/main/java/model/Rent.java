@@ -18,6 +18,8 @@ public class Rent {
         this.startDate = startDate;
         this.volume = volume;
         this.renter = renter;
+        this.volumeID = volume.getVolumeId();
+        this.personalID = renter.getPersonalId();
     }
 
     public Rent(long rentID, String startDate, long volumeID, long personalID) {
