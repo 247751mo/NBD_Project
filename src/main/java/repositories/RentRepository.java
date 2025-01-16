@@ -44,7 +44,7 @@ public class RentRepository {
                         .withColumn("personal_id", DataTypes.BIGINT)
                         .withColumn("start_date", DataTypes.TEXT)
                         .build();
-        session.execute(createRentsByRenter);
+        session.execute(createRentsByVolume);
     }
 
     public void create(Rent rent) {
