@@ -4,12 +4,13 @@ import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
 import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import lombok.Data;
 import lombok.Getter;
 
 @Entity(defaultKeyspace = "rent_a_volume")
 @CqlName("rents_by_renter")
 @Getter
-
+@Data
 public class RentsByRenter extends Rent{
     @CqlName("rent_id")
     @ClusteringColumn

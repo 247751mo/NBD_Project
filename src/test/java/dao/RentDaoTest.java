@@ -51,8 +51,9 @@ public class RentDaoTest {
     @Test
     void testgetbyif() {
 
-        Rent rent = rentDao.findByRenterId(5);
-        System.out.println(rent);
+        Rent rentty = rentDao.findByRenterId(5);
+        System.out.println(rentty);
+        Assertions.assertEquals("1.01.2025", rentty.getStartDate());
     }
 
     @Test
