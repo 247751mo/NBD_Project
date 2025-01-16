@@ -10,6 +10,7 @@ import model.Book;
 import model.Publication;
 import model.Renter;
 import model.Volume;
+import org.junit.jupiter.api.Assertions;
 import provider.VolumeProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,7 @@ class VolumeDaoTest {
     void findById() {
         Volume volume = volumeDao.findById(1);
         System.out.println(volume);
+        Assertions.assertEquals("W pustyni i w puszczy", volume.getTitle());
     }
     @Test
     void delete() {
