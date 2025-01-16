@@ -16,12 +16,16 @@ import com.datastax.oss.driver.api.querybuilder.update.Update;
 import model.Rent;
 import model.Renter;
 
+import java.util.List;
+
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.literal;
 
 public class RentProvider {
     private final CqlSession session;
 
     public static final CqlIdentifier RENT_A_VOLUME = CqlIdentifier.fromCql("rent_a_volume");
+    public static final CqlIdentifier RENTS_BY_RENTER = CqlIdentifier.fromCql("rents_by_renter");
+    public static final CqlIdentifier RENTS_BY_VOLUME = CqlIdentifier.fromCql("rents_by_volume");
     public static final CqlIdentifier RENT_ID = CqlIdentifier.fromCql("rent_id");
     public static final CqlIdentifier START_DATE = CqlIdentifier.fromCql("start_date");
     public static final CqlIdentifier PERSONAL_ID = CqlIdentifier.fromCql("personal_id");
@@ -33,21 +37,48 @@ public class RentProvider {
     }
 
     public void create(Rent rent) {
-        Insert insertRent = QueryBuilder.insertInto(RENT_A_VOLUME)
+        Insert insertRenter = QueryBuilder.insertInto(RENTS_BY_RENTER)
+                .value(PERSONAL_ID, literal(rent.getPersonalID()))
                 .value(RENT_ID, literal(rent.getRentID()))
                 .value(START_DATE, literal(rent.getStartDate()))
                 .value(VOLUME_ID, literal(rent.getVolumeID()))
+                .ifNotExists();
+
+        Insert insertVolume = QueryBuilder.insertInto(RENTS_BY_VOLUME)
+                .value(VOLUME_ID, literal(rent.getVolumeID()))
+                .value(RENT_ID, literal(rent.getRentID()))
+                .value(START_DATE, literal(rent.getStartDate()))
                 .value(PERSONAL_ID, literal(rent.getPersonalID()))
                 .ifNotExists();
 
-        session.execute(insertRent.build());
+        session.execute(insertRenter.build());
+        session.execute(insertVolume.build());
     }
 
-    public Rent findById(long rentID) {
-        Select selectRent = QueryBuilder.selectFrom(RENT_A_VOLUME)
+    public Rent findByRenterId(long personalID) {
+        Select selectRenter = QueryBuilder.selectFrom(RENTS_BY_RENTER)
                 .all()
-                .where(Relation.column(RENT_ID).isEqualTo(QueryBuilder.literal(rentID)));
-        ResultSet resultSet = session.execute(selectRent.build());
+                .where(Relation.column(PERSONAL_ID).isEqualTo(QueryBuilder.literal(personalID)));
+        ResultSet resultSet = session.execute(selectRenter.build());
+        Row row = resultSet.one();
+
+        if (row == null) {
+            return null;
+        }
+
+        return new Rent(
+                row.getLong(RENT_ID),
+                row.getString(START_DATE),
+                row.getLong(VOLUME_ID),
+                row.getLong(PERSONAL_ID)
+        );
+    }
+
+    public Rent findByVolumeId(long volumeID) {
+        Select selectVolume = QueryBuilder.selectFrom(RENTS_BY_VOLUME)
+                .all()
+                .where(Relation.column(VOLUME_ID).isEqualTo(QueryBuilder.literal(volumeID)));
+        ResultSet resultSet = session.execute(selectVolume.build());
         Row row = resultSet.one();
 
         if (row == null) {
@@ -63,19 +94,29 @@ public class RentProvider {
     }
 
     public void update(Rent rent) {
-        Update updateRenter = QueryBuilder.update(RENT_A_VOLUME)
+        Update updateRenter = QueryBuilder.update(RENTS_BY_RENTER)
                 .setColumn(START_DATE, QueryBuilder.literal(rent.getStartDate()))
-                .where(Relation.column(RENT_ID).isEqualTo(QueryBuilder.literal(rent.getRentID())));
+                .where(Relation.column(PERSONAL_ID).isEqualTo(QueryBuilder.literal(rent.getPersonalID())));
         session.execute(updateRenter.build());
+
+        Update updateVolume = QueryBuilder.update(RENTS_BY_VOLUME)
+                .setColumn(START_DATE, QueryBuilder.literal(rent.getStartDate()))
+                .where(Relation.column(VOLUME_ID).isEqualTo(QueryBuilder.literal(rent.getVolumeID())));
+        session.execute(updateVolume.build());
     }
 
     public void remove(Rent rent) {
-        Delete deleteRent = QueryBuilder.deleteFrom(RENT_A_VOLUME)
+        Delete deleteRenter = QueryBuilder.deleteFrom(RENTS_BY_RENTER)
+                .where(Relation.column(PERSONAL_ID).isEqualTo(literal(rent.getPersonalID())))
                 .where(Relation.column(RENT_ID).isEqualTo(literal(rent.getRentID())));
 
+        Delete deleteVolume = QueryBuilder.deleteFrom(RENTS_BY_VOLUME)
+                .where(Relation.column(VOLUME_ID).isEqualTo(literal(rent.getVolumeID())))
+                 .where(Relation.column(RENT_ID).isEqualTo(literal(rent.getRentID())));
 
         BatchStatement batchStatement = BatchStatement.builder(BatchType.LOGGED)
-                .addStatement(deleteRent.build())
+                .addStatement(deleteRenter.build())
+                .addStatement(deleteVolume.build())
                 .build();
 
         session.execute(batchStatement);

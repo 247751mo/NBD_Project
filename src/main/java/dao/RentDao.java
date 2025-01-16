@@ -18,7 +18,11 @@ public interface RentDao {
 
     @StatementAttributes(consistencyLevel = "ONE", pageSize = 100)
     @QueryProvider(providerClass = RentProvider.class)
-    Rent findById (long rentID);
+    Rent findByRenterId (long personalID);
+
+    @StatementAttributes(consistencyLevel = "ONE", pageSize = 100)
+    @QueryProvider(providerClass = RentProvider.class)
+    Rent findByVolumeId (long volumeID);
 
     @StatementAttributes(consistencyLevel = "QUORUM")
     @QueryProvider(providerClass = RentProvider.class)

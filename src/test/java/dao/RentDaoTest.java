@@ -51,7 +51,7 @@ public class RentDaoTest {
     @Test
     void testgetbyif() {
 
-        Rent rent = rentDao.findById(1);
+        Rent rent = rentDao.findByRenterId(5);
         System.out.println(rent);
     }
 
@@ -64,10 +64,10 @@ public class RentDaoTest {
 
         Rent rent1 = new Rent(2, "1 stycznia", book1, renter1);
         rentDao.create(rent1);
-        Rent rent = rentDao.findById(2);
+        Rent rent = rentDao.findByRenterId(7);
         System.out.println(rent);
         rentDao.remove(rent1);
-        Rent rentt = rentDao.findById(2);
+        Rent rentt = rentDao.findByRenterId(7);
         Assertions.assertNull(rentt);
     }
 }

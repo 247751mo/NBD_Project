@@ -26,15 +26,25 @@ public class RentRepository {
     }
 
     private void makeTable() {
-        SimpleStatement createRents =
-                SchemaBuilder.createTable(CqlIdentifier.fromCql("rent_a_volume"))
+        SimpleStatement createRentsByRenter =
+                SchemaBuilder.createTable(CqlIdentifier.fromCql("rents_by_renter"))
                         .ifNotExists()
-                        .withPartitionKey(CqlIdentifier.fromCql("rent_id"), DataTypes.BIGINT)
+                        .withPartitionKey(CqlIdentifier.fromCql("personal_id"), DataTypes.BIGINT)
+                        .withClusteringColumn(CqlIdentifier.fromCql("rent_id"), DataTypes.BIGINT)
                         .withColumn("volume_id", DataTypes.BIGINT)
+                        .withColumn("start_date", DataTypes.TEXT)
+                        .build();
+                session.execute(createRentsByRenter);
+
+        SimpleStatement createRentsByVolume =
+                SchemaBuilder.createTable(CqlIdentifier.fromCql("rents_by_volume"))
+                        .ifNotExists()
+                        .withPartitionKey(CqlIdentifier.fromCql("volume_id"), DataTypes.BIGINT)
+                        .withClusteringColumn(CqlIdentifier.fromCql("rent_id"), DataTypes.BIGINT)
                         .withColumn("personal_id", DataTypes.BIGINT)
                         .withColumn("start_date", DataTypes.TEXT)
                         .build();
-                session.execute(createRents);
+        session.execute(createRentsByRenter);
     }
 
     public void create(Rent rent) {
@@ -45,8 +55,12 @@ public class RentRepository {
         rentDao.update(rent);
     }
 
-    public Rent findbyID(long rentID){
-        return rentDao.findById(rentID);
+    public Rent findByRenterID(long personalID) {
+        return rentDao.findByRenterId(personalID);
+    }
+
+    public Rent findByVolumeID(long volumeID) {
+        return rentDao.findByVolumeId(volumeID);
     }
 
     public void remove(Rent rent) {
