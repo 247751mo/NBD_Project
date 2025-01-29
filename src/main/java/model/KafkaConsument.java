@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class KafkaConsument {
-    private final List<KafkaConsumer<Integer, String>> kafkaConsumers = new ArrayList<>();
+    private final List<KafkaConsumer<String, String>> kafkaConsumers = new ArrayList<>();
     private final String RENT_TOPIC = "rents";
     private final int numConsumers;
     private final RentRepo rentRepo;
@@ -45,7 +45,7 @@ public class KafkaConsument {
 
     public void initConsumers() {
         Properties consumerConfig = new Properties();
-        consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class.getName());
+        consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, "group-rents");
         consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9192,kafka2:9292,kafka3:9392");
@@ -53,7 +53,7 @@ public class KafkaConsument {
 
         if (kafkaConsumers.isEmpty()) {
             for (int i = 0; i < numConsumers; i++) {
-                KafkaConsumer<Integer, String> kafkaConsumer = new KafkaConsumer<>(consumerConfig);
+                KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(consumerConfig);
                 kafkaConsumer.subscribe(Collections.singleton(RENT_TOPIC));
                 kafkaConsumers.add(kafkaConsumer);
                 System.out.println("Creating consumer " + i);
@@ -61,7 +61,7 @@ public class KafkaConsument {
         }
     }
 
-    public void consume(KafkaConsumer<Integer, String> consumer) {
+    public void consume(KafkaConsumer<String, String> consumer) {
         try {
             consumer.poll(0);
             Set<TopicPartition> consumerAssignment = consumer.assignment();
@@ -69,9 +69,9 @@ public class KafkaConsument {
             Duration timeout = Duration.of(100, ChronoUnit.MILLIS);
 
             while (true) {
-                ConsumerRecords<Integer, String> records = consumer.poll(timeout);
+                ConsumerRecords<String, String> records = consumer.poll(timeout);
 
-                for (ConsumerRecord<Integer, String> record : records) {
+                for (ConsumerRecord<String, String> record : records) {
                     try {
                         Rent rent = objectMapper.readValue(record.value(), Rent.class);
                         rentRepo.create(rent);
@@ -91,7 +91,7 @@ public class KafkaConsument {
 
     public void consumeTopicByAllConsumers() {
         ExecutorService executorService = Executors.newFixedThreadPool(numConsumers);
-        for (KafkaConsumer<Integer, String> consumer : kafkaConsumers) {
+        for (KafkaConsumer<String, String> consumer : kafkaConsumers) {
             executorService.execute(() -> consume(consumer));
         }
     }
