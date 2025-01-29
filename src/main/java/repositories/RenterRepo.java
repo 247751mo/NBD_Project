@@ -8,7 +8,7 @@ import model.Renter;
 import org.bson.conversions.Bson;
 import java.util.ArrayList;
 
-public class MongoRenterRepo extends AbstractMongoRepository {
+public class RenterRepo extends AbstractMongoRepository {
 
     public Renter read(String id) {
         Bson filter = Filters.eq("_id", id);

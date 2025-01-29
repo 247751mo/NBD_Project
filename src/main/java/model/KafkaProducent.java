@@ -1,4 +1,4 @@
-package org.example;
+package model;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -7,25 +7,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Getter;
-import model.Rent;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.KafkaFuture;
-import org.apache.kafka.common.errors.TopicExistsException;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.apache.kafka.common.serialization.UUIDSerializer;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.util.List;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Getter
 public class KafkaProducent {
-    static KafkaProducer<Integer, String> kafkaProducer;
+    static KafkaProducer<String, String> kafkaProducer;
     private static final String RENT_TOPIC = "rents";
 
     public KafkaProducent() throws ExecutionException, InterruptedException {
@@ -41,9 +35,9 @@ public class KafkaProducent {
                 "kafka1:9192,kafka2:9292,kafka3:9392");
         producerConfig.put(ProducerConfig.ACKS_CONFIG, "all");
         producerConfig.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
-        kafkaProducer = new KafkaProducer<>(producerConfig);
+        kafkaProducer = new KafkaProducer<String, String>(producerConfig);
     }
-    public KafkaProducer<Integer, String> getKafkaProducer(){
+    public KafkaProducer<String, String> getKafkaProducer(){
         return kafkaProducer;
     }
     public static void sendRentAsync(Rent rent) throws InterruptedException, JsonProcessingException {
@@ -56,7 +50,7 @@ public class KafkaProducent {
         String jsonClient = om.writeValueAsString(rent);
 
         System.out.println(jsonClient);
-        ProducerRecord<Integer, String> record = new ProducerRecord<>(RENT_TOPIC, rent.getId(), jsonClient);
+        ProducerRecord<String, String> record = new ProducerRecord<>(RENT_TOPIC, rent.getId(), jsonClient);
         kafkaProducer.send(record);
     }
 

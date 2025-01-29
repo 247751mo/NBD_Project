@@ -1,8 +1,7 @@
 import model.Renter;
 import org.junit.jupiter.api.*;
-import repositories.MongoRenterRepo;
-import repositories.RedisRenterRepo;
 import repositories.RenterRepo;
+import repositories.RedisRenterRepo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RenterManagerTest {
 
     private static final RedisRenterRepo redisRepo = new RedisRenterRepo();
-    private static final MongoRenterRepo mongoRepo = new MongoRenterRepo();
+    private static final RenterRepo mongoRepo = new RenterRepo();
     private static final RenterRepo renterRepo = new RenterRepo(redisRepo, mongoRepo);
     private RenterManager renterManager;
 

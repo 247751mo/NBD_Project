@@ -5,7 +5,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import repositories.MongoVolumeRepo;
+import repositories.VolumeRepo;
 
 import java.util.List;
 
@@ -13,29 +13,29 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class VolumeRepoTest {
 
-    private static MongoVolumeRepo mongoVolumeRepo;
+    private static VolumeRepo volumeRepo;
 
     @BeforeAll
     public static void setUp() {
-        mongoVolumeRepo = new MongoVolumeRepo();
+        volumeRepo = new VolumeRepo();
     }
 
     @BeforeEach
     public void cleanUp() {
-        mongoVolumeRepo.getDatabase().getCollection("volumes", Volume.class).drop();
+        volumeRepo.getDatabase().getCollection("volumes", Volume.class).drop();
     }
 
     @AfterAll
     public static void tearDown() {
-        mongoVolumeRepo.getDatabase().getCollection("volumes", Volume.class).drop();
-        mongoVolumeRepo.close();
+        volumeRepo.getDatabase().getCollection("volumes", Volume.class).drop();
+        volumeRepo.close();
     }
 
     @Test
     void testAddVolume() {
         Book book1 = new Book(1,"Solaris", "Scifi", "Stanislaw Lem");
-        mongoVolumeRepo.create(book1);
-        Book foundVolume = (Book) mongoVolumeRepo.read(1);
+        volumeRepo.create(book1);
+        Book foundVolume = (Book) volumeRepo.read(1);
         assertEquals(book1.getTitle(), foundVolume.getTitle());
         assertEquals(book1.getGenre(), foundVolume.getGenre());
         assertEquals(book1.getVolumeId(), foundVolume.getVolumeId());
@@ -49,23 +49,23 @@ class VolumeRepoTest {
     @Test
     void testRemoveVolume() {
         Volume book1 = new Book(1,"Solaris","Scifi","Stanislaw Lem");
-        mongoVolumeRepo.create(book1);
+        volumeRepo.create(book1);
 
-        Volume foundVolume = mongoVolumeRepo.read(book1.getVolumeId());
+        Volume foundVolume = volumeRepo.read(book1.getVolumeId());
         assertNotNull(foundVolume);
 
-        mongoVolumeRepo.delete(book1);
+        volumeRepo.delete(book1);
 
-        Volume deletedVolume = mongoVolumeRepo.read(book1.getVolumeId());
+        Volume deletedVolume = volumeRepo.read(book1.getVolumeId());
         assertNull(deletedVolume);
     }
 
     @Test
     void testUpdateVolume() {
         Volume book1 = new Book(1,"Solaris","Scifi","Stanislaw Lem");
-        mongoVolumeRepo.create(book1);
+        volumeRepo.create(book1);
 
-        Volume foundVolumeBeforeUpdate = mongoVolumeRepo.read(book1.getVolumeId());
+        Volume foundVolumeBeforeUpdate = volumeRepo.read(book1.getVolumeId());
         assertEquals("Solaris", foundVolumeBeforeUpdate.getTitle());
         assertEquals("Scifi", foundVolumeBeforeUpdate.getGenre());
 
@@ -73,9 +73,9 @@ class VolumeRepoTest {
         book1.setGenre("ificS");
         book1.setIsRented(1);
 
-        mongoVolumeRepo.update(book1);
+        volumeRepo.update(book1);
 
-        Volume foundVolumeAfterUpdate = mongoVolumeRepo.read(book1.getVolumeId());
+        Volume foundVolumeAfterUpdate = volumeRepo.read(book1.getVolumeId());
         assertEquals("NowyTytul", foundVolumeAfterUpdate.getTitle());
         assertEquals("ificS", foundVolumeAfterUpdate.getGenre());
 
@@ -83,16 +83,16 @@ class VolumeRepoTest {
 
     @Test
     void testGetAllVolumes() {
-        List<Volume> volumes = mongoVolumeRepo.readAll();
+        List<Volume> volumes = volumeRepo.readAll();
         int initialSize = volumes.size();
 
         Volume book1 = new Book(1,"Solaris","Scifi","Stanislaw Lem");
         Volume monthly1 = new Monthly(2, "Miesiecznik","Gatunek","Wydawca");
 
-        mongoVolumeRepo.create(book1);
-        mongoVolumeRepo.create(monthly1);
+        volumeRepo.create(book1);
+        volumeRepo.create(monthly1);
 
-        volumes = mongoVolumeRepo.readAll();
+        volumes = volumeRepo.readAll();
         int finalSize = volumes.size();
 
         assertEquals(initialSize + 2, finalSize);

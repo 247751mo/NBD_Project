@@ -14,20 +14,20 @@ import repositories.*;
 import java.time.LocalDateTime;
 
 public class RentManagerTest {
-    private static MongoRentRepo rentRepo;
+    private static RentRepo rentRepo;
     private static final RedisRenterRepo redisRepo = new RedisRenterRepo();
-    private static MongoRenterRepo mongoRepo;
+    private static RenterRepo mongoRepo;
     private static final RenterRepo renterRepo = new RenterRepo(redisRepo, mongoRepo);
-    private static MongoVolumeRepo mongoVolumeRepo;
+    private static VolumeRepo volumeRepo;
     private static RentManager rentManager;
 
 
 
     @BeforeAll
     public static void setUp() {
-        rentRepo = new MongoRentRepo();
-        mongoRepo = new MongoRenterRepo();
-        mongoVolumeRepo = new MongoVolumeRepo();
+        rentRepo = new RentRepo();
+        mongoRepo = new RenterRepo();
+        volumeRepo = new VolumeRepo();
         rentManager = new RentManager(rentRepo);
         redisRepo.clearCache();
     }
@@ -35,11 +35,11 @@ public class RentManagerTest {
     @AfterAll
     public static void tearDown() {
         rentRepo.getDatabase().getCollection("rents", Rent.class).drop();
-        mongoVolumeRepo.getDatabase().getCollection("volumes", Volume.class).drop();
+        volumeRepo.getDatabase().getCollection("volumes", Volume.class).drop();
         mongoRepo.getDatabase().getCollection("renters", Renter.class).drop();
         rentRepo.close();
         mongoRepo.close();
-        mongoVolumeRepo.close();
+        volumeRepo.close();
         redisRepo.clearCache();
         redisRepo.close();
     }
@@ -53,7 +53,7 @@ public class RentManagerTest {
         volume.setIsRented(1);
         Renter renter = new Renter("124", "Doe", "Jane");
 
-        mongoVolumeRepo.create(volume);
+        volumeRepo.create(volume);
         rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
 
         Rent rent = new Rent(renter, volume, LocalDateTime.now());
@@ -76,11 +76,11 @@ public class RentManagerTest {
         Renter renter = new Renter("143443", "Smif", "Jon");
 
         rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
-        mongoVolumeRepo.create(volume1);
-        mongoVolumeRepo.create(volume2);
-        mongoVolumeRepo.create(volume3);
-        mongoVolumeRepo.create(volume4);
-        mongoVolumeRepo.create(volume5);
+        volumeRepo.create(volume1);
+        volumeRepo.create(volume2);
+        volumeRepo.create(volume3);
+        volumeRepo.create(volume4);
+        volumeRepo.create(volume5);
 
         Rent testRent1 = new Rent(renter, volume1, LocalDateTime.now());
         Rent testRent2 = new Rent(renter, volume2, LocalDateTime.now());

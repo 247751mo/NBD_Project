@@ -1,6 +1,5 @@
 package model;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.DefaultBaseTypeLimitingValidator;
@@ -10,26 +9,25 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.UUIDDeserializer;
-import repositories.MongoRentRepo;
+import repositories.RentRepo;
 
-import java.text.MessageFormat;
+
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class KafkaRenter {
-    private final List<KafkaRenter<Integer, String>> kafkaRenters = new ArrayList<>();
+public class KafkaConsument {
+    private final List<KafkaConsumer<Integer, String>> kafkaConsumers = new ArrayList<>();
     private final String RENT_TOPIC = "rents";
-    private final int numRenters;
-    private final MongoRentRepo rentRepo;
+    private final int numConsumers;
+    private final RentRepo rentRepo;
     private final ObjectMapper objectMapper;
 
-    public KafkaRenter(int numConsumers) {
-        this.numRenters = numConsumers;
-        this.rentRepo = new rentRepo();
+    public KafkaConsument(int numConsumers) {
+        this.numConsumers = numConsumers;
+        this.rentRepo = new RentRepo();
         this.objectMapper = new ObjectMapper();
 
         // Obsługa typów hierarchicznych
@@ -76,7 +74,7 @@ public class KafkaRenter {
                 for (ConsumerRecord<Integer, String> record : records) {
                     try {
                         Rent rent = objectMapper.readValue(record.value(), Rent.class);
-                        rentRepository.add(rent);
+                        rentRepo.create(rent);
                         System.out.println("Saved rent: " + rent.getId());
                     } catch (Exception e) {
                         System.err.println("Failed to process record: " + record.value() + ", error: " + e.getMessage());
