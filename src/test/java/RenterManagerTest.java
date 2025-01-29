@@ -1,4 +1,3 @@
-import managers.RenterManager;
 import model.Renter;
 import org.junit.jupiter.api.*;
 import repositories.MongoRenterRepo;

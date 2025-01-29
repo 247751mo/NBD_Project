@@ -12,6 +12,8 @@ import model.Volume;
 import org.bson.conversions.Bson;
 import java.util.ArrayList;
 
+import static org.example.KafkaProducent.sendRentAsync;
+
 public class MongoRentRepo extends AbstractMongoRepository {
     public Rent read(Object id) {
         Bson filter = Filters.eq("_id", id);

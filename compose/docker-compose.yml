@@ -1,4 +1,4 @@
-name: nbd-mongo-redis
+name: nbd-mongo-kafka
 services:
   mongo_1:
     build: .
