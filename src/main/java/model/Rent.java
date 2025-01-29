@@ -9,6 +9,7 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 @Getter
 
@@ -16,7 +17,7 @@ import java.time.temporal.ChronoUnit;
 public class Rent {
 
     @BsonId
-    private String id;
+    private UUID id;
 
     @BsonProperty("renter")
     @Setter
@@ -35,7 +36,7 @@ public class Rent {
     private LocalDateTime endTime;
 
     @BsonCreator
-    public Rent(@BsonProperty("id") String id,
+    public Rent(@BsonProperty("id") UUID id,
                 @BsonProperty("renter") Renter renter,
                 @BsonProperty("volume") Volume volume,
                 @BsonProperty("beginTime") LocalDateTime beginTime) {
@@ -46,7 +47,7 @@ public class Rent {
     }
 
     public Rent(Renter renter, Volume volume, LocalDateTime beginTime) {
-        this.id = java.util.UUID.randomUUID().toString();
+        this.id = java.util.UUID.randomUUID();
         this.renter = renter;
         this.volume = volume;
         this.beginTime = beginTime != null ? beginTime.truncatedTo(ChronoUnit.SECONDS) : LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
