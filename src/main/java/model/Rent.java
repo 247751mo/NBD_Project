@@ -23,7 +23,7 @@ import java.util.UUID;
 public class Rent {
 
     @BsonId
-    private int id;
+    private UUID id;
 
     @BsonProperty("renter")
     @Setter
@@ -42,7 +42,7 @@ public class Rent {
     private LocalDateTime endTime;
 
     @BsonCreator
-    public Rent(@BsonProperty("id") @JsonProperty("id") int id,
+    public Rent(@BsonProperty("id") @JsonProperty("id") UUID id,
                 @BsonProperty("renter") @JsonProperty("renter") Renter renter,
                 @BsonProperty("volume") @JsonProperty("volume") Volume volume,
                 @BsonProperty("beginTime") @JsonProperty("beginTime") LocalDateTime beginTime) {
@@ -53,6 +53,7 @@ public class Rent {
     }
 
     public Rent(Renter renter, Volume volume, LocalDateTime beginTime) {
+        this.id = java.util.UUID.randomUUID();
         this.renter = renter;
         this.volume = volume;
         this.beginTime = beginTime != null ? beginTime.truncatedTo(ChronoUnit.SECONDS) : LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);

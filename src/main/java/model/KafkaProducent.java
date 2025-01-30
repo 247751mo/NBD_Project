@@ -14,6 +14,8 @@ import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.common.serialization.UUIDSerializer;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -21,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 
 @Getter
 public class KafkaProducent {
-    static KafkaProducer<Integer, String> kafkaProducer;
+    static KafkaProducer<UUID, String> kafkaProducer;
     private static final String RENT_TOPIC = "rents";
 
     public KafkaProducent() throws ExecutionException, InterruptedException {
@@ -39,9 +41,9 @@ public class KafkaProducent {
         producerConfig.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
         producerConfig.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 10242880); // 5 MB
 
-        kafkaProducer = new KafkaProducer<Integer, String>(producerConfig);
+        kafkaProducer = new KafkaProducer<UUID, String>(producerConfig);
     }
-    public KafkaProducer<Integer, String> getKafkaProducer(){
+    public KafkaProducer<UUID, String> getKafkaProducer(){
         return kafkaProducer;
     }
     public static void sendRentAsync(Rent rent) throws InterruptedException, JsonProcessingException {
@@ -49,13 +51,13 @@ public class KafkaProducent {
         ObjectMapper om = JsonMapper.builder().addModule(new JavaTimeModule()).build();
         om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-        //Jsonb jsonb = JsonbBuilder.create();
-        // String jsonClient = jsonb.toJson (rent +"nazwa - wypozyczalni");
+//        Jsonb jsonb = JsonbBuilder.create();
+//         String jsonClient = jsonb.toJson (rent +"nazwa");
         String jsonClient = om.writeValueAsString(rent);
 
         System.out.println(jsonClient);
-        ProducerRecord<Integer, String> record = new ProducerRecord<>(RENT_TOPIC, rent.getId(), jsonClient);
-        System.out.println("Kafka Key (Integer): " + rent.getId());
+        ProducerRecord<UUID, String> record = new ProducerRecord<>(RENT_TOPIC, rent.getId(), jsonClient);
+        System.out.println("Kafka Key (UUID): " + rent.getId());
         System.out.println("Kafka Value (JSON): " + jsonClient);
 
         kafkaProducer.send(record);
@@ -72,7 +74,7 @@ public class KafkaProducent {
     public static void createTopic() throws InterruptedException { Properties properties = new Properties();
         properties.put
                 (AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9192, kafka1:9292, kafka1:9392");
-        int partitionsNumber = 5;
+        int partitionsNumber = 3;
         short replicationFactor = 3;
         try (Admin admin = Admin.create(properties)) {
             NewTopic newTopic = new NewTopic(RENT_TOPIC, partitionsNumber, replicationFactor);

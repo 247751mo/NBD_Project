@@ -86,7 +86,7 @@ class KafkaProducentTest {
         consument.consumeTopicByAllConsumers();
 
         // Create and send Rent
-        Rent testRent = new Rent(1, testRenter, testVolume, LocalDateTime.now());
+        Rent testRent = new Rent(testRenter, testVolume, LocalDateTime.now());
         KafkaProducent.sendRentAsync(testRent);
 
         // Wait for the message to be processed
