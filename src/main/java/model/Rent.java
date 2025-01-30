@@ -1,5 +1,6 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,10 +42,10 @@ public class Rent {
     private LocalDateTime endTime;
 
     @BsonCreator
-    public Rent(@BsonProperty("id") UUID id,
-                @BsonProperty("renter") Renter renter,
-                @BsonProperty("volume") Volume volume,
-                @BsonProperty("beginTime") LocalDateTime beginTime) {
+    public Rent(@BsonProperty("id") @JsonProperty("id") UUID id,
+                @BsonProperty("renter") @JsonProperty("renter") Renter renter,
+                @BsonProperty("volume") @JsonProperty("volume") Volume volume,
+                @BsonProperty("beginTime") @JsonProperty("beginTime") LocalDateTime beginTime) {
         this.id = id;
         this.renter = renter;
         this.volume = volume;
