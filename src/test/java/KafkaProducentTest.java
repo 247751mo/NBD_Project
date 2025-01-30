@@ -76,4 +76,33 @@ class KafkaProducentTest {
         System.out.println("Rent was sent to Kafka with ID: " + testRent.getId());
     }
 
+    @Test
+    @DisplayName("Test adding a new Rent with Kafka and MongoDB")
+    void testAddRentWithKafkaAndMongo() throws InterruptedException, JsonProcessingException {
+
+
+        KafkaConsument consument = new KafkaConsument(2); // liczba konsumentów
+        consument.initConsumers();
+        consument.consumeTopicByAllConsumers();
+
+        // Create and send Rent
+        Rent testRent = new Rent(testRenter, testVolume, LocalDateTime.now());
+        KafkaProducent.sendRentAsync(testRent);
+
+        // Wait for the message to be processed
+        Rent retrievedRent = null;
+        int retryCount = 0;
+        while (retrievedRent == null && retryCount < 10) { // 10 prób z odstępami
+            retrievedRent = rentRepo.read(testRent.getId());
+            Thread.sleep(500); // Poczekaj 500 ms między próbami
+            retryCount++;
+        }
+
+        // Assertions
+        assertNotNull(retrievedRent, "Rent should be saved in MongoDB.");
+        assertEquals(testRent.getRenter().getPersonalID(), retrievedRent.getRenter().getPersonalID());
+        assertEquals(testRent.getVolume().getVolumeId(), retrievedRent.getVolume().getVolumeId());
+
+    }
+
 }
