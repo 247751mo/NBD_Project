@@ -1,6 +1,5 @@
 import model.*;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static model.KafkaProducent.sendRentAsync;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.bson.Document;
 import org.junit.jupiter.api.*;
-import java.time.LocalDateTime;
+
 import java.util.concurrent.ExecutionException;
 
 
