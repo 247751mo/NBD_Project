@@ -51,6 +51,8 @@ public class KafkaConsument {
         consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, "group-rents");
         consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9192,kafka2:9292,kafka3:9392");
         consumerConfig.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+        consumerConfig.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, 5242880); // 5 MB
+
 
         if (kafkaConsumers.isEmpty()) {
             for (int i = 0; i < numConsumers; i++) {
