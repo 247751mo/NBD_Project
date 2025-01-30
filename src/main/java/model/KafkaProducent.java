@@ -32,7 +32,7 @@ public class KafkaProducent {
 
     public static void initProducer() throws ExecutionException, InterruptedException {
         Properties producerConfig = new Properties();
-        producerConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class.getName());
+        producerConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, UUIDSerializer.class.getName());
         producerConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         producerConfig.put(ProducerConfig.CLIENT_ID_CONFIG, "local");
         producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
