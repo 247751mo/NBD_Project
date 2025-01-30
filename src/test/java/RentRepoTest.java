@@ -12,13 +12,14 @@ import repositories.*;
 
 import java.time.LocalDateTime;
 
-public class RentManagerTest {
-    private static MongoRentRepo rentRepo;
-    private static final RedisRenterRepo redisRepo = new RedisRenterRepo();
-    private static MongoRenterRepo mongoRepo;
-    private static final RenterRepo renterRepo = new RenterRepo(redisRepo, mongoRepo);
-    private static MongoVolumeRepo mongoVolumeRepo;
-    private static RentManager rentManager;
+public class RentRepoTest {
+    private static RentRepo rentRepo;
+    private static VolumeRepo volumeRepo;
+    private static RenterRepo renterRepo;
+
+    private Volume testVolume;
+    private Renter testRenter;
+    private Rent testRent;
 
 
 
