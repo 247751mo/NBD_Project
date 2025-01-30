@@ -22,6 +22,7 @@ public class Rent {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
+    @Column(length = 500)
     private String name;
     Rent(String name) {
         this.name = name;
