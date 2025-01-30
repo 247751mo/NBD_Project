@@ -32,10 +32,10 @@ public class RentRepoTest {
         renterRepo.initDbConnection();
 
         // Insert sample Renter
-        testRenter = new Renter("123356", "John", "Doe");
+        Renter testRenter = new Renter("123356", "John", "Doe");
 
         // Insert sample Volume
-        testVolume = new Book(12, "Solaris", "Sci-fi", "Stanislaw Lem");
+        Volume testVolume = new Book(12, "Solaris", "Sci-fi", "Stanislaw Lem");
     }
 
     @AfterEach
