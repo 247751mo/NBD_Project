@@ -41,6 +41,9 @@ public class RentRepo extends AbstractMongoRepository {
             MongoCollection<Rent> rentsCollection = getDatabase().getCollection("rents", Rent.class);
             rentsCollection.insertOne(clientSession, rent);
 
+            System.out.println("Inserted Rent into MongoDB: " + rent.getId()); // Dodaj logowanie
+
+
             MongoCollection<Volume> volumeCollection = getDatabase().getCollection("volumes", Volume.class);
             Bson filter = Filters.eq("_id", rent.getVolume().getVolumeId());
             Bson updates = Updates.inc("isRented", 1);

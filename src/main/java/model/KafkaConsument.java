@@ -77,6 +77,7 @@ public class KafkaConsument {
                 for (ConsumerRecord<UUID, String> record : records) {
                     try {
                         Rent rent = objectMapper.readValue(record.value(), Rent.class);
+                        System.out.println("Processing Rent ID: " + rent.getId());  // Dodaj logowanie tutaj
                         rentRepo.create(rent);
                         System.out.println("Saved rent: " + rent.getId());
                     } catch (Exception e) {
