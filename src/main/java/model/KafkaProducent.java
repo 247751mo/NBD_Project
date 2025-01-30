@@ -10,6 +10,7 @@ import lombok.Getter;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.common.serialization.UUIDSerializer;
 
@@ -20,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 
 @Getter
 public class KafkaProducent {
-    static KafkaProducer<UUID, String> kafkaProducer;
+    static KafkaProducer<Integer, String> kafkaProducer;
     private static final String RENT_TOPIC = "rents";
 
     public KafkaProducent() throws ExecutionException, InterruptedException {
@@ -29,7 +30,7 @@ public class KafkaProducent {
 
     public static void initProducer() throws ExecutionException, InterruptedException {
         Properties producerConfig = new Properties();
-        producerConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, UUIDSerializer.class.getName());
+        producerConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class.getName());
         producerConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         producerConfig.put(ProducerConfig.CLIENT_ID_CONFIG, "local");
         producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
@@ -38,9 +39,9 @@ public class KafkaProducent {
         producerConfig.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
         producerConfig.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 10242880); // 5 MB
 
-        kafkaProducer = new KafkaProducer<UUID, String>(producerConfig);
+        kafkaProducer = new KafkaProducer<Integer, String>(producerConfig);
     }
-    public KafkaProducer<UUID, String> getKafkaProducer(){
+    public KafkaProducer<Integer, String> getKafkaProducer(){
         return kafkaProducer;
     }
     public static void sendRentAsync(Rent rent) throws InterruptedException, JsonProcessingException {
@@ -53,8 +54,8 @@ public class KafkaProducent {
         String jsonClient = om.writeValueAsString(rent);
 
         System.out.println(jsonClient);
-        ProducerRecord<UUID, String> record = new ProducerRecord<>(RENT_TOPIC, rent.getId(), jsonClient);
-        System.out.println("Kafka Key (UUID): " + rent.getId());
+        ProducerRecord<Integer, String> record = new ProducerRecord<>(RENT_TOPIC, rent.getId(), jsonClient);
+        System.out.println("Kafka Key (Integer): " + rent.getId());
         System.out.println("Kafka Value (JSON): " + jsonClient);
 
         kafkaProducer.send(record);
