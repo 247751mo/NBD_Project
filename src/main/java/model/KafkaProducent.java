@@ -52,6 +52,9 @@ public class KafkaProducent {
 
         System.out.println(jsonClient);
         ProducerRecord<UUID, String> record = new ProducerRecord<>(RENT_TOPIC, rent.getId(), jsonClient);
+        System.out.println("Kafka Key (UUID): " + rent.getId());
+        System.out.println("Kafka Value (JSON): " + jsonClient);
+
         kafkaProducer.send(record);
     }
 
