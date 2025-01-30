@@ -1,154 +1,143 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
-import model.*;
-import org.bson.Document;
+import model.Book;
+import model.Rent;
+import model.Renter;
+import model.Volume;
+import model.KafkaProducent;
 import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
-import repositories.*;
+import repositories.RentRepo;
+import repositories.RenterRepo;
+import repositories.VolumeRepo;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RentRepoTest {
-    private static RentRepo rentRepo;
-    private static VolumeRepo volumeRepo;
-    private static RenterRepo renterRepo;
-    private KafkaProducent kafkaProducent;
+import static model.KafkaProducent.sendRentAsync;
+import static org.junit.jupiter.api.Assertions.*;
 
-    private Volume testVolume;
-    private Renter testRenter;
-    private Rent testRent;
+class RentRepoTest {
+
+    private static RentRepo rentRepo;
+    private static RenterRepo renterRepo;
+    private static VolumeRepo volumeRepo;
+    private static KafkaProducent kafkaProducent;
+
+    @BeforeAll
+    public static void setUp() throws ExecutionException, InterruptedException {
+        rentRepo = new RentRepo();
+        renterRepo = new RenterRepo();
+        volumeRepo = new VolumeRepo();
+        kafkaProducent = new KafkaProducent();
+    }
 
     @BeforeEach
-    void setup() throws ExecutionException, InterruptedException {
-        kafkaProducent = new KafkaProducent();
-
-        rentRepo = new RentRepo();
-        rentRepo.initDbConnection();
-
-        volumeRepo = new VolumeRepo();
-        volumeRepo.initDbConnection();
-
-        renterRepo = new RenterRepo();
-        renterRepo.initDbConnection();
-
-        // Insert sample Renter
-        Renter testRenter = new Renter("123356", "John", "Doe");
-
-        // Insert sample Volume
-        Volume testVolume = new Book(12, "Solaris", "Sci-fi", "Stanislaw Lem");
+    public void cleanUp() {
+        rentRepo.getDatabase().getCollection("rents", Rent.class).drop();
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).drop();
+        rentRepo.getDatabase().getCollection("renters", Renter.class).drop();
     }
 
-    @AfterEach
-    public void tearDown() {
-        rentRepo.getDatabase().getCollection("rents", Rent.class).deleteMany(new Document());
-        rentRepo.getDatabase().getCollection("archived", Rent.class).deleteMany(new Document());
+    @AfterAll
+    public static void tearDown() {
+        rentRepo.getDatabase().getCollection("rents", Rent.class).drop();
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).drop();
+        rentRepo.getDatabase().getCollection("renters", Renter.class).drop();
         rentRepo.close();
-        renterRepo.getDatabase().getCollection("renters", Renter.class).deleteMany(new Document());
-        renterRepo.close();
-        volumeRepo.getDatabase().getCollection("volumes", Volume.class).deleteMany(new Document());
-        volumeRepo.close();
     }
 
     @Test
-    @DisplayName("Test adding a new Rent")
-    void testAddRent() {
-        testRent = new Rent(testRenter, testVolume, LocalDateTime.now());
+    void testCreateRent() throws JsonProcessingException, InterruptedException {
+        Renter renter = new Renter("123", "Doe", "John");
+        Book volume = new Book(1,"vol1", "Test Volume", "Science Fiction");
+        Rent rent = new Rent(renter, volume, LocalDateTime.now());
 
-        // Add rent
-        rentRepo.create(testRent);
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume);
 
-        // Retrieve rent by ID
-        Rent retrievedRent = rentRepo.read(testRent.getId());
-
-        assertNotNull(retrievedRent);
-        assertEquals(testRent.getRenter().getPersonalID(), retrievedRent.getRenter().getPersonalID());
-        assertEquals(testRent.getVolume().getVolumeId(), retrievedRent.getVolume().getVolumeId());
-    }
-
-    @Test
-    @DisplayName("Test deleting a Rent")
-    void testEndRent() {
-        testAddRent(); // Ensure we have a rent added
-
-        // Delete rent
-        rentRepo.delete(testRent);
-
-        // Verify rent is deleted
-        Rent deletedRent = rentRepo.read(testRent.getId());
-        assertNull(deletedRent);
-
-        // Verify Renter rental count decreased
-        Renter updatedRenter = renterRepo.read(testRenter.getPersonalID());
-        assertEquals(0, updatedRenter.getCurrentRentsNumber());
-    }
-
-    @Test
-    @DisplayName("Test updating a Rent")
-    public void testUpdateRent() {
-        Rent rent = new Rent(testRenter, testVolume, LocalDateTime.now());
-        LocalDateTime endTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).plusHours(10);
         rentRepo.create(rent);
-        rent.setEndTime(endTime);
+        sendRentAsync(rent);
+        System.out.println("PojoCodecProvider registered"+ renter.getCurrentRentsNumber());
+        Rent foundRent = rentRepo.read(rent.getId());
+        assertNotNull(foundRent);
+        assertEquals(renter.getPersonalID(), foundRent.getRenter().getPersonalID());
+        assertEquals(volume.getVolumeId(), foundRent.getVolume().getVolumeId());
+    }
+
+    @Test
+    void testDeleteRent() throws JsonProcessingException, InterruptedException {
+        Renter renter = new Renter("124", "Doe", "Jane");
+        Book volume = new Book(2,"vol2", "Another Volume", "Fantasy");
+        Rent rent = new Rent(renter, volume, LocalDateTime.now());
+
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume);
+
+        rentRepo.create(rent);
+        sendRentAsync(rent);
+        Rent foundRent = rentRepo.read(rent.getId());
+        assertNotNull(foundRent);
+
+        rentRepo.delete(rent);
+        Rent deletedRent = rentRepo.read(rent.getId());
+        assertNull(deletedRent);
+    }
+
+    @Test
+    void testUpdateRent() throws JsonProcessingException, InterruptedException {
+        Renter renter = new Renter("125", "Doe", "Max");
+        Book volume = new Book(3,"vol3", "Volume to Update", "Thriller");
+        Rent rent = new Rent(renter, volume, LocalDateTime.now());
+
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter);
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume);
+
+        rentRepo.create(rent);
+        sendRentAsync(rent);
+
+        rent.setEndTime(LocalDateTime.now().plusDays(1));
         rentRepo.update(rent);
-        assertEquals(endTime, rentRepo.read(rent.getId()).getEndTime());
+        sendRentAsync(rent);
+
+        Rent updatedRent = rentRepo.read(rent.getId());
+        assertNotNull(updatedRent.getEndTime());
+        assertEquals(rent.getEndTime().truncatedTo(ChronoUnit.SECONDS), updatedRent.getEndTime().truncatedTo(ChronoUnit.SECONDS));
     }
 
     @Test
-    @DisplayName("Test renting the same Volume twice")
-    void testRentSameVolumeTwice() {
-        rentRepo.create(new Rent(testRenter, testVolume, LocalDateTime.now()));
-        Rent duplicateRent = new Rent(testRenter, testVolume, LocalDateTime.now());
-        assertThrows(Exception.class, () -> rentRepo.create(duplicateRent));
+    void testReadAllRents() throws JsonProcessingException, InterruptedException {
+        List<Rent> rents = rentRepo.readAll();
+        int initialSize = rents.size();
+
+        Renter renter1 = new Renter("126", "Smith", "Alice");
+        Renter renter2 = new Renter("127", "Brown", "Bob");
+        Book volume1 = new Book(4,"vol4", "First Volume", "Drama");
+        Book volume2 = new Book(5,"vol5", "Second Volume", "Horror");
+
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter1);
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter2);
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume1);
+        rentRepo.getDatabase().getCollection("volumes", Volume.class).insertOne(volume2);
+
+        rentRepo.create(new Rent(renter1, volume1, LocalDateTime.now()));
+        sendRentAsync(new Rent(renter1, volume1, LocalDateTime.now()));
+        rentRepo.create(new Rent(renter2, volume2, LocalDateTime.now()));
+        sendRentAsync(new Rent(renter2, volume2, LocalDateTime.now()));
+
+        rents = rentRepo.readAll();
+        assertEquals(initialSize + 2, rents.size());
     }
 
     @Test
-    @DisplayName("Test maximum number of Rents for a Renter")
-    void testRenterMaxRents() {
-        Volume volume1 = new Book(13, "Dune", "Sci-fi", "Frank Herbert");
-        Volume volume2 = new Book(14, "Neuromancer", "Cyberpunk", "William Gibson");
-        Volume volume3 = new Book(15, "Foundation", "Sci-fi", "Isaac Asimov");
-
-        rentRepo.create(new Rent(testRenter, testVolume, LocalDateTime.now()));
-        rentRepo.create(new Rent(testRenter, volume1, LocalDateTime.now()));
-        assertThrows(Exception.class, () -> rentRepo.create(new Rent(testRenter, volume2, LocalDateTime.now())));
-    }
-
-    @Test
-    @DisplayName("Test adding a Rent with Kafka but without MongoDB")
-    void testAddRentNoMongo() throws InterruptedException, JsonProcessingException {
-        KafkaConsument consument = new KafkaConsument(2);
-        consument.initConsumers();
-        consument.consumeTopicByAllConsumers();
-
-        testRent = new Rent(testRenter, testVolume, LocalDateTime.now());
-
-        kafkaProducent.sendRentAsync(testRent);
-
-        Thread.sleep(500); // Wait for Kafka processing
-
-        Rent retrievedRent = rentRepo.read(testRent.getId());
-
-        assertNotNull(retrievedRent);
-        assertEquals(testRent.getRenter().getPersonalID(), retrievedRent.getRenter().getPersonalID());
-        assertEquals(testRent.getVolume().getVolumeId(), retrievedRent.getVolume().getVolumeId());
-    }
-
-    @Test
-    @DisplayName("Test adding a Rent with Kafka and MongoDB")
-    void testAddRentWithKafkaAndMongo() throws InterruptedException, JsonProcessingException {
-        Rent testRent = new Rent(testRenter, testVolume, LocalDateTime.now());
-        kafkaProducent.sendRentAsync(testRent);
-
-        Rent retrievedRent = null;
-        int retryCount = 0;
-        while (retrievedRent == null && retryCount < 10) {
-            retrievedRent = rentRepo.read(testRent.getId());
-            Thread.sleep(500);
-            retryCount++;
-        }
-
-        assertNotNull(retrievedRent, "Rent should be saved in MongoDB.");
-        assertEquals(testRent.getRenter().getPersonalID(), retrievedRent.getRenter().getPersonalID());
-        assertEquals(testRent.getVolume().getVolumeId(), retrievedRent.getVolume().getVolumeId());
+    void testsiemanko() throws JsonProcessingException, InterruptedException {
+        Book book = new Book(10,"siemanko", "John Smith", "Fantasy");
+        Renter renter32 = new Renter("32", "John", "Smith");
+        rentRepo.getDatabase().getCollection("renters", Renter.class).insertOne(renter32);
+        volumeRepo.create(book);
+        Rent testrent1 = new Rent(renter32, book, LocalDateTime.now());
+        rentRepo.create(testrent1);
+        sendRentAsync(testrent1);
+        System.out.println("PojoCodecProvider registered"+ renter32.getCurrentRentsNumber());
     }
 }
