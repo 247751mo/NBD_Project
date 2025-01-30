@@ -36,7 +36,7 @@ public class KafkaProducent {
                 "kafka1:9192,kafka2:9292,kafka3:9392");
         producerConfig.put(ProducerConfig.ACKS_CONFIG, "all");
         producerConfig.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
-        producerConfig.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 5242880); // 5 MB
+        producerConfig.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 10242880); // 5 MB
 
         kafkaProducer = new KafkaProducer<UUID, String>(producerConfig);
     }
